@@ -1,0 +1,92 @@
+                                                                        Dia 01
+
+                                                                Curso Django: Templates e boas práticas.
+                                                                01.04 virtualenv
+
+    1-  Criei uma pasta para o projeto e arrastei pro visualcode, depois !!!ctrl+j/!!! pra abrir o terminal
+    2-  Na aula, os comandos do terminal são pra mac, vou anotar os do windows.
+        Para ver a versão !!python -m virtualenv --version!!
+        Para criar a venv !!python -m virtualenv venv!!
+        !!Ctrl-L!! para limpar o terminal
+
+    3-  Usei o comando para criar a venv e agora o comando para ativar a venv que é : !! venv/Scripts/activate   !!  
+
+                                                        !!   
+                                                        Essa ativação deu um erro que precisei da ajuda no forum da alura para resolver, é um problema no PowerShell:
+                                                        O erro que está sendo apresentado está informando que a execução de script está desabilitada. Usando o terminal
+                                                         aberto no VsCode estamos fazendo o uso do PowerShell. Será necessário realizar a liberação de execução de script
+                                                          no PowerShell, para isso basta seguir os passos abaixo:
+                                                        O link para duvida no forum é este:
+                                                        https://cursos.alura.com.br/forum/topico-ativacao-do-projeto-esta-dando-erro-302126  
+
+                                                        Abrir PowerShell como adm, usar o comando:
+                                                          Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+                                                        Digitar S e enter
+                                                        Voltar pro visual e ativar novamente com o venv/Scripts/activate 
+                                                        !!
+    4-  Agora vou instalar o Django na venv, isso vai fazer com que esse projeto tenha sempre a mesma versão e não causar bugs futuros. O comando foi pip install django.
+                                                              
+                                                                01.05 Servidor
+
+    1-  pip freeze > requirements.txt Para salvar o que precisa para o projeto. Sempre que instalar algo com o pip, usar esse comando.
+
+    2-  !!django-admin help!! mostra todos os comandos django
+
+    3-  !!django-admin startproject setup .!! para começar o projeto, o setup . é padrão de nome do projeto
+        Isso criou a pasta do projeto em si, com nome de setup, com os arquivos djangos.
+        Dentro da pasta raiz do projeto,NÃO É A PASTA SETUP, apareceu o arquivo manage.py, ele é 
+      responsavel por rodar varios comandos do django, além de subir o servidor.
+
+    4-  !!python manage.py runserver!! para rodar o servidor    
+
+                                      Dia 1,5
+                                  Curso Django: Templates e boas práticas.
+                                  02.02 idioma e timezone
+
+    1-  O settings.py fica a configuração da aplicação 
+        Lá alterei para pt-br e timezone para America/Sao_Paulo
+
+                                  
+                                     Dia 1,75 (Passar para o outro projeto)
+                                Curso Django: Templates e boas práticas.
+                                02.03 Variáveis de ambiente
+
+    1- Todo projeto django tem uma secret key, para manter meu projeto no git, não posso
+    enviar essa secret. Para coisas que n quero enviar pro git e deixar publicas, vamos
+    criar variaveis de ambientes, que só são usadas no desenvolvimento de projetos. 
+
+    2-  instalar o python dotenv com o pip !! pip install python-dotenv !! agora mandar pro 
+    requirements.
+
+    3-  Criei um arquivo na pasta raiz com nome de .env e coloquei a secret key lá.
+
+    4- No setting, apagar a secret key deixando apenas SECRET_KEY = ''
+    Preciso importar o os junto com os path, para poder conseguir manipular 
+    os arquivos e importar o dotenv, assim : from dotenv import load_dotenv.
+    Logo abaixo criar a função load_dotenv() para quando o arquivo for carregado
+    ele carregar as variaveis de ambiente. 
+
+    5-  Onde tinha a secre key, vc vai substituir por 
+    SECRET_KEY = str(os.getenv('SECRET_KEY'))
+      Aqui vc está transformando tudo em string, depois com os está entrando nos
+    arquivos, depois ta mandando pegar (get) as variaveis de ambiente no .env
+    e dizendo qual a variavel quer pegar. 
+
+                                Dia 2
+                      Curso Django: Templates e boas práticas.
+                      02.04 Git e Github
+
+    1-  No github criar um diretorio para o projeto.
+    2-  Criar um arquivo .gitignore  
+    3-  Ir no site (https://www.toptal.com/developers/gitignore/) e pegar do
+    django           
+    4-  No terminal "git init" para iniciar o diretorio do git
+    5-  No terminal ainda "git commit -m "primeiro commit" " 
+    6-  No github, pelar a linha git remote add origin e colar no terminal
+    7-  Terminal git push origin master
+
+                              Dia 4
+                      Curso Django: Templates e boas práticas.
+                      03.02 : App e projeto     
+
+                                                 

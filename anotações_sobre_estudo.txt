@@ -1,0 +1,46 @@
+                                                                Dia 1 para referencia das anotações.
+
+    1- Até agora criei a pasta do projeto, criei a maquina virtual venv, instalei o django e fiz o txt requirements, troquei a linguagem e o horario da aplicação
+    2-  Aprendi que o manage serve pra controlar a app, dando varios comandos e rodar o servidor. O settings serve pra ajudar as configuração a aplicação. Aprendi os paços para
+    iniciar a aplicação
+
+    3- vou fazer a apliação igual as aulas, mas n sei ainda como vou adptar para o sistema. 
+
+                                                                Dia 2 
+
+
+    1-  As variaveis de ambiente são partes sensiveis do codigo, que vc vai esconder em um arquivo
+    e não vai deixar publico, quando vc for postar aquele projeto ou quando vc for manter no Github
+    
+    2-  Pelo terminal, instalei o dotenv com pip e criei o .env no arquivo principal, coloquei
+    a chave lá, como uma variavel de novo SECRET_KEY
+
+    3-  No arquivo settings, onde ficam as configurações, importei o os do pathlib e o
+    load_dotenv do dotenv.
+
+    4-  Além de estanciar a load_dotenv()
+
+    5-  A SECRET_KEYdo settings, vai ter dentro dela a variavel que está no outro arquivo,
+    assim a secret key vai ta no setting, mas não vai ta visisvel, para fazer isso Preciso
+    usar o OS para acessar os arquivos da maquina e l dotenv. 
+
+    6-  Primeiro a SECRET_KEY tem que ser uma string, então vai ficar SECRET_KEY = str()
+        Depois usar o os e a função getenv do dotenv SECRET_KEY = str(os.getenv(''))
+        Então determinar que variavel vai pegar do .env SECRET_KEY = str(os.getenv('SECRET_KEY'))
+
+
+                    !!! Do dia 2 dos estudos em diante, não atualizei nada nesse projeto!!!!  
+
+                                        Dia 03 Atualizando o que vi no dia 02.
+
+    1-  Criei o projeto echos beta no github. 
+    2-  Criei o gitignore
+    3-  Joguei o site nele. 
+
+    4-  A partir daqui é o que preciso fazer toda vez que atualizar o projeto. 
+    5-  git commit -m "primeiro commit"
+    6-  git remote add origin https://github.com/AndersonBem/Projeto_Echos_Beta.git
+    7-  
+
+
+
