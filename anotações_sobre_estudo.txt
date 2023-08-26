@@ -37,10 +37,19 @@
     2-  Criei o gitignore
     3-  Joguei o site nele. 
 
-    4-  A partir daqui é o que preciso fazer toda vez que atualizar o projeto. 
-    5-  git commit -m "primeiro commit"
-    6-  git remote add origin https://github.com/AndersonBem/Projeto_Echos_Beta.git
-    7-  
+    4-  A partir daqui é o que preciso fazer toda vez que atualizar o projeto.
+    5-  git init e "git add ."
+    6-  git commit -m "primeiro commit"
+    7-  git remote add origin https://github.com/AndersonBem/Projeto_Echos_Beta.git
+    8-  git push origin master
+
+                                        Dia 05 Atualizando até o dia 04 das anotações
+    
+    1-  Criei o app "index" pelo terminal, vou tentar colocar a pagina inicial aqui. 
+    Não sei bem se é esse o caminho e coloquei no settings.pt, na lista de apps intalados,
+    coloquei o index. 
+
+                                                
 
 
 

@@ -80,7 +80,7 @@
     2-  Criar um arquivo .gitignore  
     3-  Ir no site (https://www.toptal.com/developers/gitignore/) e pegar do
     django           
-    4-  No terminal "git init" para iniciar o diretorio do git
+    4-  No terminal "git init" para iniciar o diretorio do git e "git add ."
     5-  No terminal ainda "git commit -m "primeiro commit" " 
     6-  No github, pelar a linha git remote add origin e colar no terminal
     7-  Terminal git push origin master
@@ -89,4 +89,51 @@
                       Curso Django: Templates e boas práticas.
                       03.02 : App e projeto     
 
-                                                 
+    1-  Até agora criei a base do do projeto, agora vamos criar as partes que são
+    as funcionalidades. 
+        O nome dessas partes é app. 
+    2-  Um projeto pode ter varios app's dentro dele. O startproject é para iniciar
+    o projeto inteiro.
+    3-  Começar criando o app de galeria, o objetivo é mandar tudo que tem relação
+    com fotos no projeto. 
+
+    4-  "python manage.py startapp galeria" Sempre que a gente alterar algo dentro
+    da pasta galeria, eu to mexendo no app, não no projeto. 
+
+    5-  Você precisa avisar ao projeto que esse app faz parte dele, precisa conectar
+    o boneco lego na plataforma, você até agora criou os dois, mas n juntou eles. 
+
+
+    6-  No setup/ setting.py ...
+    
+    !!!!!!!!!!!!(Que tem relação com o PROJETO
+    -manage.py serve para rodar varios comandos e o projeto em si.
+    -na pasta setup é onde está o projeto todo, a base.
+    -a pasta galeria é onde ta o primeiro app que criei, com nome de galeria. 
+    -O settings.py da pasta setup,fica a configuração do projeto como um todo, a base. 
+    ) !!!!!!!!!!
+
+      ... tem um dicionario com nome INSTALLED_APPS, lá eu preciso colocar os 
+    app's que eu criar. No é só colocar 'galeria', 
+
+
+                          Dia 05
+
+                          Curso Django: Templates e boas práticas.
+                      03.03 : views e urls
+
+    1-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
