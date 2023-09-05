@@ -1,0 +1,65 @@
+/* Personalize as cores aqui */
+:root {
+    --primary-color: #4682A9; /* Cor primária mais escura */
+    --secondary-color: #FFCCCC; /* Cor do Menu */
+    --light-color: #272829; /* Cores dos Textos */
+    --dark-color: #91C8E4; /* Cor do Background */
+}
+
+/* Personalize os estilos dos elementos conforme necessário */
+body {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+}
+
+.nav-link {
+    color: var(--light-color);
+}
+
+.btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--light-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.custom-rounded-table td {
+    border-radius: 10px;
+    border-width: 1px;
+}
+
+/* Redefinir o arredondamento para as células de cabeçalho */
+.custom-rounded-table th {
+    border-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-width: 1px;
+}
+
+.custom-rounded-table {
+    border-collapse: separate; /* Mantém espaço entre as células */
+    border-spacing: 0; /* Define o espaço entre as células como 0 */
+}
+
+.navbar-links a {
+        margin-right: 100px; /* Ajuste o valor conforme necessário */
+}
+
+.header-container {
+    display: flex;
+    align-items: flex-start;
+}
+.navbar {
+    margin-right: auto;
+}
+.main-container {
+    margin-left: 20px; /* Ajuste a margem conforme necessário */
+}

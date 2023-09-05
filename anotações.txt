@@ -83,6 +83,7 @@
     4-  No terminal "git init" para iniciar o diretorio do git e "git add ."
     5-  No terminal ainda "git commit -m "primeiro commit" " 
     6-  No github, pelar a linha git remote add origin e colar no terminal
+        desse projeto(https://github.com/AndersonBem/alura_space_agosto.git)
     7-  Terminal git push origin master
 
                               Dia 4
@@ -104,7 +105,7 @@
     o boneco lego na plataforma, você até agora criou os dois, mas n juntou eles. 
 
 
-    6-  No setup/ setting.py ...
+    6-  No setup.py ...
     
     !!!!!!!!!!!!(Que tem relação com o PROJETO
     -manage.py serve para rodar varios comandos e o projeto em si.
@@ -117,15 +118,142 @@
     app's que eu criar. No é só colocar 'galeria', 
 
 
-                          Dia 05
-
+                                  Dia 05
                           Curso Django: Templates e boas práticas.
                       03.03 : views e urls
 
-    1-  
+    1-  Eu quero colocar alguma exibição na pagina, para alterar isso, eu preciso
+    alterar algum app, não o programa em si, então vou no app que tenho que é o 
+    galeria. Nele vou em views.py, ele é reponsavel por definir que informações 
+    vão ser exibidas na tela para cada requisição. 
+
+    2-  Nele vou importar o from django.http import HttpResponse, a função dele
+    é responder as requisições que vem do http. 
+
+    3-  Vou criar a função de nome index, pq vai ser a pagina principal e nela 
+    vou instanciar o request, pq ela vai responder a uma requisição do http
+
+    4-  Vou usar o HttpResponse e colar um codigo html lá dentro, apenas para teste
+
+          def index(request):
+            return HttpResponse('<h1>Alura Space</h>')
+
+    5-  Isso é como um Path do Flask, vc definio a rota para a função index, mas 
+    vc precisa avisar ao django disso. Por isso você tem que ir em setup e de lá
+    usar o arquivo urls.py
+
+          1- app/views.py lá vc cria a função que deseja para criar uma route
+          2- setup/urls.py Ai vc avisa ao django que criou essa route e quando deve 
+          responder com ela. 
+    
+    6-  Em views.py vai ter o dicionario urlpatterns, que é onde vc tem que botar
+    as routes que vc criou, no caso vai ficar assim:
+          urlpatterns = [
+              path('admin/', admin.site.urls),
+              path('', index),
+          ]
+
+    7-  Mas para ter a função index disponivel, vc precisa importar ela:
+          from galeria.views import index
+
+                          Curso Django: Templates e boas práticas.
+                      03.04 : isolando as urls
+
+    1-  Se vc deixar todos as routes de todos os app que criar dentro dessa urls.py
+    do django, ele vai ficar gigantesco, então preciso criar um arquivo urls.py na
+    mão para cada app criado e assim separar de maneira mais organizada as routes de
+    cada aplicação
+    2-  Em galeria, criar arquivo urls.py nela vc vai por os importes que vai usar,
+    que são parecido com do urls.py de setup:
+          from django.urls import path
+          from galeria.views import index
+
+    3-  Depois como no outro, criei um dicionario para as routes deste app, no caso 
+    galeria. Então ficou assim:
+          urlpatterns = [
+              path('',index)
+          ]  
+
+    4-  No urls.py do setup, vc vai tirar aquele caminho e import de antes e colocar
+    o include, assim ele vai buscar tudo que tiver na app de galeria.urls
+
+          from django.contrib import admin
+          from django.urls import path, include
+
+
+          urlpatterns = [
+              path('admin/', admin.site.urls),
+              path('', include('galeria.urls')),
+          ]
+
+    5-  Então a nova sequencia de criação de uma route é :
+
+            1- app/views.py lá vc cria a função que deseja para criar uma route
+            2- app/urls.py Ai vc criar ou colocar no dicionarios urlpatterns a route
+            que vc quer como resposta, usando o path... path('', index)
+            3- No urls.py de setup, se não tiver o include desse app, vc precisa fazer
+            path('', include('galeria.urls')),
+
+    
+                          Curso Django: Templates e boas práticas.
+                      03.05 : Templates
+
+    1- Agora que sei como criar uma route, vou poder vincular um html a essa route
+    2- Você precisa dizer pro django onde ficam as paginas html, logo vc precisa ir 
+    no setup.setting. Em no dicionario de template, tem o dirs, que são os diretorios
+    que ficam os template.  
+    3- Crio a pasta templates na raiz do projeto e vou lá no dirs para avisar a ele
+    usando o os:
+        [os.path.join(BASE_DIR,'templates')]
+        o os é para entrar nos arquivos, path indica o caminho, join é a função que ta
+        buscando, o BASE_DIR é o diretorio base do projeto e 'templates' é pasta que to
+        direcionando. 
+
+    4-  Na pasta template vc cria o index.html
+    5-  Agora vc precisa ir na função do index, para avisar para ela renderizar isto
+    6-  Na views.py do APP, vc vai alterar para isto:
+          
+          from django.shortcuts import render
+
+
+          def index(request):
+              return render(request, 'index.html')
+
+        Vamos usar só o render, que vc começa pelo request sempre e depois o html que
+        quer. 
 
 
 
+                                    Dia 06
+                          Curso Django: Templates e boas práticas.
+                      04.03/04 : carregando o template/ arquivos estáticos
+    1-  Baixei os arquivos da aula. 
+    2-  Criei a pasta galeria dentro de templates, para organizar melhor o projeto.
+    Então em views.py de galeria, eu alterei o destino para galeria/index.html
+    3-  Abri o html de index que baixei e colei o codigo no index do projeto, ainda falta
+    o css. 
+    4-  em settings.py do setup (pq estou falando pro programa como um todo, não para
+    o app especifico) vou criar uma lista dizendo onde vai ficar os arquivos estaticos.
+    Irei fazer isso logo apos o STATIC_URL. Primeiro em setup, eu crio um diretorio
+    chamado static. Ai no setting.py, faço:
+            STATICFILES_DIRS=[
+                os.path.join(BASE_DIR, 'setup/static')
+            ] 
+        Isso ta dizendo pro os acessar o caminho diretorio base, procurar setup/static
+
+    5-  Agora é receita de bolo, logo abaixo do anterior:
+
+            STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
+        Caminho absoluto para o python onde ele vai coletar os arquivos. é protocolo
+
+    6-  Copiar a pasta assets e styles que baixei para dentro da pasta setup/static       
+    7-  No terminal, usar o comando python manage.py collectstatic para o django organizar
+    tudo e criar um novo dir static na base.  
+    8-  No html, mando ele carregar os arquivos estaticos com {% load static %} logo no começo
+    do arquivo.  No html ainda, no href do style, vai ficar assim: href="{% static '/styles/style.css' %}"
+    Assim to avisando  qual o caminho do arquivo estatico que quero usar e o nome dele.
+        
 
 
 

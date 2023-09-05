@@ -29,7 +29,7 @@
         Então determinar que variavel vai pegar do .env SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 
-                    !!! Do dia 2 dos estudos em diante, não atualizei nada nesse projeto!!!!  
+                    !!! Do dia 2 dos estudos em diante!!!!  
 
                                         Dia 03 Atualizando o que vi no dia 02.
 
@@ -46,8 +46,89 @@
                                         Dia 05 Atualizando até o dia 04 das anotações
     
     1-  Criei o app "index" pelo terminal, vou tentar colocar a pagina inicial aqui. 
-    Não sei bem se é esse o caminho e coloquei no settings.pt, na lista de apps intalados,
+    Não sei bem se é esse o caminho e coloquei no settings.py, na lista de apps intalados,
     coloquei o index. 
+
+                                        Dia 07
+                                Preciso atualizar do dia 05 das anotações em diante. 
+    1- app/views.py lá vc cria a função que deseja para criar uma route
+    Tudo isso fica inutil com o proximo passo:
+    {{{{{{{{{{2- setup/urls.py Ai vc avisa ao django que criou essa route e quando deve 
+    responder com ela.
+        Em app/views.py criei a função:
+            def index(request):
+                return HttpResponse('<h1>Projeto ECHOS</h>')
+        Em setup/urls.py, listei essa função com o path:
+            urlpatterns = [
+                path('admin/', admin.site.urls),
+                path('',index),
+            ]
+        No path vc diz qual o caminho primeiro, no caso o '' é a route incial, depois a função que quer chamar, além
+        de importar essa função. }}}}}}}}}}
+
+                                Isolando as urls. 
+    1-  Cada app criado, precisa criar um urls.py, para concentrar todas as routes daquele app. 
+        Então importar a função path from django.urls
+        Importar tbm a função que quer de app.views 
+        Colo no urls de setup, fazer tbm o dicionario de urls, assim:
+
+        urlpatterns = [
+            path('',index),
+        ]
+
+        Agora vai ficar claro que a aula anterior vc pode pular inteira.
+        Em urls.py de setup, vc vai importar o include junto com o path e a função vai ficar assim 
+        no dicionario:
+             path('',include('index.urls')),
+
+!!!!!!!!!!!!!  A seguencia ficou assim:
+            1- Em views.py do app, from django.shortcuts import render
+            2- Cria o urls.py no aetup, vc importa o include junto com o path e no dicionario vc cria a path
+            da rota com include : path('',include('index.urls')),
+            3- Agora em urls.py do app, importa a função da views (index) de app.views
+            4- Cria o dicionario urls com o path com a função. 
+
+                                 Templates
+
+    1-  Criei a pasta templates na pasta raiz. 
+    2-  Em settings do setup, avisei no templates, dir, que criei essa pasta :  'DIRS': [os.path.join(BASE_DIR,'templates')],
+    3-  Alterar o views do app para:
+                from django.shortcuts import render
+
+
+                # Create your views here.
+
+                def index(request):
+                    return render(request, 'index/index.html')
+
+                    index/index por causa do proximo item. 
+
+                            carregando o template/ arquivos estáticos
+    1-  Criei a pasta index, dentro de templates e coloquei o index.html lá e modifiquei o index.html
+    para o codigo que eu quero. 
+    2-  em settings.py do setup (pq estou falando pro programa como um todo, não para
+    o app especifico) vou criar uma lista dizendo onde vai ficar os arquivos estaticos.
+    Irei fazer isso logo apos o STATIC_URL. Primeiro em setup, eu crio um diretorio
+    chamado static. Ai no setting.py, faço:
+            STATICFILES_DIRS=[
+                os.path.join(BASE_DIR, 'setup/static')
+            ]
+
+            STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
+    3-  Copiar a pasta assets e styles do projeto para dentro da pasta setup/static ( no caso o projeto tava
+    com nome static e templates, copiei a static mudando o nome pra styles e criei a pasta assest vazia) 
+    4-  No terminal, usar o comando python manage.py collectstatic para o django organizar
+    tudo e criar um novo dir static na base.
+    4-  No html, mando ele carregar os arquivos estaticos com {% load static %} logo no começo
+    do arquivo.  No html ainda, no href do style, vai ficar assim: href="{% static '/styles/styles.css' %}"
+    Assim to avisando  qual o caminho do arquivo estatico que quero usar e o nome dele. Fazer isso tbm com o boot
+
+
+
+    
+    
+
 
                                                 
 
