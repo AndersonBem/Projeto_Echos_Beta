@@ -125,8 +125,42 @@
     Assim to avisando  qual o caminho do arquivo estatico que quero usar e o nome dele. Fazer isso tbm com o boot
 
 
+                        Ultima atualização 
+                        Curso Django: Templates e boas práticas.
+                      04.03/04 : carregando o template/ arquivos estáticos
+                                
+                                Dia 11
+    1-  Não tenho imagens por enquanto para colocar. 
+    2-  Colei dentro de templates/index o html de lista de vet. 
+    4-  Em views.py de index, criei a função de lista_veterinarios, ficou esquisita, mas foi
+    feito como a aula. 
+    5-  Agora vou criar a route dessa função em urls.py de index. Importar e fazer o path.
+    6-  O html de lista, tava particionado, desfiz isso e transformei num html inteiro e tirei as 
+    coisas de phyton do flask. 
+    7-  No path que criei, dei um name para ele. 
+    8-  Precisei mudar o stylesheet do html novo para a forma correta.
+    9-  Os botões de lista, apaguei os target
+    10- Fiz o mesmo pro botão home, de nomear a função e referenciar ela correto.
 
+    1-  Tirar as repetições.
+        1-  Criei o base.html em templates.
+        2-  Coloquei o começo do html que se repete lá, comecei o base.html com o load static
+        3-  Dentro da tag body, logo depois do arquivo que se repete, eu coloquei {% block content %} {% endblock %}
+        4-  Nos htmls originais, eu apago o repetido e começo com:
+        {% extends 'index/base.html' %}
+        {% load static %}
+        {% block content %}
+
+        Lembrando de fechar com {% endblock %} 
     
+    2- Vou criar os partials  
+        1-  Criei o diretorio partials em templates/index
+        2-  Criei o _footer.html
+        3-  Comecei o html com o load static, colei o que queria e no arquivo base add 
+        {% include 'index/partials/_footer.html' %}, além de apagar dos html originais.
+
+    3-  Agora preciso repetir tudo isso pra cada html. 
+        1-     
     
 
 

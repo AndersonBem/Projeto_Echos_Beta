@@ -1,34 +1,6 @@
+{% extends 'index/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Echos</title>
-    <link rel="stylesheet" href="{% static '/styles/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static '/styles/styles.css' %}">
-
-</head>
-<body>
-
-    
-        {% if messages %}
-            <ul id="messages" class="list-unstyled">
-            {% for message in messages %}
-                <li class="alert alert-success">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-   
-
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark ">
-            <a class="navbar-brand" href="/">Home</a>
-            <a class="navbar-brand" href='/login?proxima=' >Login</a>
-            <a class="navbar-brand" href="/logout">Logout</a>
-        </nav>
-    </header>
+{% block content %}
 
 
 
@@ -37,26 +9,21 @@
             <h1>{{ titulo }}</h1>
             <p>Cadastros de cliente e pacientes, emissor de laudos, planilhas e agenda de exames!</p>
             <div class="d-grid gap-2">
-                <a href="http://127.0.0.1:5000/lista_veterinarios" class="btn btn-primary" target="_blank">Lista de Véterinarios</a>
-                <a href="http://127.0.0.1:5000/lista_clinicas" class="btn btn-primary" target="_blank">Lista de Clínicas</a>
-                <a href="http://127.0.0.1:5000/lista_tutores" class="btn btn-primary" target="_blank">Lista de Tutores</a>
-                <a href="http://127.0.0.1:5000/lista_pacientes" class="btn btn-primary" target="_blank">Lista de Pacientes</a>
-                <a href="http://127.0.0.1:5000/novo_veterinario" class="btn btn-primary" target="_blank">Novo Véterinario</a>
-                <a href="http://127.0.0.1:5000/nova_clinica" class="btn btn-primary" target="_blank">Nova Clínica</a>
-                <a href="http://127.0.0.1:5000/novo_tutor" class="btn btn-primary" target="_blank">Novo Tutor</a>
-                <a href="http://127.0.0.1:5000/novo_paciente" class="btn btn-primary" target="_blank">Novo Paciente</a>
+                <a href="{% url 'lista_veterinarios' %}" class="btn btn-primary" >Lista de Véterinarios</a>
+                <a href="{% url 'lista_clinicas' %}" class="btn btn-primary" >Lista de Clínicas</a>
+                <a href="{% url 'lista_tutores' %}" class="btn btn-primary" >Lista de Tutores</a>
+                <a href="{% url 'lista_pacientes' %}" class="btn btn-primary" >Lista de Pacientes</a>
+                <a href="{% url 'novo_veterinario' %}"  class="btn btn-primary" >Novo Véterinario</a>
+                <a href="{% url 'nova_clinica' %}" class="btn btn-primary" >Nova Clínica</a>
+                <a href="{% url 'novo_tutor' %}" class="btn btn-primary" >Novo Tutor</a>
+                <a href="{% url 'novo_paciente' %}" class="btn btn-primary">Novo Paciente</a>
 
 
 
             </div>
         </section>
     </main>
-    <footer class="text-center">
-        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-            <p style="font-size: 1.2em; font-weight: bold;">Desenvolvido por Anderson Bem</p>
-        </div>
-    </footer>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

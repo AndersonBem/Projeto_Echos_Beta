@@ -83,7 +83,7 @@
     4-  No terminal "git init" para iniciar o diretorio do git e "git add ."
     5-  No terminal ainda "git commit -m "primeiro commit" " 
     6-  No github, pelar a linha git remote add origin e colar no terminal
-        desse projeto(https://github.com/AndersonBem/alura_space_agosto.git)
+        desse projeto git remote add origin  https://github.com/AndersonBem/alura_space_agosto.git
     7-  Terminal git push origin master
 
                               Dia 4
@@ -254,6 +254,91 @@
     do arquivo.  No html ainda, no href do style, vai ficar assim: href="{% static '/styles/style.css' %}"
     Assim to avisando  qual o caminho do arquivo estatico que quero usar e o nome dele.
         
+                                    Dia 08
+                        Curso Django: Templates e boas práticas.
+                      04.05/06 : carregando as imagens/Outras Paginas
+    1-  Quando eu copiei o static da aula, veio o styles com os css e os assetes 
+    que são as imagens, elas já estão referenciadas no html que eu copiei. Vou alterar
+    apenas como ta escrito no html, para ele conseguir acessar as imagens. Então se 
+    eu quiser colocar uma imagem no html, então preciso referenciar da seguinte forma:
+
+        1-  "{% static ' o caminho ' %}"
+            ex: <img src="{% static '/assets/ícones/1x/Home - ativo.png' %}">
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!IMPORTANTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    2-  Vamos ver como criar outras paginas no mesmo site, vai usar o mesmo app galeria
+    isso pode indicar que devo só usar um app e trocar o nome dele de index pra echos.
+        
+        1-  Crei o html da outra pasta dentro do templates/galeria com nome de imagem.html
+        Colei o codigo da aula lá.   
+        2-  Em views.py DO APP, vamos criar outra função para exibir essa pagina.
+
+            def imagem(request):
+                return render(request, 'galeria/imagem.html') 
+        3-  Agora preciso criar uma route para essa pagina. 
+        4-  Em urls.py DO APP. vc precisa add essa função do dicionario de routes 
+        do app. Primeiro importar a função que foi criada e fazer esta route:
+                    path('imagem/', imagem)    
+            Cuitado que é o nome seguido de / não o oposto
+        5-  Pronto, a route esta criada, agora vou carregar os estilos dentro desse html
+        e as imagens tbm.
+
+
+                        Curso Django: Templates e boas práticas.
+                      05.02 : URL name
+
+    1-  Os caminhos do html precisão ser dessa forma:
+        
+        1-  Você precisa ir no path, que está no dicionario de urls.py DO APP e 
+        nesse path, voce precisa dar um nome a ele. EX:
+                path('imagem/', imagem, name='imagem'),
+        2-  A referencia no html vai ficar assim :
+                href="{% url 'imagem' %}"
+        3-  Com CTRL+F posso pesquisar todos e substituir todos. 
+        4-  Preciso fazer isso em todos os caminhos, como o HOME para Voltar
+        5-  Da o name para o path do index
+        6- Nos html, trocar o caminho para o correto. href="{% url 'index' %}"
+                        
+                                    Dia 10
+                        Curso Django: Templates e boas práticas.
+                      05.03 : BASE e DRY
+
+    1-  Vamos tirar as repetições dos html
+
+        1-  Em templates/galeria vou criar base.html
+        2-  Lá Eu vou colocar tudo que for repetido do index e de imagem   
+        3-  Lá vou começar com {% load static %} fechar as tags que faltam(body e html)
+        e dentro do body vou colocar {% block content %} {% endblock %} isso ta jogando os
+        outros html no base.
+        4-  Nós outros html vou começar com:
+
+                {% extends 'galeria/base.html' %}
+                {% load static %}
+                {% block content %}
+        Onde to avisando de onde vem o arquivo, carregando os estaticos e dizendo onde fica
+        o arquivo base.
+        5-  No final dos htmls, colocar o {% endblock %}
+
+                      Curso Django: Templates e boas práticas.
+                      05.04 : Partials
+    1-  Vamos tirar as repetições dos html em relação de menu, botões e etc.
+
+        1-  Vou criar uma pasta dentro de templates/galeria de nome partials
+        2-  Lá dentro criar o _footer.html
+        3-  Dentro, eu vou colar o footer que se repete e começar esse arquivo com
+        {% load static %}
+        4-  Como esse footer vai se repetir, eu posso ir no base.html
+        5-  No base, dentro do body, eu vou usar o include {% include 'galeria/partials/_footer.html' %}
+        6-  Fazer o mesmo para o menu e o cabeçalho, com nomes de 
+        _header.html para o cabeçalho
+        _sidebar.html para o menu lateral
+        _footer.html para o rodapé
+        7-  Lembrar que no header, precisa vir tudo do começo ou passar o começo pro base
+        
+
 
 
 
