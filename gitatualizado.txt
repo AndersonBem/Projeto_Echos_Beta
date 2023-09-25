@@ -1,0 +1,20 @@
+1-  No github criar um diretorio para o projeto.
+    2-  Criar um arquivo .gitignore  
+    3-  Ir no site (https://www.toptal.com/developers/gitignore/) e pegar do
+    django           
+    4-  No terminal "git init" para iniciar o diretorio do git e "git add ."
+    5-  No terminal ainda "git commit -m "primeiro commit" " 
+    6-  No github, pelar a linha git remote add origin e colar no terminal
+        desse projeto https://github.com/AndersonBem/alura_space_agosto.Git
+        ESSE COMANDO SÓ USA UMA VEZ
+    7-  Terminal git push origin master
+
+
+    git remote -v  mostra qual repositorio esta add
+    git push joga pro github
+    git pull puxa o que ta no repositorio
+
+    Ordem para atualização:
+        1 git add . 
+        2 git commit - m "nome"
+        3 git push origin master 

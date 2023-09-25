@@ -162,9 +162,38 @@
     3-  Agora preciso repetir tudo isso pra cada html. 
         1-     
     
+                    Todo o primeiro curso atualizado. 
 
+                            Dia algum do futuro do passado
+                    Curso Django: persistência de dados e Admin
+                                 01.04: Nomes dinâmicos
 
-                                                
+        1-  Vou criar o dicionario apenas da lista de vet, para treinar. Pq esse modo não é nada pratico,
+        então vou alterar ele depois para Banco de Dados.
+            1-  criei o dic dados com nome, telefone e emails de alguns exemplos e no render criei o dic veterinarios que contem
+        o dic dados.
+            2-  No lista_veterinarios eu criei um laço de repetição onde ia ficar os dados dos vets, nesse laço precisa de x e your
+        depois coloquei o nome do segundo dic criado anteriormente no laço = veterinarios.items
+            3-  No local que queria os dados só precisei colocar info.nome e etc
+
+                
+                   Curso Django: persistência de dados e Admin
+                                 01.05: Banco de dados    
+
+        1-  Vou precisar criar as 4 classes = vet, paciente, cliente e clinica. 
+            1-  Em models.py do index
+                1-  Criei as 4 classes.
+            2-  No terminal, criei outro terminal e fiz o makemigrations e o migrate criando as tabelas.
+    
+                    Curso Django: persistência de dados e Admin
+                        01.07: Criando dados
+        1-  Não vou criar nada pelo terminal, pq acredito que n vai ser feito assim, então posso fazer isso depois caso precise. 
+        2   Setup/settings.py  em INSTALLED_APPS = 'index.apps.IndexConfig',
+
+                        CONTINUAR DE =
+                            Dia Perdi as contas(Dia 4 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        02.02: Acessando o banco de dados
 
 
 

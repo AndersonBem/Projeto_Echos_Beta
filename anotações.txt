@@ -326,7 +326,7 @@
                       05.04 : Partials
     1-  Vamos tirar as repetições dos html em relação de menu, botões e etc.
 
-        1-  Vou criar uma pasta dentro de templates/galeria de nome partials
+        1-  Vou criar uma pasta dentro de templates/galeria de nome partials]
         2-  Lá dentro criar o _footer.html
         3-  Dentro, eu vou colar o footer que se repete e começar esse arquivo com
         {% load static %}
@@ -337,7 +337,120 @@
         _sidebar.html para o menu lateral
         _footer.html para o rodapé
         7-  Lembrar que no header, precisa vir tudo do começo ou passar o começo pro base
+
+
+                                 Dia Perdi as contas.
+                    Curso Django: persistência de dados e Admin
+                      01.04: Nomes dinâmicos
+        1-  Em index.html apagar os cards extras e deixar apenas 1 e ativar o auto
+        save do vccode. 
+        2-  Em views.py do app, criar um dicionario com nome de dados e botar Os
+        dados das duas fotos da seguinte forma.
+
+                dados = {
+                    1: {"nome" : "Nebulosa de Carina", 
+                        "legenda" : "webbtelescope.org / NASA / James Webb"},
+                    2: {"nome" : "Galáxia NGC 1079", 
+                        "legenda" : "nasa.org / NASA / Hubble"}
+                } 
         
+        3-  O return render permite que vc envie informações igual ao flask.
+            1-  
+
+                    def index(request):
+                        dados = {
+                        1: {"nome" : "Nebulosa de Carina", 
+                            "legenda" : "webbtelescope.org / NASA / James Webb"},
+                        2: {"nome" : "Galáxia NGC 1079", 
+                            "legenda" : "nasa.org / NASA / Hubble"}
+                        }
+                        return render(request, 'galeria/index.html', {"cards": dados}) 
+            
+            2-  Para receber os dados no index nos cards do index.html
+                1-   Criar estrutura de repetição para cards.
+                    Antes de <li class="card"> que é a estrutura que vamos repetir, colocar
+                        {% for foto_id, info in cards.items %}
+                        lembre de fechar com endfor
+                    E no local de nome e legenda colocar respectivamente:
+                        {{ info.nome }}  {{ info.legenda }}
+        
+        4-                  Explicação
+            1-  Primeiro criei um dicionario com os dados que queria usar, tudo isso vai ser alterado
+        por um banco de dados, no return render eu coloquei outro dicionario com o item "cards"(apenas um nome)
+        e nesse cards eu associei o dicionario criado antes com nome de dados. Então joguei o dic dentro 
+        da variavel(ou dic?) cards. 
+            2-  No html, eu criei o laço de repetição que usar o foto_id pq usa o id do dic dados
+            Ou seja, o laço vê o item 1, 2, 3 e etc, depois ele entra nas infos daquele item. Poderia ser X que 
+        dava no mesmo. 
+            3-  Nos locais que vc quer os dados no html, é só por info.dados usando os nomes colocados
+        no dic dados.  
+
+                        Dia Perdi as contas(Dia 2 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        01.05: Banco de dados
+
+        1-  Em galeria/models.py vc cria as classes que o django vai usar para criar as
+        tabelas do banco de dados.
+            1-  Em models.py = 
+
+                    class Fotografia(models.Model):
+                        nome = models.CharField(max_length=100, null=False, blank=False)
+                        legenda = models.CharField(max_length=150, null=False, blank=False)
+                        descricao = models.TextField(null=False, blank=False)
+                        foto = models.CharField(max_length=100, null=False, blank=False)
+
+                        def __str__(self):
+                            return f"Fotografia [nome={self.nome}]" 
+                
+                Cada atributo da classe é uma coluna da tabela. CharField é para textos
+            pequenos, como nomes e legendas. TextField é para textos grandes.
+                Null é para dados em branco e blank é para " ". A def no final é uma boa pratica
+            para quando vc solicitar o nome do item, ele te devolver uma string, não o local 
+            da memória.
+            
+        2-  No terminal =
+                1-  Deixar um terminal rodando o server
+                2-  Num segundo terminal=
+                        
+                        python manage.py makemigrations
+                    Esse comando vai fazer o python pegar a classe que foi feita
+                e transformar numa tabela de verdade. Jogando ela dentro do dir
+                galeria/migrations.
+
+                3-  No segundo terminal= 
+
+                        python manage.py migrate   
+
+                    Agora ele cria o banco de dados de verdade.
+                
+        3-  Nas extensões instalar o sqlite viewer e isso vai criar um arquivo db.sqlite3
+        na pasta raiz.
+
+                         Dia Perdi as contas(Dia 3 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        01.07: Criando dados
+        
+        1-  Criando um novo item pelo terminal  
+            1-  python manage.py shell no terminal 
+            2-  from galeria.models import Fotografia
+            3-  foto = Fotografia(nome="Nebulosa de Carina", legenda = "webbtelescope.org / NASA / James Webb", foto= "carina-nebula.png")
+            4-  foto.save()
+        2-  O arquivo apps.py de galeria são as configurações da galeria. Em settings.py
+        de setup, eu vou em INSTALLED_APPS e alterar o galeria para ficar mais completo
+        respeitando essas configurações = 'galeria.apps.GaleriaConfig',
+
+                        Dia Perdi as contas(Dia 4 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        02.02: Acessando o banco de dados
+
+
+
+        
+
+
+
+
+                   
 
 
 

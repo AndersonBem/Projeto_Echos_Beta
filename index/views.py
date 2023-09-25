@@ -7,7 +7,15 @@ def index(request):
     return render(request, 'index/index.html')
 
 def lista_veterinarios(request):
-    return render(request, 'index/lista_veterinarios.html')
+    dados = {
+    1: {"nome" : "Jéssica Bem",
+        "telefone" : "(81) 11111-1111",
+        "email" : "exemplo1@exemplo1.com"},
+    2: {"nome" : "Afonso Reis",
+        "telefone" : "(81) 22222-2222",
+        "email" : "exemplo2@exemplo2.com"}
+    }
+    return render(request, 'index/lista_veterinarios.html', {"veterinarios": dados})
 
 def lista_clinicas(request):
     return render(request,'index/lista_clinicas.html')

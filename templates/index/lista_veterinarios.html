@@ -14,13 +14,13 @@
                 </tr>
             </thead>
             <tbody>
-                
+              {% for veterinario, info in veterinarios.items %}  
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{info.nome}}</td>
+                    <td>{{info.telefone}}</td>
+                    <td>{{info.email}}</td>
                 </tr>
-                
+              {% endfor %}  
             </tbody>
         </table>
     </div>
