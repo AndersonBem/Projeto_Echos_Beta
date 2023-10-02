@@ -15,14 +15,17 @@
                 </tr>
             </thead>
             <tbody>
-                
+                {% if tutores %}
+                {% for tutor in tutores %}  
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{tutor.nome}}</td>
+                    <td>{{tutor.telefone}}</td>
+                    <td>{{tutor.email}}</td>
+                    <td>{{tutor.endereco}}</td>
                 </tr>
-                
+                {% endfor %} 
+                {% else %}
+                {% endif %} 
             </tbody>
         </table>
 {% endblock %}

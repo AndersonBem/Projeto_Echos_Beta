@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from index.models import Veterinario, Clinica, Paciente, Tutor 
 
 
 # Create your views here.
@@ -7,24 +8,20 @@ def index(request):
     return render(request, 'index/index.html')
 
 def lista_veterinarios(request):
-    dados = {
-    1: {"nome" : "Jéssica Bem",
-        "telefone" : "(81) 11111-1111",
-        "email" : "exemplo1@exemplo1.com"},
-    2: {"nome" : "Afonso Reis",
-        "telefone" : "(81) 22222-2222",
-        "email" : "exemplo2@exemplo2.com"}
-    }
-    return render(request, 'index/lista_veterinarios.html', {"veterinarios": dados})
+    veterinarios = Veterinario.objects.all()
+    return render(request, 'index/lista_veterinarios.html', {"veterinarios": veterinarios})
 
 def lista_clinicas(request):
-    return render(request,'index/lista_clinicas.html')
+    clinicas = Clinica.objects.all()
+    return render(request,'index/lista_clinicas.html', {"clinicas": clinicas})
 
 def lista_pacientes(request):
-    return render(request, 'index/lista_pacientes.html')
+    pacientes = Paciente.objects.all()
+    return render(request, 'index/lista_pacientes.html', {"pacientes": pacientes})
 
 def lista_tutores(request):
-    return render(request, 'index/lista_tutores.html')
+    tutores = Tutor.objects.all()
+    return render(request, 'index/lista_tutores.html', {"tutores": tutores})
 
 def nova_clinica(request):
     return render(request,'index/nova_clinica.html')

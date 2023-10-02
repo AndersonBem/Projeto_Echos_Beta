@@ -443,6 +443,69 @@
                     Curso Django: persistência de dados e Admin
                         02.02: Acessando o banco de dados
 
+        1-  Para acessar o banco, vc vai precisar apagar o dic criado em views.py de
+        galeria.
+            1-  Em galeria/views.py:
+                    from galeria.models import Fotografia
+            2-  Dentro da função index:
+                    fotografias = Fotografia.objects.all()
+                    Isso colocou todos os objetos do models Fotografia dentro da var 
+                fotografias 
+            3-  No dic cards dentro do return, referenciar agora fotografias.
+
+            4-  No index, trocar a estrutura de repetição para: 
+                    {% if cards %}
+                    {% for fotografia in cards %}
+                    ...
+                    {% endfor %}
+                    {% else %}
+                    {% endif %}
+            5-  E as referencias agora vão ser fotografia.nome e etc
+                No nome src, apagar o nome do arquivo e no final colocar {{ fotografia.foto }}
+                vai ficar = 
+                src="{% static '/assets/imagens/galeria/'%}{{ fotografia.foto }}"
+            
+                        Dia Perdi as contas(Dia 6 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        02.03: Passando uma referencia 
+        
+        1-  Primeiro preciso criar mais um item
+            1-  No terminal =  python manage.py shell para abrir o shell de comando
+            2-  from galeria.models import Fotografia
+            3-  Dentro de setup/static/assets/imagens/galeria colocar a imagem
+            4-  O static dentro de setup, faz referenecia a desenvolvimento e o de fora ao em
+            produção.
+            5-  No terminal eu salvei a fotografia e etc.
+        
+        2-  Quando eu clico na imagem, vai sempre pra mesma pagina, agora eu vou fazer a pagina
+        index passar para imagem a informação do que eu quero.
+            1-  em index, no href que ta indicando imagem = 
+                    <a href="{% url 'imagem' fotografia.id %}">
+            2-  Isso manda o valor do ir pro urls.py de galeria. Acredito
+            que isso ta acontecendo pq é ai que esta a route e é isso que
+            fez. Lá, eu mudo o path para:
+                     path('imagem/<int: foto_id>', imagem, name='imagem'),
+            3-  Esse path agora ta enviando pra função imagem, que precisa ser alterada
+            para :
+                    def imagem(request, foto_id):
+                        fotografia = get_object_or_404(Fotografia, pk=foto_id)
+                        return render(request, 'galeria/imagem.html', {"fotografia": fotografia})  
+                Lembrar do import          
+            4-  No imagem.html, mudar o src tbm para :
+                    src="{% static '/assets/imagens/galeria/'%}{{ fotografia.foto }}">
+            5-  E tbm mudar as descrições da imagem.
+
+            !!!!!! tudo isso até agora,pode ser aplicado as listas do meu projeto, para ter
+            um html só, não aquela lista gigante.!!!!! Não faz sentido na verdade.
+
+
+                            Dia Perdi as contas(Dia 7 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        02.04: Djnago Admin
+
+         
+        
+
 
 
         

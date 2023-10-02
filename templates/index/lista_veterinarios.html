@@ -14,13 +14,16 @@
                 </tr>
             </thead>
             <tbody>
-              {% for veterinario, info in veterinarios.items %}  
+                {% if veterinarios %}
+                {% for veterinario in veterinarios %}  
                 <tr>
-                    <td>{{info.nome}}</td>
-                    <td>{{info.telefone}}</td>
-                    <td>{{info.email}}</td>
+                    <td>{{veterinario.nome}}</td>
+                    <td>{{veterinario.telefone}}</td>
+                    <td>{{veterinario.email}}</td>
                 </tr>
-              {% endfor %}  
+                {% endfor %} 
+                {% else %}
+                {% endif %} 
             </tbody>
         </table>
     </div>

@@ -14,13 +14,17 @@
                 </tr>
             </thead>
             <tbody>
-                
+                {% if clinicas %}
+                {% for clinica in clinicas %}  
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ clinica.nome }}</td>
+                    <td>{{ clinica.telefone }}</td>
+                    <td>{{ clinica.email }}</td>
+                    <td>{{ clinica.endereco }}</td>
                 </tr>
+                {% endfor %} 
+                {% else %}
+                {% endif %} 
                 
             </tbody>
         </table>

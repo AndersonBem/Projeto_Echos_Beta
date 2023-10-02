@@ -195,5 +195,32 @@
                     Curso Django: persistência de dados e Admin
                         02.02: Acessando o banco de dados
 
+        1-  Vou começar com o de vet e passar para o proximos depois. 
+            1- Primeiro vou criar os dados de um vet pelo terminal
+            2- Em vieww.py do index, eu vou from index.models import Veterinario 
+            3- Dentro da fuc lista_veterinarios: veterinarios = Veterinario.objects.all()
+        Isso faz uma variavel com todos os veterinarios do bd lá dentro. 
+            4-  No dic que já ta dentro de render, eu coloco essa variavel.
+            5-  No html de lista_veterinarios, vou mudar o laço para ele enteder essa nova
+        variavel. 
+                    {% if veterinarios %}
+                    {% for veterinario in veterinarios %} 
+                    ...
+                    {% endfor %} 
+                    {% else %}
+                    {% endif %}
+            6-  as referencias agora vão ser veterinario.nome e etc
+
+                        Dia Perdi as contas(Dia 6 do novo curso).
+                    Curso Django: persistência de dados e Admin
+                        02.03: Passando uma referencia 
+
+            1-      Não faz sentido com o projeto.
+
+                        CONTINUAR DE 02.04: DJANGO ADIN
+        
+             
+
+
 
 

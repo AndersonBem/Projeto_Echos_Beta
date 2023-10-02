@@ -16,16 +16,19 @@
                 </tr>
             </thead>
             <tbody>
-                
+                {% if pacientes %}
+                {% for paciente in pacientes %} 
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ paciente.nome }}</td>
+                    <td>{{ paciente.especie }}</td>
+                    <td>{{ paciente.raca }}</td>
+                    <td>{{ paciente.nascimento }}</td>
+                    <td>{{ paciente.peso }}</td>
+                    <td>{{ paciente.castracao }}</td>
                 </tr>
-                
+                {% endfor %} 
+                {% else %}
+                {% endif %} 
 
             </tbody>
         </table>
