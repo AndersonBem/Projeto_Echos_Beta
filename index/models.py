@@ -20,12 +20,18 @@ class Clinica(models.Model):
         return f"Cliníca [nome={self.nome}]"
 
 class Paciente(models.Model):
+
+    OPCOES_CATEGORIA = [
+        ("FELINO", "Felino"),
+        ("CANINO", "Canino")
+    ]
+
     nome = models.CharField(max_length=100, null=False, blank=False)
-    especie = models.CharField(max_length=100, null=False, blank=False)
+    especie = models.CharField(max_length=100,choices=OPCOES_CATEGORIA,default="")
     raca = models.CharField(max_length=150, null=False, blank=False)
     nascimento = models.CharField(max_length=50, null=False, blank=False)
     peso = models.CharField(max_length=5, null=False, blank=False)
-    castracao = models.CharField(max_length=2, null=False, blank=False)
+    castracao = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Paciente [nome={self.nome}]"

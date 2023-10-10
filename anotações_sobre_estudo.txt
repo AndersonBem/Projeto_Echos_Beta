@@ -218,6 +218,39 @@
             1-      Não faz sentido com o projeto.
 
                         CONTINUAR DE 02.04: DJANGO ADIN
+        1-  Criei o superuser Anderson - Senha padrão            
+        2-  No admin.py do app, importei do models todos as planilhas do banco.
+        3-  Depois registrei todos as planilhas
+        4-  No admin.py ainda, vou criar uma classe para organizar o display do admin   
+            1-  Feito a classe e distribuido por cada registro de cada planilha.
+
+                         Curso Django: persistência de dados e Admin
+                        02.07: Incluindo categoria
+        1-  Vou add uma categoria (felino e canino)
+            1-  Fazer uma lista de tuplas com as categorias que eu quero DENTRO DA CLASSE. 
+                1- categoria = models.CharField(max_length=100,choices=OPCOES_CATEGORIA, defualt="")
+                2- Trocei categoria por especie e apaguei o especie antigo,
+                3- Migrate 
+
+                        Curso Django: persistência de dados e Admin
+                        03.02 : Personalizando o admin
+        1-  Add filtro por categoria    
+            1-  Em admin.py na class de paciente add
+                1-  list_filter = ("especie",)
+
+        2-  1-  list_per_page = 10 em todos
+
+                        Curso Django: persistência de dados e Admin
+                        03.03 : Funcionalidade de publicação
+
+        1-  Eu tenho uma opção de publicar ou não, vou tentar fazer para castração
+            1-  O models.py:
+                1- castracao = models.BooleanField(default=False)
+
+                        Curso Django: persistência de dados e Admin
+                        03.04: Incrementando o index
+        
+
         
              
 

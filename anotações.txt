@@ -496,15 +496,188 @@
             5-  E tbm mudar as descrições da imagem.
 
             !!!!!! tudo isso até agora,pode ser aplicado as listas do meu projeto, para ter
-            um html só, não aquela lista gigante.!!!!! Não faz sentido na verdade.
+            um html só, não aquela lista gigante.!!!!!
 
 
                             Dia Perdi as contas(Dia 7 do novo curso).
                     Curso Django: persistência de dados e Admin
                         02.04: Djnago Admin
+        1-  preciso criar o user do admin.
+            1-  No terminal = python manage.py createsuperuser
+            2-  
 
-         
+                    Curso Django: persistência de dados e Admin
+                        02.06: CRUD do Admim
+        1-  No admin.py do app.
+            1-  from django.contrib import admin
+                from galeria.models import Fotografia
+
+                # Register your models here.
+
+                admin.site.register(Fotografia)
+            2-  Isso vc registrou o model que vc quer q apareça no admin
+            3-  Vou criar uma class que contenha o list_display para orga-
+            nizar o admin e nela posso colocar o que quero mostrar. Preciso
+            referenciar essa classe no admin.site,register.
+                Vai ficar assim no admin.
+                    from django.contrib import admin
+                    from galeria.models import Fotografia
+
+                    class ListandoFotografias(admin.ModelAdmin):
+                        list_display = ("id", "nome", "legenda", "publicada")
+                        list_display_links = ("id", "nome")
+                        search_fields = ("nome",)
+                        list_filter = ("categoria",)
+                        list_editable = ("publicada",)
+                        list_per_page = 10
+
+                    # Register your models here.
+
+
+                    admin.site.register(Fotografia, ListandoFotografias)
+            4-  O list_display_links torna as coisas links para editar O
+            objeto.  
+            5-  search_fields = ("nome",) lembrar que precisa ser uma tupla
+
+                     Curso Django: persistência de dados e Admin
+                        02.07: Incluindo categoria
+
+        1-  Quero add uma categoria para selecionar por ela. Isso mostra como
+        add algo na classe e usar para separar, pode ser usado para
+        felino/canino e etc e isso pode definir categorias certas para aquilo.
+            1-  Em models.py do app 
+                1-  Fazer uma lista de Tuplas(precisa ser tupla pelo django)
+                com as categorias que quero:
+                        OPCOES_CATEGORIA = [
+                            ("NEBULOSA","Nebulosa"),
+                            ("ESTRELA","Estrela"),
+                            ("GALÁXIA","Galáxia"),
+                            ("PLANETA","Planeta")
+                        ]
+                2-  add Categoria na classe:
+                        categoria = models.CharField(max_length=100,choices=OPCOES_CATEGORIA, defualt="")
+                3-  Sempre que alterar o models, fazer migrate  
+                    1-  python manage.py makemigrations
+                    2-  python manage.py migrate  
+                     
+                    Curso Django: persistência de dados e Admin
+                        03.02 : Personalizando o admin
         
+        1-  Filtro por categoria 
+            1-  Em admin.py do app, add na class list_filter = ("categoria",)
+        2-  Paginação
+            1-  list_per_page = 10
+
+
+                    Curso Django: persistência de dados e Admin
+                        03.03 : Funcionalidade de publicação
+        1-  Vou criar uma funcionalidade onde posso add um objeto novo, mas n publicar ele
+            1-  Em models.py do app 
+                1- Dentro do class de Fotografia :
+                    publicada = models.BooleanField(default=False)  
+                2-  Migrate
+                3-  !!!!!!!!!!!!Esse models.BooleanField serve pra vc ticar ou não, pode
+                servir pra castrado ou não 
+            2-  Preciso fazer uma logica para filtrar
+                1-  Em views.py do app. 
+                    1-  alterar a variavel fotografias para :
+                        fotografias = Fotografia.objects.filter(publicada=True)
+            3-  Em admin.py 
+                1-  No list_display add "publicada"
+                2-  Add list_editable = ("publicada",)
+
+                    Curso Django: persistência de dados e Admin
+                        03.04: Incrementando o index
+        1-  Add data de atualização da postagem
+            1-  Em models.py do app, na class
+                1- from datetime import datetime
+                2- data_fotogragia = models.DateTimeField(default=datetime.now, blank=False)
+                3- migrate 
+        2-  Add ordenação da pagina
+            1-  Em views.py do app
+                1-  fotografias = Fotografia.objects.order_by("data_fotogragia").filter(publicada=True)
+                2-  Se eu colocar "-data_fotogragia" fica ao contrario
+
+
+                    Curso Django: persistência de dados e Admin
+                        04.02 : Novo caminho para as fotos
+        1-  Vamos arrumar um jeito de fazer upload para fotos.
+            1-  Mudar o campo no model para funcionar no admin.
+                1-  Em settings.py de setup
+                    1-  Logo abaixo de static_root
+                        
+                        # Media
+
+                        MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+                        MEDIA_URL = "/media/"
+
+                        Isso vai dizer para ele procurar no base pelo dir
+                        media                   
+                2-  Em urls.py DO SETUP logo apos o urlpatterns
+
+                        + static(setting.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+                        Isso ta informando que no settings ele deve buscar o media url e o 
+                    media root como static
+
+                    from django.conf import settings
+                    from django.conf.urls.static import static
+                3-  Em models.py    
+                    1-  mudar o foto para:
+                        foto = models.ImageField(upload_to="fotos/%Y/%m/%d", blank=True)
+
+                        O fotos/%Y/%m/%d significa que ele vai para o dir foto e vai criar
+                        os dir seguintes de ano/mes/Dia
+
+                    2-  migrate (precisou instalar o pillow e fazer o freeze)
+                
+                    Curso Django: persistência de dados e Admin
+                        04.03 : Imagem "not found"
+
+        1-  Em setup/static/assets/imagens/galeria colar a imagem de not found
+        2-  No index.html antes dos cards, colocar. 
+                {% for fotografia in cards %}
+                <li class="card">
+                    <a href="{% url 'imagem' fotografia.id %}">
+                    {% if fotografia.foto == "" or fotografia.foto == null %}
+                        <img class="card__imagem" src="{% static '/assets/imagens/galeria/not-found.png'%}" alt="foto">
+                    {% else %}
+                        <img class="card__imagem" src="{{ fotografia.foto.url }}" alt="foto">
+                    {% endif %}
+
+                o if primeiro é para imagem not found e o segundo é o jeito que se usa para
+            ele achar 
+                o fotografia in cards é x in cards e cards contem todos os objetos deste banco
+            de dados. então o x.foto ele ta indo na coluna foto do objeto.  e o x.foto.url Duvida no forum
+        
+
+                    Curso Django: persistência de dados e Admin
+                        04.04: Alterando template imagem
+        1-  Em imagem.html fazer a mesma coisa de antes, vai ficar :
+                {% if fotografia.foto == "" or fotografia.foto == null %}
+                    <img class="imagem__imagem" src="{% static '/assets/imagens/galeria/not-found.png'%}">
+                {% else %}
+                    <img class="imagem__imagem" src="{{ fotografia.foto.url }}">
+                {% endif %}
+        2-  Em models, mudar para :
+                def __str__(self):
+                    return self.nome
+
+
+                    Curso Django: persistência de dados e Admin
+                        05.02 : Funcionalidade de busca
+
+                
+
+
+
+
+
+
+            
+                
+                        
 
 
 
