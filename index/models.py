@@ -36,7 +36,7 @@ class Paciente(models.Model):
     peso = models.CharField(max_length=5, null=False, blank=False)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    foto = models.ImageField(upload_to="paciente/%Y/%m/%d", blank=True)
+    foto = models.ImageField(upload_to="imagem_laudo/%Y/%m/%d", blank=True)
     
     def __str__(self):
         return self.nome
