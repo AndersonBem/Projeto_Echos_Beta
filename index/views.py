@@ -8,19 +8,19 @@ def index(request):
     return render(request, 'index/index.html')
 
 def lista_veterinarios(request):
-    veterinarios = Veterinario.objects.all()
+    veterinarios = Veterinario.objects.order_by("nome").all()
     return render(request, 'index/lista_veterinarios.html', {"veterinarios": veterinarios})
 
 def lista_clinicas(request):
-    clinicas = Clinica.objects.all()
+    clinicas = Clinica.objects.order_by("nome").all()
     return render(request,'index/lista_clinicas.html', {"clinicas": clinicas})
 
 def lista_pacientes(request):
-    pacientes = Paciente.objects.all()
+    pacientes = Paciente.objects.order_by("nome").all()
     return render(request, 'index/lista_pacientes.html', {"pacientes": pacientes})
 
 def lista_tutores(request):
-    tutores = Tutor.objects.all()
+    tutores = Tutor.objects.order_by("nome").all()
     return render(request, 'index/lista_tutores.html', {"tutores": tutores})
 
 def nova_clinica(request):

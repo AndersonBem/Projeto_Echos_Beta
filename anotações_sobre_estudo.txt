@@ -249,7 +249,45 @@
 
                         Curso Django: persistência de dados e Admin
                         03.04: Incrementando o index
-        
+        1-  Add data de criação
+            1-  fiz o import do datetime em models.py
+            2-  Em todas as classes eu criei:
+                data_criacao = models.DateTimeField(default=datetime.now, blank=False)
+            3-  não vou por para aparecer no admin
+        2-  Não vou ordernar por data, pq quero ordenar por ordem alfabetica
+            1-  EX : veterinarios = Veterinario.objects.order_by("nome").all()
+
+                        Curso Django: persistência de dados e Admin
+                        04.02 : Novo caminho para as fotos
+        1-  Vou fazer um caminho para pacientes para foto, apenas de teste e preparação para as imagens dos laudos
+            1-  Em setting.py do setup:
+                MEDIA_ROOT = os.path.join(BASE_DIR, "imagem_laudo")
+
+                MEDIA_URL = "/imagem_laudo/"  
+            2-  Em urls.py do setup:
+                    from django.contrib import admin
+                    from django.urls import path, include
+                    from django.conf import settings
+                    from django.conf.urls.static import static
+
+                    urlpatterns = [
+                        path('admin/', admin.site.urls),
+                        path('',include('index.urls')),
+                    ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+            3-  No models paciente:
+                    foto = models.ImageField(upload_to="fotos/%Y/%m/%d", blank=True)
+            4-  Fazer makemigrations
+            5-  Corrigir o def __str__
+
+        2-  Pulei as proximas partes, pq ainda n estou exibindo as imagens que guardei, e preciso arrumar um jeito de salvar 
+    melhor as imagens, fiz a pergunta no forum, o chat gpeto pareceu bem complexo.
+
+
+                                    Curso Django: persistência de dados e Admin
+                        05.02 : Funcionalidade de busca
+    
+
+
 
         
              
