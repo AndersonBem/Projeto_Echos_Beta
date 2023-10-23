@@ -283,9 +283,114 @@
     melhor as imagens, fiz a pergunta no forum, o chat gpeto pareceu bem complexo.
 
 
+
+            CONSEGUI 
+            criei uma função no começo do models.py:
+            def get_upload_path(instance, filename):
+                # Obtém o nome do objeto
+                nome_objeto = instance.nome
+                # Obtém a extensão do arquivo
+                extensao = filename.split('.')[-1]
+                # Obtém a data atual
+                data_atual = datetime.now()
+                # Define o caminho de upload como "fotos/nome_objeto/ano/mes/dia/nome_do_arquivo.extensao"
+                caminho = os.path.join(nome_objeto, data_atual.strftime('Ano %Y/ Mês %m/ Dia %d'))
+                return os.path.join(caminho, f"{filename}.{extensao}")   
+
+            E estanciei foto como:
+                foto = models.ImageField(upload_to=get_upload_path, blank=True)
+            Assim ele cria o dir imagem_laudos, depois o dir com o nome do objeto, ano e etc
+
+!!!!!!!!!!! Para corrigir a busca:
+            1-   pip install psycopg2 e atualizar o pip 
+            2-  Pelo pgAdmin 4, criei o banco de dados e vou usar o comando:
+                    CREATE EXTENSION unaccent;
+            3-  Em settings.py:
+                1-  DATABASES = {
+                        'default': {
+                            'ENGINE': 'django.db.backends.postgresql',
+                            'NAME': 'Projeto Echos',
+                            'USER': 'postgres',
+                            'PASSWORD': 'A101218a@',
+                            'HOST': 'localhost',
+                            'PORT': '5432',
+                        }
+                    }
+                2-  Em INSTALLED_APPS: 'django.contrib.postgres',
+
+            4-  Migrate
+        
+        1-  Add no models de paciente:
+            1-  def data atual
+                def calcular idade
+                property
+            2-  Mudei o nascimento
+            3-  no admin mudei a classe de paciente pra mostrar idade
+
+
+
                                     Curso Django: persistência de dados e Admin
                         05.02 : Funcionalidade de busca
+
+        1-  Logo abaixo dos botões de novo das listas, coloquei
+            1-  
+          <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <form class="form-inline" action="">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="buscar" placeholder="O que você procura?">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search-location"></i>                                 </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          </div>
+            
+            2-  E no html base, coloquei 
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        
+        2-  Em URLs.py do app, eu coloquei:
+                path("buscar_paciente", buscar_paciente, name="buscar_paciente"),
+
+            Estou fazendo apenas para paciente primeiro, pq tenho o BD já!
+
+        3-   Em views.py do app:
+                def buscar_paciente(request):
+                    return render (request, "index/buscar_paciente.html" ) 
+        
+        4-  No codigo da busca, usar o  <form class="form-inline" action="{% url 'buscar_paciente' %}">
+
+                            Curso Django: persistência de dados e Admin
+                        05.03 : View de buscar  
+
+        1-  Copiar dentro dos buscar, as listas.
+
+        2-  def buscar_paciente(request):
     
+                pacientes = Paciente.objects.order_by("nome").all()
+                
+                if "buscar" in request.GET:
+                    nome_a_buscar = request.GET['buscar']
+                    if nome_a_buscar:
+                        pacientes = pacientes.filter(nome__unaccent__icontains=nome_a_buscar)
+                
+                return render (request, "index/buscar_paciente.html", {"pacientes":pacientes} )
+
+
+                Curso Django: autenticação de formulários e alerta
+                        01.03 : Preparando o ambiente
+
+
+                        
+                         
+
+
+        
+
 
 
 

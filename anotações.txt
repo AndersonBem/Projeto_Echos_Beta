@@ -535,6 +535,7 @@
 
 
                     admin.site.register(Fotografia, ListandoFotografias)
+
             4-  O list_display_links torna as coisas links para editar O
             objeto.  
             5-  search_fields = ("nome",) lembrar que precisa ser uma tupla
@@ -579,7 +580,7 @@
                 3-  !!!!!!!!!!!!Esse models.BooleanField serve pra vc ticar ou não, pode
                 servir pra castrado ou não 
             2-  Preciso fazer uma logica para filtrar
-                1-  Em views.py do app. 
+                1-  Em views.pt do app. 
                     1-  alterar a variavel fotografias para :
                         fotografias = Fotografia.objects.filter(publicada=True)
             3-  Em admin.py 
@@ -667,7 +668,87 @@
 
                     Curso Django: persistência de dados e Admin
                         05.02 : Funcionalidade de busca
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            PARA APLICAR ISSO NO SISTEMA, VOU PRECISAR COLOCAR UM BOTÃO
+        DE BUSCA NOS htmls QUE EU ACHAR necessário, POSSO TENTAR USAR O DA aula
+        MAS LEMBRAR QUE N VOU TER AS imagens
 
+            Pergunta do chatgepeto
+            DA pra usar o font awesome
+            vc precisa referenciar ele no html base:
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+            Depois usar o icone no local da imagem de buscar
+                <i class="fas fa-search-location"></i>   
+                como este exemplo
+
+            https://fontawesome.com/
+            https://fontawesome.com/search?q=busca&o=r
+            https://fontawesome.com/kits/92670e171c/setup
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        1-  Funcionalidade de Busca no Index (html)
+            1-  Criar uma nova url  
+                1-  URLs.py do app :
+                    path("buscar", buscar, name="buscar"),  primeiro foi o caminho, segundo foi o nome do html e O
+                terceiro foi o name do path
+                2-  Em views.py do app:
+                    def buscar(request):
+                        return render (request, "galeria/buscar.html" )
+                    Essa é a função que vai render a pagina html que vai ser criada,
+                depois disso vc precisa importar a função buscar no urls.py do app
+
+                3-  Criar o html em template do app, dentro de galeria
+            2-  Dentro do _header.html, onde fica o menu de busca:
+                1-  Depois da div busca__fundo, criar: 
+                    <form action="{% url 'buscar' %}">
+                    Colocar o que vem depois, dentro, ou seja isto:
+                    <input class="busca__input" type="text" placeholder="O que você procura?">
+                    <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">
+                2-  No final, vai ficar:
+                        <form action="buscar_tutor">
+                            <input class="busca__input" type="text" name="buscar" placeholder="O que você procura?">
+                            <button type="submit">
+                                <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">    
+                            </button>
+                        </form>
+
+                    Curso Django: persistência de dados e Admin
+                        05.03 : View de buscar     
+        1-  Alterar o html de buscar para o correto:
+            1-  Copiei o index dentro do buscar
+            2-  Em views.py do app:
+                A referencia da busca esta sendo passada na url da pagina
+                1-  Primeiro vamos puxar todos os objetos do banco de dados na função do views.py:
+                        fotografias = Fotografia.objects.order_by("-data_fotogragia").filter(publicada=True)
+                2-  Agora filtrar pela busca da url:
+                         if "buscar" in request.GET:
+                            nome_a_buscar = request.GET['buscar'] 
+
+                        request.get é a url da pagina, o request.GET['buscar'] faz referencia ao
+                    name do imput do index.html
+                3-  Agora se tiver um nome_a_buscar, ele vai mudar a variavel fotografia para:
+                        if "buscar" in request.GET:
+                            nome_a_buscar = request.GET['buscar']
+                            if nome_a_buscar:
+                                fotografias = fotografias.filter(nome__icontains=nome_a_buscar)
+                        O nome__icontains vai verificar se tem algo com nome_a_buscar no BD 
+                4-  Agora precisa passar a informação para o render de buscar.html  
+                        return render (request, "galeria/buscar.html", {"cards": fotografias})        
+                    
+                    Curso Django: persistência de dados e Admin
+                        05.04 : autenticação e autorização
+        1-  Fazer aparecer a descrição das imagens  
+            1-  Imagem.html:
+                1- add o fotografia.descricao no local
+        2-  Vi sobre admin, pessoas e grupos do admin
+
+
+
+
+                     Curso Django: autenticação de formulários e alerta
+                        01.03 : Preparando o ambiente
+        1-   
                 
 
 

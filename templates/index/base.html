@@ -8,6 +8,8 @@
         <title>Sistema Echos</title>
         <link rel="stylesheet" href="{% static '/styles/bootstrap.css' %}">
         <link rel="stylesheet" href="{% static '/styles/styles.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 
     </head>
         <body>
@@ -20,6 +22,7 @@
                     <a class="navbar-brand" href="/admin/">Admin</a>
                 </nav>
             </header>
+            
         
             {% block content %} {% endblock %}
             {% include 'index/partials/_footer.html' %}
