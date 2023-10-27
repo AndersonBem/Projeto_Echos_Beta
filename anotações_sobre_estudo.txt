@@ -382,7 +382,9 @@
 
 
                 Curso Django: autenticação de formulários e alerta
-                        01.03 : Preparando o ambiente
+                        01.04 : Criando nova app
+
+        1-  
 
 
                         

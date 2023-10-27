@@ -47,5 +47,32 @@
                 {% endif %} 
 
             </tbody>
-        </table>
+    </table>
+    <section>
+        <div>
+            <h2>Imagens</h2>
+            <ul>
+                {% if pacientes %}
+                {% for fotografia in pacientes %}
+                <li>
+                    {% if fotografia.foto == "" or fotografia.foto == null %}
+                        <img class="card__imagem" src="{% static '/assets/not-found.png'%}" alt="foto">
+                    {% else %}
+                        <img class="card__imagem" src="{{ fotografia.foto.url }}" alt="foto">
+                    {% endif %}
+                    </a>
+                    <div>
+                    </div>
+                </li>
+                {% endfor %}
+                {% else %}
+                <div>
+                    <p>
+                        Fotografias não encontradas
+                    </p>
+                </div>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
 {% endblock %}

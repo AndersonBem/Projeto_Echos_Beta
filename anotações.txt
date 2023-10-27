@@ -706,7 +706,7 @@
                     <input class="busca__input" type="text" placeholder="O que você procura?">
                     <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">
                 2-  No final, vai ficar:
-                        <form action="buscar_tutor">
+                        <form action="{% url 'buscar' %}">
                             <input class="busca__input" type="text" name="buscar" placeholder="O que você procura?">
                             <button type="submit">
                                 <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">    
@@ -719,7 +719,7 @@
             1-  Copiei o index dentro do buscar
             2-  Em views.py do app:
                 A referencia da busca esta sendo passada na url da pagina
-                1-  Primeiro vamos puxar todos os objetos do banco de dados na função do views.py:
+                1-  Primeiro vamos puxar todos os objetos do banco de dados:
                         fotografias = Fotografia.objects.order_by("-data_fotogragia").filter(publicada=True)
                 2-  Agora filtrar pela busca da url:
                          if "buscar" in request.GET:
@@ -747,21 +747,494 @@
 
 
                      Curso Django: autenticação de formulários e alerta
-                        01.03 : Preparando o ambiente
-        1-   
+                        01.04 : Criando nova app
+        1-  Criar um novo app para criar usuarios para edição pelo site, não admin
+            1-  python manage.py startapp usuarios  
+            2-  em settings.py, add no INSTALLED_APPS : 'usuarios.apps.UsuariosConfig'
+            3-  Na pasta do usuarios, criar urls.py
+            4-  Copiar o urls.py de galeria e colar no novo, sem path dentros.
+            5-  No urls.py de setup, eu tenho que incluir este novo com o:
+                    path('', include('usuarios.urls')),
+                 
                 
+                    Curso Django: autenticação de formulários e alerta
+                        01.05: URLs e views
+        1-  Em urls.py de usuarios.
+            1-  
+            from usuarios.views import login, cadastro 
+                urlpatterns = [
+                    path('login/', login, name='login'),
+                    path('cadastro/', cadastro, name='cadastro'),
+                    
+                ]  
+        2-  Em views.py
+            1-  def login(request):
+                    return render(request, "usuarios/login.html")
+
+                def cadastro(request):
+                    return render(request, "usuarios/cadastro.html")  
+
+        3-  Dentro de templates
+            1- Criar um dir de usuarios
+            2- Nesse dir, criar o login.html e o cadastro.html
+
+                    Curso Django: autenticação de formulários e alerta
+                        01.06: Templates    
+
+        1-  No index, no menu lateral
+            1-  Trocar o "mais vistas" Por "Login" e a href href="{% url 'login' %}"
+            2-  Trocar o "mais vistas" Por "Cadastro" e a href href="{% url 'cadastro' %}"  
+        2-  No html de login, eu coloquei o codigo da aula. Ele repete o codigo quase que inteiro E
+        em baixo tem uma section com o form em baixo, esse é a parte importante.
+        3-  Em cadastro é a mesma coisa
+        4-  Em views.py:
+            1-  Mudar os def para capturar as informações dos htmls
+                1-   
+
+                    Curso Django: autenticação de formulários e alerta
+                        02.02: Criando formulários
+        1-  Esta foi a forma padrão, agora vamos usar a forma Django --'
+            1-  Criar forms.py no app usuarios
+                1-  Nele:
+                        from django import forms
+
+                        class LoginForms(forms.Form):
+                            nome_login = forms.CharField(
+                                label="Nome de Login",
+                                required=True,
+                                max_length=100
+                            )
+                            senha = forms.CharField(
+                                label="Senha de Login",
+                                required=True,
+                                max_length=70,
+                                widget= forms.PasswordInput()
+                            )
+
+                    Label é o titulo, Required é isso, widget é da caracteristicas
+
+            2-  Em views.py de usuarios:
+                1-  from usuarios.forms import LoginForms
+                2-  def login(request):
+                        form = LoginForms()
+                        return render(request, "usuarios/login.html", {"form": form})
+                Se quer jogar algo pro render, vc cria um dicionario, coloca um nome e bota o value
+                o que vc quer jogar, no caso a variavel feita antes com a estanciacão do objeto
+
+            3-  Em login.html:
+                1-  apagar a div class que conteu os label's e o button
+                2-  <form action="" method="">
+                        {% csrf_token %}
+                        <div class="row">
+                        {% for field in form.visible_fields %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" style="color:#D9D9D9; margin-bottom: 5px;">{{field.label}}</label>
+                            {{ field }}
+                        </div>
+                        {% endfor %} 
+                        </div>
+                    </form>       
+
+                    Curso Django: autenticação de formulários e alerta
+                        02.03: Estilizando formulários
+
+            1-  Todas as classes usadas abaixo são do bootstrap:
+                    {% csrf_token %}
+                    <div class="row">
+                       {% for field in form.visible_fields %}
+                       <div class="col-12 col-lg-12" style="margin-bottom: 10px;">
+                        <label for="{{ field.id_for_label }}" style="color:#D9D9D9; margin-bottom: 5px;">{{field.label}}</label>
+                        {{ field }}
+                       </div>
+                       {% endfor %} 
+                    </div>
+                    <div >
+                       <button type="submit" class="btn btn-success col-12" style="padding: top 5px;">Logar</button> 
+                    </div>  
+
+            2-  Em forms.py:
+                    1-  from django import forms
+
+                        class LoginForms(forms.Form):
+                            nome_login = forms.CharField(
+                                label="Nome de Login",
+                                required=True,
+                                max_length=100,
+                                widget= forms.TextInput(
+                                    attrs= {
+                                        "class": "form-control",
+                                        "placeholder": "Ex: AndersonBem "
+                                    }
+                                )
+                            )
+                            senha = forms.CharField(
+                                label="Senha",
+                                required=True,
+                                max_length=70,
+                                widget= forms.PasswordInput(
+                                    attrs= {
+                                        "class": "form-control",
+                                        "placeholder": "Digite sua senha "
+                                    }
+                                )
+                            )  
+
+                    Curso Django: autenticação de formulários e alerta
+                        02.04: Formulários de cadastro
+
+            1-  Em forms.py
+                class CadastroForms(forms.Form):
+                    nome_cadastro = forms.CharField(
+                        label="Nome de Cadastro",
+                        required=True,
+                        max_length=100,
+                        widget= forms.TextInput(
+                            attrs= {
+                                "class": "form-control",
+                                "placeholder": "Ex: AndersonBem "
+                            }
+                        )
+                    )
+                    email = forms.EmailField(
+                    label="E-mail",
+                        required=True,
+                        max_length=100,
+                        widget= forms.EmailInput(
+                            attrs= {
+                                "class": "form-control",
+                                "placeholder": "Ex: anderson.bem@exemplo.com "
+                            }
+                        ) 
+                    )
+                    senha1 = forms.CharField(
+                        label="Senha",
+                        required=True,
+                        max_length=70,
+                        widget= forms.PasswordInput(
+                            attrs= {
+                                "class": "form-control",
+                                "placeholder": "Digite sua senha "
+                            }
+                        )
+                    )
+                    senha_2 = forms.CharField(
+                        label="Senha",
+                        required=True,
+                        max_length=70,
+                        widget= forms.PasswordInput(
+                            attrs= {
+                                "class": "form-control",
+                                "placeholder": "Repita sua senha"
+                            }
+                        )
+                    )               
+            2-  Em views importar e por no render
+                1-   def cadastro(request):
+                        form = CadastroForms()
+                        return render(request, "usuarios/cadastro.html", {"form": form}) 
+            
+            3-  Copiar as alterações do html login para o de cadastro 
+
+                Curso Django: autenticação de formulários e alerta
+                        03.02 : Usuários do Django
+
+            1-  Django já tem uma tabela imbutida de usuarios, não precisa fazer uma planilha
+            no BD.
+                1-  Arrumar as informações na URL.
+                    1- Em login.html:
+                        1-  Alterar <form action="" method=""> para:
+                            <form action="{% url 'login' %}" method="POST">
+                        2-  Fazer o mesmo em cadastro.html
+                2-  Fazer a logica:
+                    1-  Em views.py de usuarios:
+                        1-  Em def cadastro:
+                             def cadastro(request):
+                                form = CadastroForms()
+
+                                if request.method == 'POST':
+                                    form = CadastroForms(request.POST)
+
+                                    if form["senha_1"].value()!= form["senha_2"].value():
+                                        return redirect('cadastro')   
+
+                                  form["senha_1"].value() com isso eu acesso o value do senha_1 
+                                do formulário
+                
+                Curso Django: autenticação de formulários e alerta
+                        03.03 : Lógica de cadastro
+            
+            2-  Em views.py do usuario:
+
+                from django.contrib.auth.models import User
+
+                def cadastro(request):
+                    form = CadastroForms()
+
+                    if request.method == 'POST':
+                        form = CadastroForms(request.POST)
+
+                        if form.is_valid():
+                            if form["senha_1"].value() != form["senha_2"].value():
+                                return redirect ('cadastro')
+
+                            nome=form['nome_cadastro'].value()
+                            email=form['email'].value()
+                            senha=form['senha_1'].value()
+
+                            if User.objects.filter(username=nome).exists():
+                                return redirect('cadastro')
+
+                            usuario = User.objects.create_user(
+                                username=nome,
+                                email=email,
+                                password=senha
+                            )
+                            usuario.save()
+                            return redirect('login')
+                        
+                    return render(request, "usuarios/cadastro.html", {"form": form})
+
+                Curso Django: autenticação de formulários e alerta
+                        03.04 : Lógica de login
+
+             1-  from django.contrib import auth
+
+                # Create your views here.
+
+                def login(request):
+                    form = LoginForms()
+
+                    if request.method == 'POST':
+                        form = LoginForms(request.POST)
+
+                        if form.is_valid():
+                            nome = form['nome_login'].value()
+                            senha = form['senha'].value()
+
+                            usuario = auth.authenticate(
+                                request,
+                                username = nome,
+                                password = senha
+                            )
+
+                            if usuario is not None:
+                                auth.login(request, usuario)
+                                return redirect('index')
+                            else:
+                                return redirect('login')
+
+                    return render(request, "usuarios/login.html", {"form": form})
+                
+                Curso Django: autenticação de formulários e alerta
+                        03.05 : Alertas e mensagens.
+
+            1-  from django.contrib import messages
+
+                # Create your views here.
+
+                def login(request):
+                    form = LoginForms()
+
+                    if request.method == 'POST':
+                        form = LoginForms(request.POST)
+
+                        if form.is_valid():
+                            nome = form['nome_login'].value()
+                            senha = form['senha'].value()
+
+                            usuario = auth.authenticate(
+                                request,
+                                username = nome,
+                                password = senha
+                            )
+
+                            if usuario is not None:
+                                auth.login(request, usuario)
+                                messages.success(request, f'{nome} logado com sucesso')
+                                return redirect('index')
+                            else:
+                                messages.error(request, "Erro ao efeturar login")
+                                return redirect('login')
+
+                    return render(request, "usuarios/login.html", {"form": form})
+
+                def cadastro(request):
+                    form = CadastroForms()
+
+                    if request.method == 'POST':
+                        form = CadastroForms(request.POST)
+
+                        if form.is_valid():
+                            if form["senha_1"].value() != form["senha_2"].value():
+                                messages.error(request, "Senhas não são iguais")
+                                return redirect ('cadastro')
+
+                            nome=form['nome_cadastro'].value()
+                            email=form['email'].value()
+                            senha=form['senha_1'].value()
+
+                            if User.objects.filter(username=nome).exists():
+                                messages.error(request, "Usuário já existente")
+                                return redirect('cadastro')
+
+                            usuario = User.objects.create_user(
+                                username=nome,
+                                email=email,
+                                password=senha
+                            )
+                            usuario.save()
+                            messages.success(request, "Cadastro efetuado com sucesso")
+                            return redirect('login')
+                        
+                    return render(request, "usuarios/cadastro.html", {"form": form})
 
 
+            2-  Em login.html:
+                1-  {% for message in messages %}
+                    <div class="alert alert-primary">
+                            <p id='messages'>{{message}}</p>
+                    </div>
+                    {% endfor %}
+
+                    Onde achar melhor, no cado foi logo abaixo de img de cabeçalho
+                2-  Fiz o mesmo em cadastro.html e na partial _header.html
+
+                 Curso Django: autenticação de formulários e alerta
+                        03.06 : Logout
+
+            1-  Em views.py de usuario:
+                1-  def logout(request):
+                        auth.logout(request)
+                        messages.success(request, "Logout efetuado com sucesso")
+                        return redirect('login')    
+            2-  Em urls.py de usuarios:
+                    path('logout', logout, name='logout'),
+
+            3-  Nós html, troqueo o surpreenda por 
+                    <a href="{% url 'logout' %}"><img src="{% static '/assets/ícones/1x/Surpreenda-me - inativo.png' %}"> Logout</a>
+                    Isso foi para evitar criar outro botão
 
 
+                        Curso Django: autenticação de formulários e alerta
+                        04.02 : refatoração e validação
 
+            1-  Agora vou por a logica para verificar se ta logando nas funções que render
+            as paginas. 
+                1-  Em views.py de galeria, add em index e buscar:
+                        if not request.user.is_authenticated:
+                            messages.error(request, "Usuário não logado")
+                            return redirect('login')     
+                        
+                        importar o redirect e o messages (shortcusts e contrib)
+
+                        Curso Django: autenticação de formulários e alerta
+                        04.02 : refatoração e validação
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!! Curso Django: autenticação de formulários e alerta
+                        04.03 : Associando tabelas
+
+            1-  Para associar tabelas, basta add uma caracteristica em uma delas,
+            nesse caso, vamos associar fotografia com usuarios(tbm é uma tabela apesar de não ter
+            model)
+                1-  Na class Fotografa(em models.py de galeria)
+
+                    from django.contrib.auth.models import User (essa parte está importando a tabela de user)
+
+                        usuario = models.ForeignKey(
+                            to=User,
+                            on_delete=models.SET_NULL,
+                            null=True,
+                            blank=False,
+                            related_name="user",
+                        )
+
+                2-  Depois é só fazer o migrate
+
+                        Curso Django: autenticação de formulários e alerta
+                        04.04 : Validação clean
+
+            1-  Isso vai corrigir os nomes e determinar como pode ser feito:
+                1-  forms.py de usuario
+                    1-  Logo no final de class CadastroForms
+
+                        def clean_nome_cadastro(self):
+                            nome = self.cleaned_data.get("nome_cadastro")
+
+                            if nome:
+                                nome = nome.strip()
+                                if " " in nome:
+                                    raise forms.ValidationError("Não é possível inserir espaços dentro do nome de cadastro")
+                                else:
+                                    return nome  
+
+
+                        Curso Django: autenticação de formulários e alerta
+                        04.05 : Mensagens de erro
+            1-  Abaixo dp anterior:
+                    def clean_senha_2(self):
+                        senha_1 = self.cleaned_data.get("senha_1")
+                        senha_2 = self.cleaned_data.get("senha_2")
+
+                        if senha_1 and senha_2:
+                            if senha_1 != senha_2:
+                                raise forms.ValidationError("Senhas não são iguais")
+                            else:
+                                return senha_2 
+
+                Como eu fiz isso, em def cadastro, eu apaguei a validação que vinha após (if form.is_valid())
+
+            2-  No html que tem esse forms, no caso cadastro.html
+                1-  Dentro do for filds desse campo, logo no final e antes do endfor:
+                        {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            {{error}}
+                        </div>
+                        {% endfor %}  
+
+
+                        Curso Django: autenticação de formulários e alerta
+                        05.02 : Partial para Alertas
+
+            1-  Dentro de partial, criei _alertas.html  
+                1- Copiado do html de login:
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-primary">
+                                {{message}}
+                            </div>        
+                        {% endfor %}
+                    {% endif %}  
+            2-  Substituir dos originais para {% include 'galeria/partials/_alertas.html' %}
+
+            3-  Em settins.py de setup, no final:
+                    # messages
+
+                    from django.contrib.messages import constants as messages
+                    MESSAGE_TAGS = {
+                        messages.ERROR: 'danger',
+                        messages.SUCCESS: 'success',
+                    }     
+            
+            4-  O _alertas vai ficar:
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{message}}
+                                </div>        
+                            {% endfor %}
+                        {% endif %}    
+
+                        Curso Django: autenticação de formulários e alerta
+                        05.03 : Reorganizando diretórios
+
+            1-  Movi a pasta de partials para fora de galeria.
+            2-  Precisei ir em todos os html e mudar os galerias/partials para partials
 
             
-                
-                        
 
-
-
+                            Curso Django: CRUD e persistência no S3
+                        01.04 : Reorganizando diretórios
+            1-  
         
 
 
