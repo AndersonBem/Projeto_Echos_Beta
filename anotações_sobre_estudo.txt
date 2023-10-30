@@ -384,7 +384,123 @@
                 Curso Django: autenticação de formulários e alerta
                         01.04 : Criando nova app
 
-        1-  
+        1-  Criei o app usuarios, habilitei no setup, fiz o urls pro app e add no urls do setup
+
+                Curso Django: autenticação de formulários e alerta
+                        01.05: URLs e views
+
+        1-  Criar o path no urls de usuarios
+        2-  Criar as funções em views
+        3-  Faz um dir do app novo em templates e fazer os html
+
+                Curso Django: autenticação de formulários e alerta
+                        01.06: Templates  
+        1-  No base.html, botei o url 'login' no local certo e criei o cadastro e fiz o mesmo
+        2-  Colei o section da parte da aula no login e no cadastro, usando o base
+
+                Curso Django: autenticação de formulários e alerta
+                        02.02: Criando formulários
+
+        1-  Em forms.py criei as class
+        2-  Em views.py ele alterei a def.
+        3-  No html coloquei o codigo da aula, com o for
+
+                Curso Django: autenticação de formulários e alerta
+                        02.03: Estilizando formulários
+
+        1-  Alterei o for para botar as classes do bootstrap
+        2-  em forms alterar para ter os placeholder
+
+                Curso Django: autenticação de formulários e alerta
+                        02.04: Formulários de cadastro
+
+        1-  Em forms, fazer a class de cadastro
+        2-  Em views, alterar o def
+        3-  Jogar o html de login para o de cadastro
+
+                Curso Django: autenticação de formulários e alerta
+                        03.02 : Usuários do django
+        
+        1-  Nos html, mudei o action do form e o method
+        2-  Colocar a logica de senha 1 e senha 2 no cadastro
+
+                Curso Django: autenticação de formulários e alerta
+                        03.03 : Lógica de cadastro  
+
+        1- Fiz toda logica de cadastro
+
+                Curso Django: autenticação de formulários e alerta
+                        03.04 : Lógica de login
+
+        1-  Fiz toda logica de login
+
+                Curso Django: autenticação de formulários e alerta
+                        03.05 : Alertas e mensagens.
+        1-  Colocar o:
+            {% for message in messages %}
+                <div class="alert alert-primary">
+                   <p id='messages'>{{message}}</p>         
+                </div>    
+            {% endfor %}            
+
+            No base  
+
+        2-  coloquei as msgs nos locais certos do views.py
+
+            Curso Django: autenticação de formulários e alerta
+                        03.06 : Logout 
+        1-  Fiz a função logout com o auth e att o botão
+
+            Curso Django: autenticação de formulários e alerta
+                        04.02 : refatoração e validação 
+
+        1-  if not request.user.is_authenticated:
+                messages.error(request, "Usuário não logado")
+                return redirect('login') 
+
+            Em todos os def do views do app principal
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!! Curso Django: autenticação de formulários e alerta
+                        04.03 : Associando tabelas 
+
+        1-  Usei :
+            tutor = models.ForeignKey(
+                to= 'index.Tutor',
+                on_delete= models.SET_NULL,
+                null=True,
+                blank=False,
+                related_name= "Tutor",
+            )  
+
+            Para evitar erros de circulo
+
+                    Curso Django: autenticação de formulários e alerta
+                        04.04 : Validação clean
+
+        1- feito função no cadastro
+
+                    Curso Django: autenticação de formulários e alerta
+                        04.05 : Mensagens de erro
+
+        1-  Fiz função para verificar se as senhas são iguais e alterei o cadastro.html
+
+                    Curso Django: autenticação de formulários e alerta
+                        05.02 : Partial para Alertas
+
+        1-  Fiz a partials, coloquei no local com include e alterei o settins.py
+
+                    Curso Django: autenticação de formulários e alerta
+                        05.03 : Reorganizando diretórios     
+        1-  Botei a pasta partials fora de index e dentro de templates
+
+                     Curso Django: CRUD e persistência no S3
+                        01.04 : Reorganizando diretórios
+        
+
+
+
+         
+            
 
 
                         

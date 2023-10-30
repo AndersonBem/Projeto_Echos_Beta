@@ -3,6 +3,7 @@ from datetime import datetime, date
 from django.utils import timezone
 import os
 
+
 # Create your models here.
 
 def get_upload_path(instance, filename):
@@ -35,8 +36,18 @@ class Clinica(models.Model):
     def __str__(self):
         return self.nome
 
-class Paciente(models.Model):
+class Tutor(models.Model):
+    nome = models.CharField(max_length=100, null=False, blank=False)
+    telefone = models.CharField(max_length=15, null=False, blank=False)
+    email = models.CharField(max_length=150, null=False, blank=False)
+    endereco = models.TextField(null=False, blank=False)
+    data_criacao = models.DateTimeField(default=datetime.now, blank=False)
+    
+    def __str__(self):
+        return self.nome
 
+class Paciente(models.Model):
+    
     OPCOES_CATEGORIA = [
         ("FELINO", "Felino"),
         ("CANINO", "Canino")
@@ -63,7 +74,7 @@ class Paciente(models.Model):
         else:
             return f"{age_years} anos e {age_months} meses"
     
-
+    
     nome = models.CharField(max_length=100, null=False, blank=False)
     especie = models.CharField(max_length=100,choices=OPCOES_CATEGORIA,default="")
     raca = models.CharField(max_length=150, null=False, blank=False)
@@ -72,18 +83,17 @@ class Paciente(models.Model):
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
+    tutor = models.ForeignKey(
+        to= 'index.Tutor',
+        on_delete= models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name= "Tutor",
+    )
     
     def __str__(self):
         return self.nome
 
-class Tutor(models.Model):
-    nome = models.CharField(max_length=100, null=False, blank=False)
-    telefone = models.CharField(max_length=15, null=False, blank=False)
-    email = models.CharField(max_length=150, null=False, blank=False)
-    endereco = models.TextField(null=False, blank=False)
-    data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    
-    def __str__(self):
-        return self.nome
+
 
 

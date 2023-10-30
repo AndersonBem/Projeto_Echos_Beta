@@ -15,7 +15,7 @@ class ListandoClinica(admin.ModelAdmin):
     list_per_page = 10
 
 class ListandoPaciente(admin.ModelAdmin):
-    list_display = ("id", "nome","especie", "raca", "nascimento","idade", "peso", "castracao")
+    list_display = ("id", "nome","especie", "raca", "nascimento","idade", "peso", "castracao", "tutor")
     list_display_links = ("id", "nome")
     search_fields = ("nome",)
     list_filter = ("especie",)

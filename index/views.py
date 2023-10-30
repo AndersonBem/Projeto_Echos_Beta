@@ -1,45 +1,76 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from index.models import Veterinario, Clinica, Paciente, Tutor 
+from django.contrib import messages
 
 
 # lista de funções de listas
 
 def index(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     return render(request, 'index/index.html')
 
 def lista_veterinarios(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     veterinarios = Veterinario.objects.order_by("nome").all()
     return render(request, 'index/lista_veterinarios.html', {"veterinarios": veterinarios})
 
 def lista_clinicas(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     clinicas = Clinica.objects.order_by("nome").all()
     return render(request,'index/lista_clinicas.html', {"clinicas": clinicas})
 
 def lista_pacientes(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     pacientes = Paciente.objects.order_by("nome").all()
     return render(request, 'index/lista_pacientes.html', {"pacientes": pacientes})
 
 def lista_tutores(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     tutores = Tutor.objects.order_by("nome").all()
     return render(request, 'index/lista_tutores.html', {"tutores": tutores})
 
 #Lista de funções de novo
 
 def nova_clinica(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     return render(request,'index/nova_clinica.html')
 
 def novo_paciente(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     return render(request,'index/novo_paciente.html')
 
 def novo_tutor(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     return render(request,'index/novo_tutor.html')
 
 def novo_veterinario(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     return render(request,'index/novo_veterinario.html')
 
 # lista de funções de busca
 
 def buscar_paciente(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     
     pacientes = Paciente.objects.order_by("nome").all()
     
@@ -51,6 +82,9 @@ def buscar_paciente(request):
     return render (request, "index/buscar_paciente.html", {"pacientes":pacientes} )
 
 def buscar_veterinario(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
 
     veterinarios = Veterinario.objects.order_by("nome").all()
     
@@ -62,6 +96,9 @@ def buscar_veterinario(request):
     return render (request, "index/buscar_veterinario.html", {"veterinarios":veterinarios} )
 
 def buscar_tutor(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     
     tutores = Tutor.objects.order_by("nome").all()
     
@@ -73,6 +110,9 @@ def buscar_tutor(request):
     return render (request, "index/buscar_tutor.html", {"tutores":tutores} )
 
 def buscar_clinica(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     
     clinicas = Clinica.objects.order_by("nome").all()
     

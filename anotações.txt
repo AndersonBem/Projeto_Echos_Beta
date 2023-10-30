@@ -1096,7 +1096,7 @@
                     </div>
                     {% endfor %}
 
-                    Onde achar melhor, no cado foi logo abaixo de img de cabeçalho
+                    Onde achar melhor, no caso foi logo abaixo de img de cabeçalho
                 2-  Fiz o mesmo em cadastro.html e na partial _header.html
 
                  Curso Django: autenticação de formulários e alerta
@@ -1170,7 +1170,7 @@
 
                         Curso Django: autenticação de formulários e alerta
                         04.05 : Mensagens de erro
-            1-  Abaixo dp anterior:
+            1-  Abaixo do anterior:
                     def clean_senha_2(self):
                         senha_1 = self.cleaned_data.get("senha_1")
                         senha_2 = self.cleaned_data.get("senha_2")
