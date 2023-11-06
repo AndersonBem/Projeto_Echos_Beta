@@ -1,5 +1,5 @@
 from django.contrib import admin
-from index.models import Veterinario, Clinica, Paciente, Tutor
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor 
 
 class ListandoVeterinario(admin.ModelAdmin):
     list_display = ("id", "nome", "telefone", "email")

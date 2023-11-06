@@ -141,3 +141,17 @@ body {
 .imagem__texto {
     font-size: 1rem;
 }
+
+.btn.btn-success.col-12 {
+    background-color: #58a7e9;
+    /* Você pode ajustar outras propriedades de estilo, se necessário */
+    color: #fff; /* Define a cor do texto como branco, por exemplo */
+    border: none; /* Remove a borda, se desejar */
+}
+
+.galeria-centralizada {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 90vh; /* Define a altura da galeria para preencher a altura da tela */
+}

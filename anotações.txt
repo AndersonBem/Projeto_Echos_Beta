@@ -263,7 +263,7 @@
     eu quiser colocar uma imagem no html, então preciso referenciar da seguinte forma:
 
         1-  "{% static ' o caminho ' %}"
-            ex: <img src="{% static '/assets/ícones/1x/Home - ativo.png' %}">
+            ex: <img src="{% static 'assets/ícones/1x/Home - ativo.png' %}">
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!IMPORTANTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -463,7 +463,7 @@
             5-  E as referencias agora vão ser fotografia.nome e etc
                 No nome src, apagar o nome do arquivo e no final colocar {{ fotografia.foto }}
                 vai ficar = 
-                src="{% static '/assets/imagens/galeria/'%}{{ fotografia.foto }}"
+                src="{% static 'assets/imagens/galeria/'%}{{ fotografia.foto }}"
             
                         Dia Perdi as contas(Dia 6 do novo curso).
                     Curso Django: persistência de dados e Admin
@@ -472,7 +472,7 @@
         1-  Primeiro preciso criar mais um item
             1-  No terminal =  python manage.py shell para abrir o shell de comando
             2-  from galeria.models import Fotografia
-            3-  Dentro de setup/static/assets/imagens/galeria colocar a imagem
+            3-  Dentro de setup/staticassets/imagens/galeria colocar a imagem
             4-  O static dentro de setup, faz referenecia a desenvolvimento e o de fora ao em
             produção.
             5-  No terminal eu salvei a fotografia e etc.
@@ -492,7 +492,7 @@
                         return render(request, 'galeria/imagem.html', {"fotografia": fotografia})  
                 Lembrar do import          
             4-  No imagem.html, mudar o src tbm para :
-                    src="{% static '/assets/imagens/galeria/'%}{{ fotografia.foto }}">
+                    src="{% static 'assets/imagens/galeria/'%}{{ fotografia.foto }}">
             5-  E tbm mudar as descrições da imagem.
 
             !!!!!! tudo isso até agora,pode ser aplicado as listas do meu projeto, para ter
@@ -636,13 +636,13 @@
                     Curso Django: persistência de dados e Admin
                         04.03 : Imagem "not found"
 
-        1-  Em setup/static/assets/imagens/galeria colar a imagem de not found
+        1-  Em setup/staticassets/imagens/galeria colar a imagem de not found
         2-  No index.html antes dos cards, colocar. 
                 {% for fotografia in cards %}
                 <li class="card">
                     <a href="{% url 'imagem' fotografia.id %}">
                     {% if fotografia.foto == "" or fotografia.foto == null %}
-                        <img class="card__imagem" src="{% static '/assets/imagens/galeria/not-found.png'%}" alt="foto">
+                        <img class="card__imagem" src="{% static 'assets/imagens/galeria/not-found.png'%}" alt="foto">
                     {% else %}
                         <img class="card__imagem" src="{{ fotografia.foto.url }}" alt="foto">
                     {% endif %}
@@ -657,7 +657,7 @@
                         04.04: Alterando template imagem
         1-  Em imagem.html fazer a mesma coisa de antes, vai ficar :
                 {% if fotografia.foto == "" or fotografia.foto == null %}
-                    <img class="imagem__imagem" src="{% static '/assets/imagens/galeria/not-found.png'%}">
+                    <img class="imagem__imagem" src="{% static 'assets/imagens/galeria/not-found.png'%}">
                 {% else %}
                     <img class="imagem__imagem" src="{{ fotografia.foto.url }}">
                 {% endif %}
@@ -704,12 +704,12 @@
                     <form action="{% url 'buscar' %}">
                     Colocar o que vem depois, dentro, ou seja isto:
                     <input class="busca__input" type="text" placeholder="O que você procura?">
-                    <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">
+                    <img class="busca__icone" src="{% static 'assets/ícones/1x/search.png' %}" alt="ícone de search">
                 2-  No final, vai ficar:
                         <form action="{% url 'buscar' %}">
                             <input class="busca__input" type="text" name="buscar" placeholder="O que você procura?">
                             <button type="submit">
-                                <img class="busca__icone" src="{% static '/assets/ícones/1x/search.png' %}" alt="ícone de search">    
+                                <img class="busca__icone" src="{% static 'assets/ícones/1x/search.png' %}" alt="ícone de search">    
                             </button>
                         </form>
 
@@ -1096,7 +1096,7 @@
                     </div>
                     {% endfor %}
 
-                    Onde achar melhor, no caso foi logo abaixo de img de cabeçalho
+                    Onde achar melhor, no cado foi logo abaixo de img de cabeçalho
                 2-  Fiz o mesmo em cadastro.html e na partial _header.html
 
                  Curso Django: autenticação de formulários e alerta
@@ -1111,7 +1111,7 @@
                     path('logout', logout, name='logout'),
 
             3-  Nós html, troqueo o surpreenda por 
-                    <a href="{% url 'logout' %}"><img src="{% static '/assets/ícones/1x/Surpreenda-me - inativo.png' %}"> Logout</a>
+                    <a href="{% url 'logout' %}"><img src="{% static 'assets/ícones/1x/Surpreenda-me - inativo.png' %}"> Logout</a>
                     Isso foi para evitar criar outro botão
 
 
@@ -1170,7 +1170,7 @@
 
                         Curso Django: autenticação de formulários e alerta
                         04.05 : Mensagens de erro
-            1-  Abaixo do anterior:
+            1-  Abaixo dp anterior:
                     def clean_senha_2(self):
                         senha_1 = self.cleaned_data.get("senha_1")
                         senha_2 = self.cleaned_data.get("senha_2")
@@ -1234,18 +1234,351 @@
 
                             Curso Django: CRUD e persistência no S3
                         01.04 : Reorganizando diretórios
-            1-  
-        
+            1-  Na pasta raiz, criar o dir app e arrastar galeria e Usuários para lá
+            2-  Corrigir todas as referencias 
+                1-  Em settings nos INSTALLED_APPSm, na frente do nome add apps.
+                2-  Em apps.py de galeria, renomer o name para o apps
+                3-  Em admin.py de galeria, tem um galeria que precisa mudar no from
+                4-  Em urls.py mesma coisa que o anterior
+                5-  Em views.py a mesma coisa
+
+                1-  Em usuarios, fazer todos os intens anterior
+
+                1-  Em urls.py de setup, corrigir os path
+
+                        Curso Django: CRUD e persistência no S3
+                        01.06 : Refatorando a estilização
+
+            1-  Criar dir dentro de tempates shared
+            2-  Joguei o base.html para o shared
+            3-  Trocar as referencias:
+                1 - index, imagem e buscar.html
+            4-  Particionar melhor o login e o Cadastro
+
+                        Curso Django: CRUD e persistência no S3
+                        02.02 : URLs e views
+            
+            1-  Criar button para add imagem(objeto).
+                1-  Em _sidebar, copiar uma das opções e colocar nova imagem
+            2-  Em urls.py em galeria
+                1- Criar os Path
+                    1- path('nova-imagem', nova_imagem, name='nova_imagem'),
+                        path('editar-imagem', editar_imagem, name='editar_imagem'),
+                        path('deletar-imagem', deletar_imagem, name='deletar_imagem'),  
+
+            3-  Em views.py de galeria, criar as funções
+                1-  def nova_imagem(request):
+                        return render(request, 'galeria/nova_imagem.html')
+
+                    def editar_imagem(request):
+                        pass
+
+                    def deletar_imagem(request):
+                        pass  
+
+            4-  Voltar em urls.py e fazer os importes
+
+                        Curso Django: CRUD e persistência no S3
+                        02.03 : Formulário de galeria
+
+            1-  O codigo do login.htm colar no nova_imagem.html
+            2-  Criar o forms.py em galeria.
+                1-  from django import forms
+
+                    from apps.galeria.models import Fotografia
+
+                    class FotografiaForms(forms.ModelForm):
+                        class Meta:
+                            model = Fotografia
+                            exclude = ['publicada',]
+
+                            widgets = {
+                                'nome' : forms.TextInput(attrs={'class': 'form-control'}),
+                                'legenda' : forms.TextInput(attrs={'class': 'form-control'}),
+                                'categoria' : forms.Select(attrs={'class': 'form-control'}),
+                                'descricao' : forms.Textarea(attrs={'class': 'form-control'}, initial='Seu texto pré-pronto aqui'),
+                                'foto' : forms.FileInput(attrs={'class': 'form-control'}),
+                                'data_fotografia' : forms.DateInput(
+                                    format= '%d/%m/%Y',
+                                    attrs={
+                                        'type':'date',
+                                        'class': 'form-control'
+                                    }
+                                ),
+                                'categoria' : forms.Select(attrs={'class': 'form-control'}),
+
+                            }
+
+                 !!!!!!https://chat.openai.com/c/0322ad4f-56e9-4a7f-8b2e-f6146fc63959!!!!!
+
+
+                OPÇÃO 2:
+
+                from django import forms
+                from apps.galeria.models import Fotografia
+
+                class FotografiaForms(forms.ModelForm):
+                    class Meta:
+                        model = Fotografia
+                        exclude = ['publicada',]
+
+                    # Define o valor inicial para o campo 'descricao'
+                    initial_descricao = "Seu texto pré-pronto aqui"
+
+                    widgets = {
+                        'nome': forms.TextInput(attrs={'class': 'form-control'}),
+                        'legenda': forms.TextInput(attrs={'class': 'form-control'}),
+                        'categoria': forms.Select(attrs={'class': 'form-control'}),
+                        'foto': forms.FileInput(attrs={'class': 'form-control'}),
+                        'data_fotografia': forms.DateInput(
+                            format='%d/%m/%Y',
+                            attrs={
+                                'type': 'date',
+                                'class': 'form-control'
+                            }
+                        ),
+                        'categoria': forms.Select(attrs={'class': 'form-control'}),
+                    }
+
+                    # Define o campo 'descricao' com o valor inicial
+                    descricao = forms.CharField(
+                        widget=forms.Textarea(attrs={'class': 'form-control'}),
+                        initial=initial_descricao
+                    )
 
 
 
+                 Explica como fazer uma opção de texto melhor
 
-                   
+                            Curso Django: CRUD e persistência no S3
+                        02.04 : Lógica de novo item
+
+            1-  Em views.py de galeria:
+                1-  from apps.galeria.forms import FotografiaForms
+
+                    def nova_imagem(request):
+                    form = FotografiaForms
+                    return render(request, 'galeria/nova_imagem.html', {'form':form})
+            2-  Em forms.py, add lofo após o exclude
+
+                    labels = {
+                        'descricao': 'Descrição',
+                        'data_fotografia': 'Data de registro',
+                        'usuario': 'Usuário'
+                    } 
+
+            3-  No inicio da def nova imagem, colocar a logica de login
+            
+            4-  Fazer a logica de salva, vai ficar todo assim:
+
+                    def nova_imagem(request):
+
+                        if not request.user.is_authenticated:
+                            messages.error(request, "Usuário não logado")
+                            return redirect('login')
+
+                        form = FotografiaForms
+                        if request.method == 'POST':
+                            form = FotografiaForms(request.POST)
+                            if form.is_valid():
+                                form.save()
+                                messages.success(request, 'Nova fotografia cadastrada')
+                                return redirect('index')
+
+                        return render(request, 'galeria/nova_imagem.html', {'form':form})     
+         
+                            Curso Django: CRUD e persistência no S3
+                        02.05 : Templates e botões
+            1-  Em nova_imagem.html, alterar o nome do botão e o form vai ficar:
+                <form action="{% url 'nova_imagem' %}" method="POST" enctype="multipart/form-data">
+            2-  Em views.py, mudar o form apos o if para :
+                    form = FotografiaForms(request.POST, request.FILES)
+
+            3-  Criar botões de editar e apagar imagem em imagem.html
+                    
+
+                         Curso Django: CRUD e persistência no S3
+                        03.02 : Edição de fotografias
+
+            1-  Usar o mesmo formulario do nova_imagem
+                1-  No imagem.html, no botão:
+                        {% url 'editar_imagem' fotografia.id %}"
+                    Assim estou passando o id do objeto do banco de dados que esta sendo usado nessa pagina.
+            2-  Em urls.py, no path eu boto /<int:foto_id>
+
+            3-  Em views.py:
+                def editar_imagem(request, foto_id):
+                    fotografia = Fotografia.objects.get(id=foto_id)
+                    form = FotografiaForms(instance=fotografia)
+
+                    if request.metho == 'POST':
+                        form = FotografiaForms(request.POST, request.FILES, instance=fotografia)
+                        if form.is_valid():
+                            form.save()
+                            messages.success(request, 'Fotografia alterada')
+                            return redirect('index')
+
+                    return render(request, 'galeria/editar_imagem.html', {'form': form, 'foto_id': foto_id})  
+                    
+!!!!!!!!! Esse processo pode ser usado para criar os laudos, talvez pré criando uma tabela com os textos
+que quero, acesso a tabela pelo id e mando fazer o form com esses dados!!!!!!!!
+
+            4-  Criei o editar_imagem.html dentro de galeria e colei o nova_imagem lá dentro
+            mudando só o form action para "{% url 'editar_imagem' foto_id %}" e mudar o botão
+
+                        Curso Django: CRUD e persistência no S3
+                        03.03 : Deleção de fotografias
+
+            1-  Vai usar o id da fotografia do mesmo jeito que antes.
+                    "{% url 'deletar_imagem' fotografia.id %}"
+            2-  Em urls de galeria  
+                1-   Também por /<int:foto_id>
+
+            3-  Em views.py:
+                    def deletar_imagem(request, foto_id):
+                        fotografia = Fotografia.objects.get(id=foto_id)
+                        fotografia.delete()
+                        messages.success(request, 'Deleção feita com sucesso')
+                        return redirect('index')      
+
+                        Curso Django: CRUD e persistência no S3
+                        03.04: Funcionalidade de filtro
+
+            1-  Em index.html, nos botões que servem de filtro, vou alterar todos para:
+                    <ul class="tags__lista">
+                        <li class="tags__tag"><a href="{% url 'filtro' 'NEBULOSA' %}" class="btn" style="color:#c9c9c9;">Nebulosa</a></li>
+                        <li class="tags__tag"><a href="{% url 'filtro' 'ESTRELA' %}" class="btn" style="color:#c9c9c9;">Estrela</a></li>
+                        <li class="tags__tag"><a href="{% url 'filtro' 'GALAXIA' %}" class="btn" style="color:#c9c9c9;">Galáxia</a></li>
+                        <li class="tags__tag"><a href="{% url 'filtro' 'PLANETA' %}" class="btn" style="color:#c9c9c9;">Planeta</a></li>
+                    </ul>
+
+            2-  Em urls.py  
+                path('filtro/<str:categoria>',filtro, name='filtro')
+
+            3-  em views.py de galeria:
+                def filtro(request, categoria):
+                    fotografias = Fotografia.objects.order_by("-data_fotogragia").filter(publicada=True, categoria=categoria)
+
+                    return render(request, 'galeria/index.html', {"cards": fotografias})
+
+            4-  Em views.py, no buscar, eu posso mudar para
+                    return render (request, "galeria/index.html", {"cards": fotografias})
+
+            Assim posso apagar o buscar.html 
+
+                        Curso Django: CRUD e persistência no S3
+                        04.03: Criando um bucket no S3 
+            1-  Criei conta na AWS e um bucket.
+
+                        Curso Django: CRUD e persistência no S3
+                        04.04: Criando um usuário na IAM
+
+            1-  Criando um iam.
+                1-  Anderson-Bem
+
+                        Curso Django: CRUD e persistência no S3
+                        05.02 : Conexão com o Django
+
+            1-  Em settings.py do setup
+                1-pip install django-storages
+                pip install boto3
+                pip freeze requirements.txt
+
+                2-  Acima de STATIC_URL
+
+                    # AWS Configuração
+
+                    AWS_ACCESS_KEY_ID = 'AKIA6DQLMY2D5GMUNXZE'
+
+                    AWS_SECRET_ACCESS_KEY = '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'
+
+                    AWS_STORAGE_BUCKET_NAME = 'anderson-alura-space'
+
+                    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+                    AWS_DEFAULT_ACL = 'public-read'
+
+                    AWS_S3_OBJECT_PARAMETERS = {
+                        'CacheControl': 'max-age=86400'
+                    }
+
+                    AWS_LOCATION = 'static'
+
+                    AWS_QUERYSTRING_AUTH = False
+
+                    AWS_HEADERS = {
+                        'Access-Control-Allow-Origin': '*',
+                    }
 
 
+                        Curso Django: CRUD e persistência no S3
+                        05.03 Fotografias no bucket
+
+            1-  Em settings.py do setup  
+                # Static files (CSS, JavaScript, Images)
+                # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
+                DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
+                STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+
+                STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+
+                    E
+                MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+            2-  Em INSTALLED_APPS:
+                'storages',   
+
+            3-  eM URLS.PY do setup:
+
+                from django.contrib import admin
+                from django.urls import path, include
+                from django.conf import settings
+                from django.conf.urls.static import static
+
+
+                urlpatterns = [
+                    path('admin/', admin.site.urls),
+                    path('', include('apps.galeria.urls')),
+                    path('', include('apps.usuarios.urls')),
+                ]
+
+
+                if settings.DEBUG:
+                    urlpatterns += + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                    urlpatterns += + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+            4-  Na lupa, buscar assets/ e trocar por assets/
+
+            5-  python manage.py collectstatic e esperar, demora
+
+            6-  Você pode usar o .env tbm, fica assim:
+                AWS_ACCESS_KEY_ID = str(os.getenv('AWS_ACCESS_KEY_ID'))
+
+                AWS_SECRET_ACCESS_KEY = str(os.getenv('AWS_SECRET_ACCESS_KEY'))
+
+                AWS_STORAGE_BUCKET_NAME = str(os.getenv('AWS_STORAGE_BUCKET_NAME'))
+
+            
+
+                            Curso Django: CRUD e persistência no S3
+                        05.04: Melhorando a segurança
+
+            1-  Dir na raiz Scripts
+                1-  secret_key_generator.py
+                    1-  from django.core.management.utils import get_random_secret_key
+
+                        print(get_random_secret_key())
+
+            2-  no terminal cd Scripts
+                python secret_key_generator.py
+
+                1-  O que gerou, vc troca a secret_key do .env
+
+                    
 
 
 

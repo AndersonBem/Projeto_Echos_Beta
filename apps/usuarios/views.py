@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from usuarios.forms import LoginForms, CadastroForms
+from apps.usuarios.forms import LoginForms, CadastroForms
 
 from django.contrib.auth.models import User
 
@@ -37,6 +37,10 @@ def login(request):
     return render(request, "usuarios/login.html", {"form": form})
 
 def cadastro(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    
     form = CadastroForms()
 
     if request.method == 'POST':

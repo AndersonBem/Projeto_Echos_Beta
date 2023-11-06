@@ -79,7 +79,7 @@ class Paciente(models.Model):
     especie = models.CharField(max_length=100,choices=OPCOES_CATEGORIA,default="")
     raca = models.CharField(max_length=150, null=False, blank=False)
     nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
-    peso = models.CharField(max_length=5, null=False, blank=False)
+    peso = models.DecimalField(max_digits=5, decimal_places=2)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)

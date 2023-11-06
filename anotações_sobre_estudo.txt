@@ -495,6 +495,83 @@
 
                      Curso Django: CRUD e persistência no S3
                         01.04 : Reorganizando diretórios
+
+        1-  Corrigir todas as referencias incluindo os migrate.
+
+                        Curso Django: CRUD e persistência no S3
+                        01.06 : Refatorando a estilização
+
+        1-  
+                        Curso Django: CRUD e persistência no S3
+                        02.02 : URLs e views
+
+        1-  Add um novo_alguma coisa, vou começar com vet
+            1-  Já tem o botão
+            2-  Criei o urls e o views de deletar e editar
+            3-  
+
+                        Curso Django: CRUD e persistência no S3
+                        02.03 : Formulário de galeria
+
+        1-  Já tinha o html, mas vou copiar o de login pra o de novo_veterinario
+            1- O forms de vet fica assim:
+
+            from django import forms
+
+            from apps.index.models import Veterinario
+
+            class VeterinarioForms(forms.ModelForm):
+                class Meta:
+                    model = Veterinario
+                    exclude = ['data_criacao']
+
+                    labels = {
+                        'nome': 'Nome',
+                        'telefone': 'Telefone',
+                        'email': 'E-mail'
+                    } 
+                    
+                    widgets={
+                        'nome' : forms.TextInput(attrs={'class':'form-control'}),
+                        'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone', 'data-mask': '(00) 00000-0000'}),
+                        'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
+
+                    } 
+
+                    Curso Django: CRUD e persistência no S3
+                        02.04 : Lógica de novo item e no fim repetir o anterior
+
+        1-  
+            def novo_veterinario(request):
+                if not request.user.is_authenticated:
+                    messages.error(request, "Usuário não logado")
+                    return redirect('login')
+                
+                form = VeterinarioForms
+                if request.method == 'POST':
+                    form = VeterinarioForms(request.POST)
+                    if form.is_valid():
+                        form.save()
+                        messages.success(request, 'Novo veterinário Cadastrado')
+                        return redirect('lista_veterinario')
+                return render(request,'index/novo_veterinario.html', {'form':form})
+
+    2- Add no fim do template de novo_veterinario isso ai, pra ajustar o tel:
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#telefone').mask('(00) 00000-0000');
+        });
+    </script>
+
+
+                                 Curso Django: CRUD e persistência no S3
+                        02.05 : Templates e botões
+
+    1-  
+
         
 
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
-from index.models import Veterinario, Clinica, Paciente, Tutor 
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor 
 from django.contrib import messages
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms
 
 
 # lista de funções de listas
@@ -45,25 +46,80 @@ def nova_clinica(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    return render(request,'index/nova_clinica.html')
+    form = ClinicaForms
+    if request.method == 'POST':
+        form = ClinicaForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Nova cliníca cadastrada')
+            return redirect('lista_clinicas')
+    return render(request,'index/nova_clinica.html', {'form':form})
+
+def editar_clinica(request):
+    pass
+
+def deletar_clinica(request):
+    pass
 
 def novo_paciente(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    return render(request,'index/novo_paciente.html')
+    form = PacienteForms
+    if request.method == 'POST':
+        form = PacienteForms(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Novo Paciente Cadastrado')
+            return redirect('lista_pacientes')
+    return render(request,'index/novo_paciente.html', {'form':form})
+
+def editar_paciente(request):
+    pass
+
+def deletar_paciente(request):
+    pass
 
 def novo_tutor(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    return render(request,'index/novo_tutor.html')
+    form = TutorForms
+    if request.method == 'POST':
+        form = TutorForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Novo tutor cadastrado')
+            return redirect('lista_tutores')
+    return render(request,'index/novo_tutor.html', {'form': form})
+
+def editar_tutor(request):
+    pass
+
+def deletar_tutor(request):
+    pass
+
 
 def novo_veterinario(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    return render(request,'index/novo_veterinario.html')
+    
+    form = VeterinarioForms
+    if request.method == 'POST':
+        form = VeterinarioForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Novo veterinário Cadastrado')
+            return redirect('lista_veterinarios')
+    return render(request,'index/novo_veterinario.html', {'form':form})
+
+def editar_veterinario(request):
+    pass
+
+def deletar_veterinario(request):
+    pass
+    
 
 # lista de funções de busca
 

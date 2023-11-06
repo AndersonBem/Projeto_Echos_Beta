@@ -2,7 +2,7 @@
 
 import datetime
 from django.db import migrations, models
-import index.models
+import apps.index.models
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='paciente',
             name='foto',
-            field=models.ImageField(blank=True, upload_to=index.models.get_upload_path),
+            field=models.ImageField(blank=True, upload_to=apps.index.models.get_upload_path),
         ),
         migrations.AlterField(
             model_name='paciente',
