@@ -11,20 +11,20 @@ urlpatterns = [
     path('lista_tutores', lista_tutores, name='lista_tutores'),
 
     path('nova_clinica', nova_clinica, name='nova_clinica'),
-    path('editar_clinica', editar_clinica, name='editar_clinica'),
-    path('deletar_clinica', deletar_clinica, name='deletar_clinica'),
+    path('editar_clinica/<int:clinica_id>', editar_clinica, name='editar_clinica'),
+    path('deletar_clinica/<int:clinica_id>', deletar_clinica, name='deletar_clinica'),
 
     path('novo_paciente', novo_paciente, name='novo_paciente'),
-    path('editar_paciente', editar_paciente, name='editar_paciente'),
-    path('deletar_paciente', deletar_paciente, name='deletar_paciente'),
+    path('editar_paciente/<int:paciente_id>', editar_paciente, name='editar_paciente'),
+    path('deletar_paciente/<int:paciente_id>', deletar_paciente, name='deletar_paciente'),
 
     path('novo_tutor', novo_tutor, name='novo_tutor'),
-    path('editar_tutor', editar_tutor, name='editar_tutor'),
-    path('deletar_tutor', deletar_tutor, name='deletar_tutor'),
+    path('editar_tutor/<int:tutor_id>', editar_tutor, name='editar_tutor'),
+    path('deletar_tutor/<int:tutor_id>', deletar_tutor, name='deletar_tutor'),
 
     path('novo_veterinario', novo_veterinario, name='novo_veterinario'),
-    path('editar_veterinario', editar_veterinario, name='editar_veterinario'),
-    path('deletar_veterinario', deletar_veterinario, name='deletar_veterinario'),
+    path('editar_veterinario/<int:veterinario_id>', editar_veterinario, name='editar_veterinario'),
+    path('deletar_veterinario/<int:veterinario_id>', deletar_veterinario, name='deletar_veterinario'),
 
     path("buscar_paciente", buscar_paciente, name="buscar_paciente"),
     path("buscar_veterinario", buscar_veterinario, name="buscar_veterinario"),

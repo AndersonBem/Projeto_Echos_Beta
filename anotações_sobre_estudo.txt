@@ -571,11 +571,22 @@
                         02.05 : Templates e botões
 
     1-  
+                             Curso Django: CRUD e persistência no S3
+                        03.02 : Edição de fotografias
 
-        
+                             Curso Django: CRUD e persistência no S3
+                        03.03 : Deleção de fotografias
 
+                            Curso Django: CRUD e persistência no S3
+                        03.04: Funcionalidade de filtro
 
+                            Curso Django: CRUD e persistência no S3
+                        04.03: Criando um bucket no S3
 
+                            Curso Django: CRUD e persistência no S3
+                        05.02 : Conexão com o Django
+
+                        
          
             
 

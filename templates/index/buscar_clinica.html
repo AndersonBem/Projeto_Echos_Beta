@@ -4,6 +4,7 @@
     <div class="page-header">
         <h1>Lista de Clínicas</h1>
         <a href="{% url 'nova_clinica' %}" class="btn btn-primary" >Nova Clínica</a>
+        
         <div class="container">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
@@ -38,6 +39,11 @@
                     <td>{{ clinica.email }}</td>
                     <td>{{ clinica.endereco }}</td>
                 </tr>
+
+                <a href="{% url 'editar_clinica' clinica.id %}" class="btn btn-success" >Editar</a>
+                <a href="{% url 'deletar_clinica' clinica.id %}"  class="btn btn-danger" >Deletar</a>
+
+
                 {% endfor %} 
                 {% else %}
                 {% endif %} 

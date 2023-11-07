@@ -55,11 +55,23 @@ def nova_clinica(request):
             return redirect('lista_clinicas')
     return render(request,'index/nova_clinica.html', {'form':form})
 
-def editar_clinica(request):
-    pass
+def editar_clinica(request, clinica_id):
+    clinica = Clinica.objects.get(id=clinica_id)
+    form = ClinicaForms(instance=clinica)
 
-def deletar_clinica(request):
-    pass
+    if request.method == 'POST':
+        form = ClinicaForms(request.POST, request.FILES, instance=clinica)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cliníca alterada')
+            return redirect('lista_clinicas')
+    return render (request, 'index/editar_clinica.html', {'form':form, 'clinica_id': clinica_id})
+
+def deletar_clinica(request, clinica_id):
+    clinica = Clinica.objects.get(id=clinica_id)
+    clinica.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_clinicas')
 
 def novo_paciente(request):
     if not request.user.is_authenticated:
@@ -74,11 +86,23 @@ def novo_paciente(request):
             return redirect('lista_pacientes')
     return render(request,'index/novo_paciente.html', {'form':form})
 
-def editar_paciente(request):
-    pass
+def editar_paciente(request, paciente_id):
+    paciente = Paciente.objects.get(id=paciente_id)
+    form = PacienteForms(instance=paciente)
 
-def deletar_paciente(request):
-    pass
+    if request.method == 'POST':
+        form = PacienteForms(request.POST, request.FILES, instance=paciente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Paciente alterado')
+            return redirect('lista_pacientes')
+    return render (request, 'index/editar_paciente.html', {'form':form, 'paciente_id': paciente_id})
+
+def deletar_paciente(request, paciente_id):
+    paciente = Paciente.objects.get(id=paciente_id)
+    paciente.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_pacientes')
 
 def novo_tutor(request):
     if not request.user.is_authenticated:
@@ -93,12 +117,24 @@ def novo_tutor(request):
             return redirect('lista_tutores')
     return render(request,'index/novo_tutor.html', {'form': form})
 
-def editar_tutor(request):
-    pass
+def editar_tutor(request, tutor_id):
+    tutor = Tutor.objects.get(id=tutor_id)
+    form = TutorForms(instance=tutor)
 
-def deletar_tutor(request):
-    pass
+    if request.method == 'POST':
+        form = TutorForms(request.POST, request.FILES, instance=tutor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tutor alterado')
+            return redirect('lista_tutores')
+    return render (request, 'index/editar_tutor.html', {'form':form, 'tutor_id': tutor_id})
 
+
+def deletar_tutor(request, tutor_id):
+    tutor = Tutor.objects.get(id=tutor_id)
+    tutor.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_tutores')
 
 def novo_veterinario(request):
     if not request.user.is_authenticated:
@@ -114,11 +150,23 @@ def novo_veterinario(request):
             return redirect('lista_veterinarios')
     return render(request,'index/novo_veterinario.html', {'form':form})
 
-def editar_veterinario(request):
-    pass
+def editar_veterinario(request, veterinario_id):
+    veterinario = Veterinario.objects.get(id=veterinario_id)
+    form = VeterinarioForms(instance=veterinario)
 
-def deletar_veterinario(request):
-    pass
+    if request.method == 'POST':
+        form=VeterinarioForms(request.POST, request.FILES, instance=veterinario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Veterinário salvo")
+            return redirect('lista_veterinarios')
+    return render(request, 'index/editar_veterinario.html', {'form': form, 'veterinario_id': veterinario_id})
+
+def deletar_veterinario(request, veterinario_id):
+    veterinario = Veterinario.objects.get(id=veterinario_id)
+    veterinario.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_veterinarios')
     
 
 # lista de funções de busca

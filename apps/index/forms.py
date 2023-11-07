@@ -19,6 +19,7 @@ class VeterinarioForms(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
 
         }
+
 class ClinicaForms(forms.ModelForm):
     class Meta:
         model = Clinica
@@ -38,8 +39,6 @@ class ClinicaForms(forms.ModelForm):
             'endereco' : forms.TextInput(attrs={'class':'form-control'})
 
         }
-
-
 
 class PacienteForms(forms.ModelForm):
     class Meta:
@@ -68,7 +67,7 @@ class PacienteForms(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
-            'peso': forms.NumberInput(attrs={'class': 'form-control','placeholder': 'Ex: 111,11'}),
+            'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'foto' : forms.FileInput(attrs={'class': 'form-control'}),
             'tutor': forms.Select(attrs={'class': 'form-control'})

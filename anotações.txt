@@ -1400,11 +1400,11 @@
                          Curso Django: CRUD e persistência no S3
                         03.02 : Edição de fotografias
 
-            1-  Usar o mesmo formulario do nova_imagem
+            1-  Usar o mesmo formulario do nova_imagem em editar_imagem
                 1-  No imagem.html, no botão:
                         {% url 'editar_imagem' fotografia.id %}"
                     Assim estou passando o id do objeto do banco de dados que esta sendo usado nessa pagina.
-            2-  Em urls.py, no path eu boto /<int:foto_id>
+            2-  Em urls.py, eu boto /<int:foto_id>
 
             3-  Em views.py:
                 def editar_imagem(request, foto_id):

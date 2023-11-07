@@ -3,8 +3,9 @@
 {% block content %}
 
       <div class="page-header">
-          <h1>Lista de Véterinarios</h1>
-          <a href="{% url 'novo_veterinario' %}"  class="btn btn-primary" >Novo Véterinario</a>
+          <h1>Lista de Veterinários</h1>
+          <a href="{% url 'novo_veterinario' %}"  class="btn btn-primary" >Novo Veterinário</a>
+          
           <div class="container">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
@@ -37,6 +38,10 @@
                     <td>{{veterinario.telefone}}</td>
                     <td>{{veterinario.email}}</td>
                 </tr>
+                <a href="{% url 'editar_veterinario' veterinario.id %}"   class="btn btn-success" >Editar</a>
+                <a href="{% url 'deletar_veterinario' veterinario.id %}"  class="btn btn-danger" >Deletar</a>
+
+
                 {% endfor %} 
                 {% else %}
                 {% endif %} 
