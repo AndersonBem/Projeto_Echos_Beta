@@ -47,7 +47,7 @@ class PacienteForms(forms.ModelForm):
 
         labels = {
             'nome': 'Nome',
-            'especie': 'Especie',
+            
             'raca': 'Raça',
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
@@ -58,8 +58,8 @@ class PacienteForms(forms.ModelForm):
         
         widgets={
             'nome' : forms.TextInput(attrs={'class':'form-control'}),
-            'especie': forms.RadioSelect(attrs={'class': 'radio-select'}),
-            'raca': forms.TextInput(attrs={'class':'form-control'}),
+            
+            'raca': forms.Select(attrs={'class': 'radio-select'}),
             'nascimento': forms.DateInput(
                 format='%d/%m/%Y',
                 attrs={

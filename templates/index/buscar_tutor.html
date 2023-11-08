@@ -39,10 +39,14 @@
                     <td>{{tutor.telefone}}</td>
                     <td>{{tutor.email}}</td>
                     <td>{{tutor.endereco}}</td>
+                    <td>
+                        <a href="{% url 'editar_tutor' tutor.id %}"   class="btn btn-success" >Editar</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'deletar_tutor' tutor.id %}"  class="btn btn-danger" >Deletar</a>
+                    </td>
                 </tr>
 
-                <a href="{% url 'editar_tutor' tutor.id %}"   class="btn btn-success" >Editar</a>
-                <a href="{% url 'deletar_tutor' tutor.id %}"  class="btn btn-danger" >Deletar</a>
 
                 {% endfor %} 
                 {% else %}

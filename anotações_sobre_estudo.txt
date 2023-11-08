@@ -595,7 +595,11 @@
  e depois criar outro. Posso tentar manter o model que tenho para felinos e criar um para caninos. Assim economizo trabalho por hora ou
  posso alterar primeiro o model Paciente para PacienteFelino, fazer todas as alterações e depois criar outro model para caninos
     A unica coisa que foi salva foi o html de selecao.html e quando cria o tutor, vai para ele. 
-
+                    DIA 1 15H
+    Fiz uma classe para ter as raças de felino salvas, consigo add elas pelo admin, consegui também
+fazer a seleção de raças na hora de criar o paciente se baseada nesse BD
+    Arrumei as listas.
+                    
     
     
          

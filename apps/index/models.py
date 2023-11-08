@@ -49,8 +49,8 @@ class Tutor(models.Model):
 class Paciente(models.Model):
     
     OPCOES_CATEGORIA = [
-        ("FELINO", "Felino"),
-        ("CANINO", "Canino")
+        ("PCB", "PCB"),
+        ("PERSA", "Persa")
     ]
     def data_atual_sem_hora():
         return timezone.now().date()
@@ -76,8 +76,14 @@ class Paciente(models.Model):
     
     
     nome = models.CharField(max_length=100, null=False, blank=False)
-    especie = models.CharField(max_length=100,choices=OPCOES_CATEGORIA,default="")
-    raca = models.CharField(max_length=150, null=False, blank=False)
+    especie = models.CharField(default="Felino")
+    raca = models.ForeignKey(
+        to= 'index.RacaFelino',
+        on_delete= models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name= "RacaFelino",
+    )
     nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
     peso = models.CharField(max_length=100, null=False, blank=False)
     castracao = models.BooleanField(default=False)
@@ -94,6 +100,8 @@ class Paciente(models.Model):
     def __str__(self):
         return self.nome
 
+class RacaFelino(models.Model):
+    raca = models.CharField(max_length=100, null=False, blank=False)
 
-
-
+    def __str__(self):
+        return self.raca

@@ -37,7 +37,7 @@
                 {% if pacientes %}
                 {% for paciente in pacientes %} 
                 <tr>
-                    <td>{{ paciente.nome }}</td>
+                    <td><a href="{% url 'buscar_paciente' %}?buscar={{ paciente.nome }}">{{ paciente.nome }}</a></td>
                     <td>{{ paciente.especie }}</td>
                     <td>{{ paciente.raca }}</td>
                     <td>{{ paciente.idade }}</td>

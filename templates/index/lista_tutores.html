@@ -34,7 +34,7 @@
                 {% if tutores %}
                 {% for tutor in tutores %}  
                 <tr>
-                    <td>{{tutor.nome}}</td>
+                    <td><a href="{% url 'buscar_tutor' %}?buscar={{ tutor.nome }}">{{tutor.nome}}</a></td>
                     <td>{{tutor.telefone}}</td>
                     <td>{{tutor.email}}</td>
                     <td>{{tutor.endereco}}</td>

@@ -42,10 +42,21 @@
                     <td>{{ paciente.idade }}</td>
                     <td>{{ paciente.peso }}</td>
                     <td>{{ paciente.castracao }}</td>
+                    <td>
+                        <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success" >Editar</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'deletar_paciente' paciente.id %}"  class="btn btn-danger" >Deletar</a>
+                    </td>
+                    <td>
+                        {% if paciente.foto %}
+                            <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
+                        {% else %}
+                            <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+                        {% endif %}
+                    </td>
                 </tr>
 
-                <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success" >Editar</a>
-                <a href="{% url 'deletar_paciente' paciente.id %}"  class="btn btn-danger" >Deletar</a>
 
                 {% endfor %} 
                 {% else %}
@@ -53,31 +64,5 @@
 
             </tbody>
     </table>
-    <section>
-        <div>
-            <h2>Imagens</h2>
-            <ul>
-                {% if pacientes %}
-                {% for fotografia in pacientes %}
-                <li>
-                    {% if fotografia.foto == "" or fotografia.foto == null %}
-                        <img class="card__imagem" src="{% static 'assets/not-found.png'%}" alt="foto">
-                    {% else %}
-                        <img class="card__imagem" src="{{ fotografia.foto.url }}" alt="foto">
-                    {% endif %}
-                    </a>
-                    <div>
-                    </div>
-                </li>
-                {% endfor %}
-                {% else %}
-                <div>
-                    <p>
-                        Fotografias não encontradas
-                    </p>
-                </div>
-                {% endif %}
-            </ul>
-        </div>
-    </section>
+    
 {% endblock %}

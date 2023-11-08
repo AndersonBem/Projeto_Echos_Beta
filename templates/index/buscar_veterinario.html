@@ -37,9 +37,13 @@
                     <td>{{veterinario.nome}}</td>
                     <td>{{veterinario.telefone}}</td>
                     <td>{{veterinario.email}}</td>
+                    <td>
+                        <a href="{% url 'editar_veterinario' veterinario.id %}"   class="btn btn-success" >Editar</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'deletar_veterinario' veterinario.id %}"  class="btn btn-danger" >Deletar</a>                    
+                    </td>
                 </tr>
-                <a href="{% url 'editar_veterinario' veterinario.id %}"   class="btn btn-success" >Editar</a>
-                <a href="{% url 'deletar_veterinario' veterinario.id %}"  class="btn btn-danger" >Deletar</a>
 
 
                 {% endfor %} 
