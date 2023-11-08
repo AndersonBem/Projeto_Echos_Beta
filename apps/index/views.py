@@ -114,7 +114,7 @@ def novo_tutor(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Novo tutor cadastrado')
-            return redirect('lista_tutores')
+            return redirect('selecao')
     return render(request,'index/novo_tutor.html', {'form': form})
 
 def editar_tutor(request, tutor_id):
@@ -226,3 +226,6 @@ def buscar_clinica(request):
             clinicas = clinicas.filter(nome__unaccent__icontains=nome_a_buscar)
 
     return render (request, "index/buscar_clinica.html", {"clinicas":clinicas} )
+
+def selecao(request):
+    return render(request, 'index/selecao.html')

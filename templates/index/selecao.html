@@ -1,0 +1,21 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <h1 class="mb-4">Selecione</h1>
+        <form action="{% url 'selecao' %}" method="GET">
+            <div class="btn-group btn-group-lg" role="group" aria-label="Escolha um animal">
+                <a href="{% url 'novo_paciente' %}" class="btn btn-primary btn-lg custom-margin rounded mb-4">Felino</a>
+                <a href="{% url 'novo_paciente' %}" class="btn btn-primary btn-lg custom-margin rounded mb-4">Canino</a>
+
+            </div>
+        </form>
+    </div>
+    <style>
+        .custom-margin {
+            margin-right: 200px; /* Ajuste o valor conforme necessário para controlar o espaçamento */
+        }
+    </style>
+{% endblock %}
+
+

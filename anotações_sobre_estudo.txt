@@ -587,6 +587,17 @@
                         05.02 : Conexão com o Django
 
                         
+
+
+                        Iniciando Solo
+                    DIA 1 08/11/2023
+    Perdi tudo que fiz, pq na hora de fazer a migrate deu muitos erros. Amanhã vou tentar primeiro alterar um model que tenho
+ e depois criar outro. Posso tentar manter o model que tenho para felinos e criar um para caninos. Assim economizo trabalho por hora ou
+ posso alterar primeiro o model Paciente para PacienteFelino, fazer todas as alterações e depois criar outro model para caninos
+    A unica coisa que foi salva foi o html de selecao.html e quando cria o tutor, vai para ele. 
+
+    
+    
          
             
 
