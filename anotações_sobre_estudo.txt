@@ -607,7 +607,7 @@ preciso organizar as listas para essas alterações.
     Fiz aparecer os animais de cada tutor e transformei em links, mas buga a busca. Então talvez
 seja melhor criar uma nova pagina para essa busca especifica, criando uma urls, uma views e um template especifico
 talvez como vizualizacao_paciente.html e a visuzalização esta apenas para felinos. 
-
+    Precisa criar um html que n seja buscar paciente, mas um que seja do paciente em si!
     
     
     
