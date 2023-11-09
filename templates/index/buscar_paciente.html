@@ -1,68 +1,71 @@
 {% extends 'index/base.html' %}
 {% load static %}
 {% block content %}
-    <div class="page-header">
-        <h1>Lista de Pacientes</h1>
-        <a href="{% url 'novo_paciente' %}" class="btn btn-primary">Novo Paciente</a>
-       
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <form class="form-inline" action="{% url 'buscar_paciente' %}">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="buscar" placeholder="O que você procura?">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-search-location"></i>                                 </button>
-                            </div>
+<div class="page-header">
+    <h1>Lista de Pacientes</h1>
+    <a href="{% url 'novo_paciente' %}" class="btn btn-primary">Novo Paciente</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form class="form-inline" action="{% url 'buscar_paciente' %}">
+                    <div class="input-group">
+                        <input type="hidden" name="tutor_id" value="{{ tutor_id }}">
+                        <input type="hidden" name="paciente_id" value="{{ paciente_id }}">
+                        <input type="text" class="form-control" name="buscar" placeholder="O que você procura?">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search-location"></i>
+                            </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
-          </div>
+        </div>
     </div>
-    <table class="table table-hover custom-rounded-table">
-            <thead class="thead-default">
-                <tr>
-                    <th>Nome</th>
-                    <th>Espécie</th>
-                    <th>Raça</th>
-                    <th>Idade</th>
-                    <th>Peso</th>
-                    <th>Castração</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if pacientes %}
-                {% for paciente in pacientes %} 
-                <tr>
-                    <td>{{ paciente.nome }}</td>
-                    <td>{{ paciente.especie }}</td>
-                    <td>{{ paciente.raca }}</td>
-                    <td>{{ paciente.idade }}</td>
-                    <td>{{ paciente.peso }}</td>
-                    <td>{{ paciente.castracao }}</td>
-                    <td>
-                        <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success" >Editar</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'deletar_paciente' paciente.id %}"  class="btn btn-danger" >Deletar</a>
-                    </td>
-                    <td>
-                        {% if paciente.foto %}
-                            <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
-                        {% else %}
-                            <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
-                        {% endif %}
-                    </td>
-                </tr>
-
-
-                {% endfor %} 
+</div>
+<table class="table table-hover custom-rounded-table">
+    <thead class="thead-default">
+        <tr>
+            <th>Nome</th>
+            <th>Espécie</th>
+            <th>Raça</th>
+            <th>Idade</th>
+            <th>Peso</th>
+            <th>Castração</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if pacientes %}
+        {% for paciente in pacientes %}
+        <tr>
+            <td><a href="{% url 'buscar_paciente' ?buscar={{ paciente.nome }}}">{{ paciente.nome }}</a></td>
+            <td>{{ paciente.especie }}</td>
+            <td>{{ paciente.raca }}</td>
+            <td>{{ paciente.idade }}</td>
+            <td>{{ paciente.peso }}</td>
+            <td>{{ paciente.castracao }}</td>
+            <td>
+                <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
+            </td>
+            <td>
+                <a href="{% url 'deletar_paciente' paciente.id %}" class="btn btn-danger">Deletar</a>
+            </td>
+            <td>
+                {% if paciente.foto %}
+                <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
                 {% else %}
-                {% endif %} 
-
-            </tbody>
-    </table>
-    
+                <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        {# Trate o caso em que não há pacientes #}
+        <tr>
+            <td colspan="7">Nenhum paciente encontrado.</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
 {% endblock %}

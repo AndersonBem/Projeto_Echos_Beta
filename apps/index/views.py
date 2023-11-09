@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor 
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino 
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms
 
 
 # lista de funções de listas
@@ -30,7 +30,9 @@ def lista_pacientes(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    pacientes = Paciente.objects.order_by("nome").all()
+    pacientes_felinos= Paciente.objects.order_by("nome").all()
+    pacientes_caninos = PacienteCanino.objects.order_by("nome").all()
+    pacientes = list(pacientes_felinos) + list(pacientes_caninos)
     return render(request, 'index/lista_pacientes.html', {"pacientes": pacientes})
 
 def lista_tutores(request):
@@ -41,7 +43,7 @@ def lista_tutores(request):
     return render(request, 'index/lista_tutores.html', {"tutores": tutores})
 
 #Lista de funções de novo
-
+#Clinica
 def nova_clinica(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
@@ -73,6 +75,8 @@ def deletar_clinica(request, clinica_id):
     messages.success(request, 'Deleção feita com sucesso')
     return redirect('lista_clinicas')
 
+#pacientes felinos
+
 def novo_paciente(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
@@ -103,6 +107,41 @@ def deletar_paciente(request, paciente_id):
     paciente.delete()
     messages.success(request, 'Deleção feita com sucesso')
     return redirect('lista_pacientes')
+
+#pacientes Caninos
+
+def novo_paciente_canino(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    form = PacienteCaninoForms
+    if request.method == 'POST':
+        form = PacienteCaninoForms(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Novo Paciente Cadastrado')
+            return redirect('lista_pacientes')
+    return render(request,'index/novo_paciente_canino.html', {'form':form})
+
+def editar_paciente_canino(request, paciente_id):
+    paciente = PacienteCanino.objects.get(id=paciente_id)
+    form = PacienteCaninoForms(instance=paciente)
+
+    if request.method == 'POST':
+        form = PacienteCaninoForms(request.POST, request.FILES, instance=paciente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Paciente alterado')
+            return redirect('lista_pacientes')
+    return render (request, 'index/editar_paciente_canino.html', {'form':form, 'paciente_id': paciente_id})
+
+def deletar_paciente_canino(request, paciente_id):
+    paciente = PacienteCanino.objects.get(id=paciente_id)
+    paciente.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_pacientes')
+
+#tutores
 
 def novo_tutor(request):
     if not request.user.is_authenticated:

@@ -48,10 +48,7 @@ class Tutor(models.Model):
 
 class Paciente(models.Model):
     
-    OPCOES_CATEGORIA = [
-        ("PCB", "PCB"),
-        ("PERSA", "Persa")
-    ]
+   
     def data_atual_sem_hora():
         return timezone.now().date()
     def calcular_idade(self):
@@ -90,17 +87,79 @@ class Paciente(models.Model):
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
     tutor = models.ForeignKey(
-        to= 'index.Tutor',
-        on_delete= models.SET_NULL,
+        Tutor, 
+        on_delete=models.CASCADE,
         null=True,
-        blank=False,
-        related_name= "Tutor",
+        blank=False, 
+        related_name='pacientes'
     )
     
     def __str__(self):
         return self.nome
 
+class PacienteCanino(models.Model):
+    
+    
+    def data_atual_sem_hora():
+        return timezone.now().date()
+    def calcular_idade(self):
+        today = date.today()
+        age_years = today.year - self.nascimento.year
+        age_months = today.month - self.nascimento.month
+        if today.day < self.nascimento.day:
+            age_months -= 1
+        if age_months < 0:
+            age_years -= 1
+            age_months += 12
+        return age_years, age_months
+    @property
+    def idade(self):
+        age_years, age_months = self.calcular_idade()
+        if age_years == 0:
+            return f"{age_months} meses"
+        elif age_months == 0:
+            return f"{age_years} anos"
+        else:
+            return f"{age_years} anos e {age_months} meses"
+    
+    
+    nome = models.CharField(max_length=100, null=False, blank=False)
+    especie = models.CharField(default="Canino")
+    raca = models.ForeignKey(
+        to= 'index.RacaCanino',
+        on_delete= models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name= "RacaCanino",
+    )
+    nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
+    peso = models.CharField(max_length=100, null=False, blank=False)
+    castracao = models.BooleanField(default=False)
+    data_criacao = models.DateTimeField(default=datetime.now, blank=False)
+    foto = models.ImageField(upload_to=get_upload_path, blank=True)
+    tutor = models.ForeignKey(
+        Tutor,
+        on_delete= models.CASCADE,
+        null=True,
+        blank=False,
+        related_name= 'pacientes_caninos',
+    )
+    
+    def __str__(self):
+        return self.nome
+
+
+
+
+
+
 class RacaFelino(models.Model):
+    raca = models.CharField(max_length=100, null=False, blank=False)
+
+    def __str__(self):
+        return self.raca
+
+class RacaCanino(models.Model):
     raca = models.CharField(max_length=100, null=False, blank=False)
 
     def __str__(self):

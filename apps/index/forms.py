@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
@@ -43,6 +43,39 @@ class ClinicaForms(forms.ModelForm):
 class PacienteForms(forms.ModelForm):
     class Meta:
         model = Paciente
+        exclude = ['data_criacao']
+
+        labels = {
+            'nome': 'Nome',
+            
+            'raca': 'Raça',
+            'nascimento': "Data de Nascimento",
+            'peso': "Peso",
+            'castracao': "O paciente é castrado?",
+            'foto': "Foto",
+            'tutor': "Tutor"
+        } 
+        
+        widgets={
+            'nome' : forms.TextInput(attrs={'class':'form-control'}),
+            
+            'raca': forms.Select(attrs={'class': 'radio-select'}),
+            'nascimento': forms.DateInput(
+                format='%d/%m/%Y',
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+            'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
+            'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'foto' : forms.FileInput(attrs={'class': 'form-control'}),
+            'tutor': forms.Select(attrs={'class': 'form-control'})
+        }
+
+class PacienteCaninoForms(forms.ModelForm):
+    class Meta:
+        model = PacienteCanino
         exclude = ['data_criacao']
 
         labels = {

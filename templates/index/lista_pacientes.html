@@ -3,10 +3,13 @@
 {% block content %}
     <div class="page-header">
         <h1>Lista de Pacientes</h1>
-        <a href="{% url 'novo_paciente' %}" class="btn btn-primary">Novo Paciente</a>
+        <a href="{% url 'novo_paciente' %}" class="btn btn-primary">Novo Paciente Felino</a>
+        <a href="{% url 'novo_paciente_canino' %}" class="btn btn-primary">Novo Paciente Canino</a>
+
         <div class="container">
             <div class="row">
                 <div class="col-md-6 offset-md-3">
+                    
                     <form class="form-inline" action="{% url 'buscar_paciente' %}">
                         <div class="input-group">
                             <input type="text" class="form-control" name="buscar" placeholder="O que você procura?">
@@ -16,9 +19,11 @@
                             </div>
                         </div>
                     </form>
+                    
                 </div>
             </div>
           </div>
+          
     </div>
     <table class="table table-hover custom-rounded-table">
             <thead class="thead-default">
@@ -37,8 +42,8 @@
                 {% if pacientes %}
                 {% for paciente in pacientes %} 
                 <tr>
-                    <td><a href="{% url 'buscar_paciente' %}?buscar={{ paciente.nome }}">{{ paciente.nome }}</a></td>
-                    <td>{{ paciente.especie }}</td>
+                    <td><a href="{% url 'buscar_paciente' }">{{ paciente.nome }}</a></td>
+
                     <td>{{ paciente.raca }}</td>
                     <td>{{ paciente.idade }}</td>
                     <td>{{ paciente.peso }}</td>

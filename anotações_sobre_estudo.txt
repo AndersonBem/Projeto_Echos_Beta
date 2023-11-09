@@ -599,7 +599,16 @@
     Fiz uma classe para ter as raças de felino salvas, consigo add elas pelo admin, consegui também
 fazer a seleção de raças na hora de criar o paciente se baseada nesse BD
     Arrumei as listas.
-                    
+    Preciso fazer um models para canino, um models para raça de caninos, um botão pra add raça de felinos e caninos,
+preciso organizar as listas para essas alterações.
+
+                    DIA 2 09/11/2023
+    Criei a class de raçascaninas e a class de pacientes caninos.
+    Fiz aparecer os animais de cada tutor e transformei em links, mas buga a busca. Então talvez
+seja melhor criar uma nova pagina para essa busca especifica, criando uma urls, uma views e um template especifico
+talvez como vizualizacao_paciente.html e a visuzalização esta apenas para felinos. 
+
+    
     
     
          
