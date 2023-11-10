@@ -47,9 +47,10 @@ class Tutor(models.Model):
         return self.nome
 
 class Paciente(models.Model):
+    
+   
     def data_atual_sem_hora():
         return timezone.now().date()
-
     def calcular_idade(self):
         today = date.today()
         age_years = today.year - self.nascimento.year
@@ -60,7 +61,6 @@ class Paciente(models.Model):
             age_years -= 1
             age_months += 12
         return age_years, age_months
-
     @property
     def idade(self):
         age_years, age_months = self.calcular_idade()
@@ -70,16 +70,16 @@ class Paciente(models.Model):
             return f"{age_years} anos"
         else:
             return f"{age_years} anos e {age_months} meses"
-
+    
+    
     nome = models.CharField(max_length=100, null=False, blank=False)
     especie = models.CharField(max_length=100, null=False, blank=False)
     raca = models.ForeignKey(
-        to='index.Raca',
-        on_delete=models.SET_NULL,
+        to= 'index.RacaFelino',
+        on_delete= models.SET_NULL,
         null=True,
         blank=False,
-        related_name="Raca",
-        limit_choices_to={'especie': models.F('especie')}
+        related_name= "RacaFelino",
     )
     nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
     peso = models.CharField(max_length=100, null=False, blank=False)
@@ -87,13 +87,13 @@ class Paciente(models.Model):
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
     tutor = models.ForeignKey(
-        Tutor,
+        Tutor, 
         on_delete=models.CASCADE,
         null=True,
-        blank=False,
+        blank=False, 
         related_name='pacientes'
     )
-
+    
     def __str__(self):
         return self.nome
 
@@ -150,17 +150,7 @@ class PacienteCanino(models.Model):
 
 
 
-class Raca(models.Model):
-    ESPECIE_CHOICES = [
-        ('felino', 'Felino'),
-        ('canino', 'Canino'),
-    ]
 
-    especie = models.CharField(max_length=100, choices=ESPECIE_CHOICES, null=False, blank=False)
-    raca = models.CharField(max_length=100, null=False, blank=False)
-
-    def __str__(self):
-        return self.raca
 
 
 class RacaFelino(models.Model):

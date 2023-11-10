@@ -1,5 +1,5 @@
-from django.shortcuts import render,redirect
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino, Raca 
+from django.shortcuts import render,redirect, get_object_or_404
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino 
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms
 
@@ -81,25 +81,14 @@ def novo_paciente(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-
-    especie = request.GET.get('especie')
-
-    # Verifique se a espécie é válida
-    if especie not in ["Felino", "Canino"]:
-        messages.error(request, "Espécie inválida")
-        return redirect('selecao')  # Redirecione para a página de seleção se a espécie for inválida
-
-    form = PacienteForms(request.POST or None, initial={'especie': especie})
-
+    form = PacienteForms
     if request.method == 'POST':
+        form = PacienteForms(request.POST, request.FILES)
         if form.is_valid():
-            paciente = form.save(commit=False)
-            paciente.set_especie_and_raca(especie, request.POST.get('raca'))
-            paciente.save()
+            form.save()
             messages.success(request, 'Novo Paciente Cadastrado')
             return redirect('lista_pacientes')
-
-    return render(request, 'index/novo_paciente.html', {'form': form})
+    return render(request,'index/novo_paciente.html', {'form':form})
 
 def editar_paciente(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
@@ -279,3 +268,10 @@ def buscar_clinica(request):
 
 def selecao(request):
     return render(request, 'index/selecao.html')
+
+def exibicao(request, paciente_id):
+    # Buscar o paciente pelo ID, retornar 404 se não encontrado
+    paciente = Paciente.objects.get(id=paciente_id)
+
+    # Agora, você pode passar o objeto do paciente para o template
+    return render(request, 'index/exibicao.html', {'paciente': paciente})

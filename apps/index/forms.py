@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino, Raca
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
@@ -41,29 +41,25 @@ class ClinicaForms(forms.ModelForm):
         }
 
 class PacienteForms(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        especie = kwargs.pop('especie', None)
-        super(PacienteForms, self).__init__(*args, **kwargs)
-
-        if especie:
-            self.fields['raca'].queryset = Raca.objects.filter(especie=especie)
-
+    especie = forms.CharField(initial='Felino')
     class Meta:
         model = Paciente
         exclude = ['data_criacao']
 
         labels = {
             'nome': 'Nome',
+            
             'raca': 'Raça',
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
             'foto': "Foto",
             'tutor': "Tutor"
-        }
-
-        widgets = {
-            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+        } 
+        
+        widgets={
+            'nome' : forms.TextInput(attrs={'class':'form-control'}),
+            
             'raca': forms.Select(attrs={'class': 'radio-select'}),
             'nascimento': forms.DateInput(
                 format='%d/%m/%Y',
@@ -74,19 +70,20 @@ class PacienteForms(forms.ModelForm):
             ),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control'}),
+            'foto' : forms.FileInput(attrs={'class': 'form-control'}),
             'tutor': forms.Select(attrs={'class': 'form-control'})
         }
 
-
 class PacienteCaninoForms(forms.ModelForm):
+    especie = forms.CharField(initial='Canino')
+
     class Meta:
-        model = PacienteCanino
+        model = Paciente
         exclude = ['data_criacao']
 
         labels = {
             'nome': 'Nome',
-            
+            'especie':'Especie',
             'raca': 'Raça',
             'nascimento': "Data de Nascimento",
             'peso': "Peso",

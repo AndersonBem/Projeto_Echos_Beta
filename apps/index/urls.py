@@ -2,7 +2,7 @@ from django.urls import path
 from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
-    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino 
+    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao 
 
 urlpatterns = [
     path('',index, name='index'),
@@ -37,5 +37,7 @@ urlpatterns = [
     path("buscar_tutor", buscar_tutor, name="buscar_tutor"),
     path("buscar_clinica", buscar_clinica, name="buscar_clinica"),
 
-    path('selecao', selecao, name='selecao')
+    path('selecao', selecao, name='selecao'),
+    path('exibicao/<int:paciente_id>/', exibicao, name='exibicao')
+
 ]

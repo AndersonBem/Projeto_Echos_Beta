@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino, Raca
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino
 
 class ListandoVeterinario(admin.ModelAdmin):
     list_display = ("id", "nome", "telefone", "email")
@@ -27,12 +27,6 @@ class ListandoTutor(admin.ModelAdmin):
     search_fields = ("nome",)
     list_per_page = 10
 
-class ListandoRaca(admin.ModelAdmin):
-    list_display = ("id", 'especie', "raca")
-    list_display_links = ("id", 'especie', "raca")
-    search_fields = ("raca",)
-    list_per_page = 10
-
 class ListandoRacaFelino(admin.ModelAdmin):
     list_display = ("id", "raca")
     list_display_links = ("id", "raca")
@@ -55,6 +49,5 @@ admin.site.register(Veterinario, ListandoVeterinario)
 admin.site.register(Clinica, ListandoClinica)
 admin.site.register(Paciente, ListandoPaciente)
 admin.site.register(Tutor, ListandoTutor)
-admin.site.register(Raca, ListandoRaca)
 admin.site.register(RacaFelino, ListandoRacaFelino)
 admin.site.register(RacaCanino, ListandoRacaCanino)
