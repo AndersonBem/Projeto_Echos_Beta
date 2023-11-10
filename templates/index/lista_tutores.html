@@ -36,7 +36,7 @@
     <tbody>
         {% for tutor in tutores %}
             <tr>
-                <td><a href="{% url 'buscar_tutor' %}?buscar={{ tutor.nome }}">{{ tutor.nome }}</a></td>
+                <td><a href="{% url 'exibicao_tutor' tutor.id %}">{{ tutor.nome }}</a></td>
                 <td>{{ tutor.telefone }}</td>
                 <td>{{ tutor.email }}</td>
                 <td>{{ tutor.endereco }}</td>
@@ -47,7 +47,7 @@
                     <input type="checkbox" id="{{ tutor.id }}-pacientes-toggle" class="hide" />
                     <ul class="pacientes-list" id="{{ tutor.id }}-pacientes-list">
                         {% for paciente in tutor.pacientes.all %}
-                            <a href="{% url 'exibicao' paciente.id %}">
+                            <a href="{% url 'exibicao_tutor' tutor.id %}">
                                 <li>{{ paciente.nome }} ({{ paciente.especie }})</li>
                             </a>
                         {% endfor %}

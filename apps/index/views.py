@@ -30,9 +30,7 @@ def lista_pacientes(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    pacientes_felinos= Paciente.objects.order_by("nome").all()
-    pacientes_caninos = PacienteCanino.objects.order_by("nome").all()
-    pacientes = list(pacientes_felinos) + list(pacientes_caninos)
+    pacientes= Paciente.objects.order_by("nome").all()
     return render(request, 'index/lista_pacientes.html', {"pacientes": pacientes})
 
 def lista_tutores(request):
@@ -81,14 +79,18 @@ def novo_paciente(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    form = PacienteForms
+
+    ultimo_tutor = Tutor.objects.last()
+
+    form = PacienteForms(request.POST or None, initial={'tutor': ultimo_tutor})
+
     if request.method == 'POST':
-        form = PacienteForms(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'Novo Paciente Cadastrado')
             return redirect('lista_pacientes')
-    return render(request,'index/novo_paciente.html', {'form':form})
+
+    return render(request, 'index/novo_paciente.html', {'form': form})
 
 def editar_paciente(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
@@ -114,14 +116,18 @@ def novo_paciente_canino(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    form = PacienteCaninoForms
+
+    ultimo_tutor = Tutor.objects.last()
+
+    form = PacienteCaninoForms(request.POST or None, initial={'tutor': ultimo_tutor})
+
     if request.method == 'POST':
-        form = PacienteCaninoForms(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'Novo Paciente Cadastrado')
             return redirect('lista_pacientes')
-    return render(request,'index/novo_paciente_canino.html', {'form':form})
+
+    return render(request, 'index/novo_paciente_canino.html', {'form': form})
 
 def editar_paciente_canino(request, paciente_id):
     paciente = PacienteCanino.objects.get(id=paciente_id)
@@ -266,8 +272,11 @@ def buscar_clinica(request):
 
     return render (request, "index/buscar_clinica.html", {"clinicas":clinicas} )
 
+
 def selecao(request):
-    return render(request, 'index/selecao.html')
+    ultimo_tutor = Tutor.objects.last()
+    return render(request, 'index/selecao.html', {'ultimo_tutor': ultimo_tutor})
+
 
 def exibicao(request, paciente_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
@@ -275,3 +284,10 @@ def exibicao(request, paciente_id):
 
     # Agora, você pode passar o objeto do paciente para o template
     return render(request, 'index/exibicao.html', {'paciente': paciente})
+
+def exibicao_tutor(request, tutor_id):
+    # Buscar o paciente pelo ID, retornar 404 se não encontrado
+    tutor = Tutor.objects.get(id=tutor_id)
+
+    # Agora, você pode passar o objeto do paciente para o template
+    return render(request, 'index/exibicao_tutor.html', {'tutor': tutor})

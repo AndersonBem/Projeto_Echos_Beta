@@ -1,0 +1,30 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-header">
+    <h1>Detalhes do tutor</h1>
+    <a href="{% url 'novo_tutor' %}" class="btn btn-primary">Novo tutor</a>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2>Nome: {{ tutor.nome }}</h2>
+            <p>Espécie: {{ tutor.especie }}</p>
+            <p>Raça: {{ tutor.raca }}</p>
+            <p>Idade: {{ tutor.idade }}</p>
+            <p>Peso: {{ tutor.peso }}</p>
+            <p>Castração: {{ tutor.castracao }}</p>
+
+            <a href="{% url 'editar_tutor' tutor.id %}" class="btn btn-success">Editar</a>
+            <a href="{% url 'deletar_tutor' tutor.id %}" class="btn btn-danger">Deletar</a>
+            <a href="{% url 'selecao' %}" class="btn btn-success">Adicionar Paciente</a>
+            {% if tutor.foto %}
+            <img class="card__imagem" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">
+            {% else %}
+            <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

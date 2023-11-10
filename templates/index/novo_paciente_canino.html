@@ -27,14 +27,34 @@
             
             
             
-</section>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#peso').mask('00,00 kg', { translation: { 'k': null, 'g': null } });
-    });
-</script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+        <script>
+            // Adicione esta linha para garantir que o jQuery não entre em conflito com outras bibliotecas
+            jQuery.noConflict();
+        
+            jQuery(document).ready(function ($) {
+                console.log("jQuery e jQuery Mask foram carregados com sucesso.");
+        
+                // Verifique se o seletor está correto e se o elemento existe na página
+                var pesoField = $('#peso');
+                if (pesoField.length > 0) {
+                    console.log("Campo de peso encontrado.");
+        
+                    // Tente aplicar a máscara
+                    pesoField.mask('00,00 kg', {
+                        translation: {
+                            'k': null,
+                            'g': null
+                        },
+                        reverse: true
+                    });
+                    console.log("Máscara aplicada com sucesso.");
+                } else {
+                    console.log("Campo de peso não encontrado. Verifique se o ID está correto.");
+                }
+            });
+        </script>
 
 
 {% endblock %}

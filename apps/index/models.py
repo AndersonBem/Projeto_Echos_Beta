@@ -114,6 +114,9 @@ class Paciente(models.Model):
     def __str__(self):
         return self.nome
 
+
+#Não apagar de baixo, mesmo q n esteja em uso 
+
 class PacienteCanino(models.Model):
     
     
@@ -154,13 +157,7 @@ class PacienteCanino(models.Model):
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
-    tutor = models.ForeignKey(
-        Tutor,
-        on_delete= models.CASCADE,
-        null=True,
-        blank=False,
-        related_name= 'pacientes_caninos',
-    )
+    
     
     def __str__(self):
         return self.nome
@@ -181,3 +178,6 @@ class RacaCanino(models.Model):
 
     def __str__(self):
         return self.raca
+    
+
+
