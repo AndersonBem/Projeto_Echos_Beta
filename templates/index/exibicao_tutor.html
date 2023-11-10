@@ -17,7 +17,7 @@
 
             <a href="{% url 'editar_tutor' tutor.id %}" class="btn btn-success">Editar</a>
             <a href="{% url 'deletar_tutor' tutor.id %}" class="btn btn-danger">Deletar</a>
-            <a href="{% url 'selecao' %}" class="btn btn-success">Adicionar Paciente</a>
+            <a href="{% url 'selecao' tutor.id %}" class="btn btn-success">Adicionar Paciente</a>
             {% if tutor.foto %}
             <img class="card__imagem" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">
             {% else %}

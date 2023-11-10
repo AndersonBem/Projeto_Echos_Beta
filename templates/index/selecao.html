@@ -19,7 +19,11 @@
     <script>
         function redirecionar() {
             var selecionado = document.getElementById("animal").value;
+            var tutor_id = "{{ tutor_id }}";
             var urlRedirecionamento = selecionado === 'felino' ? '{% url "novo_paciente" %}' : '{% url "novo_paciente_canino" %}';
+            if (tutor_id) {
+                urlRedirecionamento += '?tutor_id=' + tutor_id;
+            }
             window.location.href = urlRedirecionamento;
         }
     </script>

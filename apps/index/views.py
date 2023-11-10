@@ -80,9 +80,12 @@ def novo_paciente(request):
         messages.error(request, "Usuário não logado")
         return redirect('login')
 
+    tutor_id = request.GET.get('tutor_id')
     ultimo_tutor = Tutor.objects.last()
 
-    form = PacienteForms(request.POST or None, initial={'tutor': ultimo_tutor})
+    tutor_inicial = get_object_or_404(Tutor, id=tutor_id) if tutor_id else ultimo_tutor
+
+    form = PacienteForms(request.POST or None, initial={'tutor': tutor_inicial})
 
     if request.method == 'POST':
         if form.is_valid():
@@ -91,6 +94,7 @@ def novo_paciente(request):
             return redirect('lista_pacientes')
 
     return render(request, 'index/novo_paciente.html', {'form': form})
+
 
 def editar_paciente(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
@@ -117,14 +121,17 @@ def novo_paciente_canino(request):
         messages.error(request, "Usuário não logado")
         return redirect('login')
 
+    tutor_id = request.GET.get('tutor_id')
     ultimo_tutor = Tutor.objects.last()
 
-    form = PacienteCaninoForms(request.POST or None, initial={'tutor': ultimo_tutor})
+    tutor_inicial = get_object_or_404(Tutor, id=tutor_id) if tutor_id else ultimo_tutor
+
+    form = PacienteCaninoForms(request.POST or None, initial={'tutor': tutor_inicial})
 
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            messages.success(request, 'Novo Paciente Cadastrado')
+            messages.success(request, 'Novo Paciente Canino Cadastrado')
             return redirect('lista_pacientes')
 
     return render(request, 'index/novo_paciente_canino.html', {'form': form})
@@ -153,15 +160,16 @@ def novo_tutor(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
+
     form = TutorForms
     if request.method == 'POST':
         form = TutorForms(request.POST)
         if form.is_valid():
-            form.save()
+            novo_tutor = form.save()  # Salva o novo tutor e obtém a instância
             messages.success(request, 'Novo tutor cadastrado')
-            return redirect('selecao')
-    return render(request,'index/novo_tutor.html', {'form': form})
-
+            return redirect('exibicao_tutor', tutor_id=novo_tutor.id)
+    
+    return render(request, 'index/novo_tutor.html', {'form': form})
 def editar_tutor(request, tutor_id):
     tutor = Tutor.objects.get(id=tutor_id)
     form = TutorForms(instance=tutor)
@@ -273,9 +281,8 @@ def buscar_clinica(request):
     return render (request, "index/buscar_clinica.html", {"clinicas":clinicas} )
 
 
-def selecao(request):
-    ultimo_tutor = Tutor.objects.last()
-    return render(request, 'index/selecao.html', {'ultimo_tutor': ultimo_tutor})
+def selecao(request, tutor_id):
+    return render(request, 'index/selecao.html', {'tutor_id': tutor_id})
 
 
 def exibicao(request, paciente_id):
