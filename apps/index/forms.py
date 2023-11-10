@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino, RacaCanino, RacaFelino
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
@@ -42,25 +42,24 @@ class ClinicaForms(forms.ModelForm):
 
 class PacienteForms(forms.ModelForm):
     especie = forms.CharField(initial='Felino')
+
     class Meta:
         model = Paciente
-        exclude = ['data_criacao']
-
+        exclude = ['data_criacao', 'raca_canino']
+        
         labels = {
             'nome': 'Nome',
-            
-            'raca': 'Raça',
+            'raca_felino': 'Raça Felino',
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
             'foto': "Foto",
             'tutor': "Tutor"
-        } 
-        
-        widgets={
-            'nome' : forms.TextInput(attrs={'class':'form-control'}),
-            
-            'raca': forms.Select(attrs={'class': 'radio-select'}),
+        }
+
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'raca_felino': forms.Select(attrs={'class': 'radio-select'}),
             'nascimento': forms.DateInput(
                 format='%d/%m/%Y',
                 attrs={
@@ -70,7 +69,7 @@ class PacienteForms(forms.ModelForm):
             ),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'foto' : forms.FileInput(attrs={'class': 'form-control'}),
+            'foto': forms.FileInput(attrs={'class': 'form-control'}),
             'tutor': forms.Select(attrs={'class': 'form-control'})
         }
 
@@ -79,23 +78,22 @@ class PacienteCaninoForms(forms.ModelForm):
 
     class Meta:
         model = Paciente
-        exclude = ['data_criacao']
+        exclude = ['data_criacao','raca_felino']
+        
 
         labels = {
             'nome': 'Nome',
-            'especie':'Especie',
-            'raca': 'Raça',
+            'raca_canino': 'Raça Canino',
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
             'foto': "Foto",
             'tutor': "Tutor"
-        } 
-        
-        widgets={
-            'nome' : forms.TextInput(attrs={'class':'form-control'}),
-            
-            'raca': forms.Select(attrs={'class': 'radio-select'}),
+        }
+
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'raca_canino': forms.Select(attrs={'class': 'radio-select'}),
             'nascimento': forms.DateInput(
                 format='%d/%m/%Y',
                 attrs={
@@ -105,7 +103,7 @@ class PacienteCaninoForms(forms.ModelForm):
             ),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'foto' : forms.FileInput(attrs={'class': 'form-control'}),
+            'foto': forms.FileInput(attrs={'class': 'form-control'}),
             'tutor': forms.Select(attrs={'class': 'form-control'})
         }
 

@@ -74,13 +74,30 @@ class Paciente(models.Model):
     
     nome = models.CharField(max_length=100, null=False, blank=False)
     especie = models.CharField(max_length=100, null=False, blank=False)
-    raca = models.ForeignKey(
-        to= 'index.RacaFelino',
-        on_delete= models.SET_NULL,
+    raca_felino = models.ForeignKey(
+        to='index.RacaFelino',
+        on_delete=models.SET_NULL,
         null=True,
         blank=False,
-        related_name= "RacaFelino",
+        related_name="raca_felino_paciente",
     )
+
+    raca_canino = models.ForeignKey(
+        to='index.RacaCanino',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name="raca_canino_paciente",
+    )
+    @property
+    def raca(self):
+        if self.raca_felino:
+            return self.raca_felino
+        elif self.raca_canino:
+            return self.raca_canino
+        else:
+            return None
+        
     nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
     peso = models.CharField(max_length=100, null=False, blank=False)
     castracao = models.BooleanField(default=False)
