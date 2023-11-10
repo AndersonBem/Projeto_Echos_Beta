@@ -47,7 +47,7 @@
                     <input type="checkbox" id="{{ tutor.id }}-pacientes-toggle" class="hide" />
                     <ul class="pacientes-list" id="{{ tutor.id }}-pacientes-list">
                         {% for paciente in tutor.pacientes.all %}
-                            <a href="{% url 'buscar_paciente' %}">
+                            <a href="{% url 'exibicao' paciente.id %}">
                                 <li>{{ paciente.nome }} ({{ paciente.especie }})</li>
                             </a>
                         {% endfor %}
