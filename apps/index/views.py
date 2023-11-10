@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino 
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino, Raca 
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms
 
@@ -81,14 +81,25 @@ def novo_paciente(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    form = PacienteForms
+
+    especie = request.GET.get('especie')
+
+    # Verifique se a espécie é válida
+    if especie not in ["Felino", "Canino"]:
+        messages.error(request, "Espécie inválida")
+        return redirect('selecao')  # Redirecione para a página de seleção se a espécie for inválida
+
+    form = PacienteForms(request.POST or None, initial={'especie': especie})
+
     if request.method == 'POST':
-        form = PacienteForms(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            paciente = form.save(commit=False)
+            paciente.set_especie_and_raca(especie, request.POST.get('raca'))
+            paciente.save()
             messages.success(request, 'Novo Paciente Cadastrado')
             return redirect('lista_pacientes')
-    return render(request,'index/novo_paciente.html', {'form':form})
+
+    return render(request, 'index/novo_paciente.html', {'form': form})
 
 def editar_paciente(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
