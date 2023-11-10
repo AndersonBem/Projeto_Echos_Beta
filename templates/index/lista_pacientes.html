@@ -43,7 +43,7 @@
                 {% for paciente in pacientes %} 
                 <tr>
                     <td><a href="{% url 'exibicao' paciente.id %}">{{ paciente.nome }}</a></td>
-
+                    <td>{{ paciente.especie }}</td>
                     <td>{{ paciente.raca }}</td>
                     <td>{{ paciente.idade }}</td>
                     <td>{{ paciente.peso }}</td>
