@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino 
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms
 
@@ -137,7 +137,7 @@ def novo_paciente_canino(request):
     return render(request, 'index/novo_paciente_canino.html', {'form': form})
 
 def editar_paciente_canino(request, paciente_id):
-    paciente = PacienteCanino.objects.get(id=paciente_id)
+    paciente = Paciente.objects.get(id=paciente_id)
     form = PacienteCaninoForms(instance=paciente)
 
     if request.method == 'POST':
@@ -149,7 +149,7 @@ def editar_paciente_canino(request, paciente_id):
     return render (request, 'index/editar_paciente_canino.html', {'form':form, 'paciente_id': paciente_id})
 
 def deletar_paciente_canino(request, paciente_id):
-    paciente = PacienteCanino.objects.get(id=paciente_id)
+    paciente = Paciente.objects.get(id=paciente_id)
     paciente.delete()
     messages.success(request, 'Deleção feita com sucesso')
     return redirect('lista_pacientes')

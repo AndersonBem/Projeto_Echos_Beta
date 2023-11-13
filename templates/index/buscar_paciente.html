@@ -39,7 +39,7 @@
         {% if pacientes %}
         {% for paciente in pacientes %}
         <tr>
-            <td><a href="{% url 'buscar_paciente' ?buscar={{ paciente.nome }}}">{{ paciente.nome }}</a></td>
+            <td><a href="{% url 'editar_paciente' paciente.id %}">{{ paciente.nome }}</a></td>
             <td>{{ paciente.especie }}</td>
             <td>{{ paciente.raca }}</td>
             <td>{{ paciente.idade }}</td>
@@ -48,9 +48,7 @@
             <td>
                 <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
             </td>
-            <td>
-                <a href="{% url 'deletar_paciente' paciente.id %}" class="btn btn-danger">Deletar</a>
-            </td>
+            
             <td>
                 {% if paciente.foto %}
                 <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">

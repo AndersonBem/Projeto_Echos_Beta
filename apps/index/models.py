@@ -19,8 +19,8 @@ def get_upload_path(instance, filename):
 
 class Veterinario(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
-    telefone = models.CharField(max_length=15, null=False, blank=False)
-    email = models.CharField(max_length=150, null=False, blank=False)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.CharField(max_length=150, null=True, blank=True)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     
     def __str__(self):
@@ -28,9 +28,9 @@ class Veterinario(models.Model):
 
 class Clinica(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
-    telefone = models.CharField(max_length=15, null=False, blank=False)
-    email = models.CharField(max_length=150, null=False, blank=False)
-    endereco = models.TextField(null=False, blank=False)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.CharField(max_length=150, null=True, blank=True)
+    endereco = models.TextField(null=True, blank=True)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     
     def __str__(self):
@@ -38,9 +38,9 @@ class Clinica(models.Model):
 
 class Tutor(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
-    telefone = models.CharField(max_length=15, null=False, blank=False)
-    email = models.CharField(max_length=150, null=False, blank=False)
-    endereco = models.TextField(null=False, blank=False)
+    telefone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.CharField(max_length=150, null=True, blank=True)
+    endereco = models.TextField(null=True, blank=True)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     
     def __str__(self):
@@ -98,8 +98,8 @@ class Paciente(models.Model):
         else:
             return None
         
-    nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
-    peso = models.CharField(max_length=100, null=False, blank=False)
+    nascimento = models.DateField(default=data_atual_sem_hora)
+    peso = models.CharField(max_length=100, null=True, blank=True)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
@@ -113,55 +113,6 @@ class Paciente(models.Model):
     
     def __str__(self):
         return self.nome
-
-
-#Não apagar de baixo, mesmo q n esteja em uso 
-
-class PacienteCanino(models.Model):
-    
-    
-    def data_atual_sem_hora():
-        return timezone.now().date()
-    def calcular_idade(self):
-        today = date.today()
-        age_years = today.year - self.nascimento.year
-        age_months = today.month - self.nascimento.month
-        if today.day < self.nascimento.day:
-            age_months -= 1
-        if age_months < 0:
-            age_years -= 1
-            age_months += 12
-        return age_years, age_months
-    @property
-    def idade(self):
-        age_years, age_months = self.calcular_idade()
-        if age_years == 0:
-            return f"{age_months} meses"
-        elif age_months == 0:
-            return f"{age_years} anos"
-        else:
-            return f"{age_years} anos e {age_months} meses"
-    
-    
-    nome = models.CharField(max_length=100, null=False, blank=False)
-    especie = models.CharField(default="Canino")
-    raca = models.ForeignKey(
-        to= 'index.RacaCanino',
-        on_delete= models.SET_NULL,
-        null=True,
-        blank=False,
-        related_name= "RacaCanino",
-    )
-    nascimento = models.DateField(default=data_atual_sem_hora, blank=False)
-    peso = models.CharField(max_length=100, null=False, blank=False)
-    castracao = models.BooleanField(default=False)
-    data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    foto = models.ImageField(upload_to=get_upload_path, blank=True)
-    
-    
-    def __str__(self):
-        return self.nome
-
 
 
 

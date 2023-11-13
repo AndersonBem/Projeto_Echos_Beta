@@ -305,6 +305,8 @@
             1-   pip install psycopg2 e atualizar o pip 
             2-  Pelo pgAdmin 4, criei o banco de dados e vou usar o comando:
                     CREATE EXTENSION unaccent;
+                    FILHA DA PUTA, VC PRECISA FAZER ISSO NO PG ADMIN 4, CLICA COM O ESQUERDO NO PROJETO ECHOS, VAI EM 
+                    FERRAMENTA DE CONSULTA, DIGITA ISSO AI DE CIMA E CLICA EM RUM 
             3-  Em settings.py:
                 1-  DATABASES = {
                         'default': {

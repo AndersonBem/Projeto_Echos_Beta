@@ -15,13 +15,18 @@
             <p>Peso: {{ paciente.peso }}</p>
             <p>Castração: {{ paciente.castracao }}</p>
 
-            <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
-            <a href="{% url 'deletar_paciente' paciente.id %}" class="btn btn-danger">Deletar</a>
+            {% if paciente.especie == 'felino' %}
+                <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
+                <a href="{% url 'deletar_paciente' paciente.id %}" class="btn btn-danger">Deletar</a>
+            {% else %}
+                <a href="{% url 'editar_paciente_canino' paciente.id %}" class="btn btn-success">Editar</a>
+                <a href="{% url 'deletar_paciente_canino' paciente.id %}" class="btn btn-danger">Deletar</a>
+            {% endif %}
 
             {% if paciente.foto %}
-            <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
+                <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}
-            <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+                <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
             {% endif %}
         </div>
     </div>

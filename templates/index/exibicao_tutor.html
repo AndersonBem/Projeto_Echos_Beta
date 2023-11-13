@@ -9,11 +9,10 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <h2>Nome: {{ tutor.nome }}</h2>
-            <p>Espécie: {{ tutor.especie }}</p>
-            <p>Raça: {{ tutor.raca }}</p>
-            <p>Idade: {{ tutor.idade }}</p>
-            <p>Peso: {{ tutor.peso }}</p>
-            <p>Castração: {{ tutor.castracao }}</p>
+            <p>Telefone: {{ tutor.telefone }}</p>
+            <p>E-mail: {{ tutor.email }}</p>
+            <p>Endereço: {{ tutor.endereco }}</p>
+            
 
             <a href="{% url 'editar_tutor' tutor.id %}" class="btn btn-success">Editar</a>
             <a href="{% url 'deletar_tutor' tutor.id %}" class="btn btn-danger">Deletar</a>

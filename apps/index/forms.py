@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, PacienteCanino, RacaCanino, RacaFelino
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
