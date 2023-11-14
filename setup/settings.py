@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'apps.usuarios.apps.UsuariosConfig',
 
-    'storages'
+    'storages',
+    'tinymce'
 ]
 
 MIDDLEWARE = [
@@ -183,4 +184,23 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR : 'danger',
     messages.SUCCESS : 'success',
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 800,
+    'menubar': True,
+    'plugins': [
+        'advlist autolink lists link image charmap print preview anchor',
+        'searchreplace visualblocks code fullscreen',
+        'insertdatetime media table paste code help wordcount',
+    ],
+    'toolbar': 'undo redo | formatselect | ' +
+               'bold italic backcolor | alignleft aligncenter ' +
+               'alignright alignjustify | bullist numlist outdent indent | ' +
+               'removeformat | help',
+    'content_css': [
+        '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+        '//www.tiny.cloud/css/codepen.min.css',
+    ],
 }

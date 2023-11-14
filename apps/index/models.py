@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, date
 from django.utils import timezone
 import os
+from tinymce.models import HTMLField
 
 
 # Create your models here.
@@ -48,9 +49,14 @@ class Tutor(models.Model):
 
 class Paciente(models.Model):
     
-   
-    def data_atual_sem_hora():
-        return timezone.now().date()
+    GENERO_CHOICES = [
+        ('Macho', 'Macho'),
+        ('Fêmea', 'Fêmea'),
+    ]
+
+    @property
+    def data_atual_sem_hora(self):
+        return timezone.now().strftime('%Y-%m-%d')
     def calcular_idade(self):
         today = date.today()
         age_years = today.year - self.nascimento.year
@@ -70,15 +76,19 @@ class Paciente(models.Model):
             return f"{age_years} anos"
         else:
             return f"{age_years} anos e {age_months} meses"
+    @property
+    def nascimento_formatado(self):
+        return self.nascimento.strftime('%Y-%m-%d')
     
     
     nome = models.CharField(max_length=100, null=False, blank=False)
     especie = models.CharField(max_length=100, null=False, blank=False)
+    sexo =  models.CharField(max_length=5, choices=GENERO_CHOICES, default='Macho')
     raca_felino = models.ForeignKey(
         to='index.RacaFelino',
         on_delete=models.SET_NULL,
         null=True,
-        blank=False,
+        blank=True,
         related_name="raca_felino_paciente",
     )
 
@@ -86,7 +96,7 @@ class Paciente(models.Model):
         to='index.RacaCanino',
         on_delete=models.SET_NULL,
         null=True,
-        blank=False,
+        blank=True,
         related_name="raca_canino_paciente",
     )
     @property
@@ -131,4 +141,43 @@ class RacaCanino(models.Model):
         return self.raca
     
 
-
+class Laudo(models.Model):
+    paciente = models.ForeignKey(
+        Paciente, 
+        on_delete=models.CASCADE,
+        null=True,
+        blank=False, 
+        related_name='laudos'
+    )
+    especie = models.CharField(max_length=100, null=False, blank=False)
+    raca = models.CharField(max_length=100, null=False, blank=False)
+    sexo = models.CharField(max_length=100, null=False, blank=False)
+    tutor = models.ForeignKey(
+        'index.Tutor', 
+        on_delete=models.CASCADE,
+        null=True,
+        blank=False, 
+        related_name='tutor'
+    )
+    email = models.CharField(max_length=100, null=False, blank=False)
+    idade = models.CharField(max_length=100, null=False, blank=False)
+    peso = models.CharField(max_length=100, null=False, blank=False)
+    email_extra = models.CharField(max_length=100, null=False, blank=False)
+    telefone_extra = models.CharField(max_length=100, null=False, blank=False)
+    suspeita = models.CharField(max_length=100, null=False, blank=False)
+    clinica = models.ForeignKey(
+        Clinica, 
+        on_delete=models.CASCADE,
+        null=True,
+        blank=False, 
+        related_name='clinicas'
+    )
+    veterinario = models.ForeignKey(
+        Veterinario, 
+        on_delete=models.CASCADE,
+        null=True,
+        blank=False, 
+        related_name='pacientes'
+    )
+    data = models.DateTimeField(default=datetime.now, blank=False)
+    laudo = models.TextField(null=True, blank=True)

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms
 
 
 # lista de funções de listas
@@ -298,3 +298,37 @@ def exibicao_tutor(request, tutor_id):
 
     # Agora, você pode passar o objeto do paciente para o template
     return render(request, 'index/exibicao_tutor.html', {'tutor': tutor})
+
+
+def laudo(request, paciente_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+
+    paciente = Paciente.objects.get(id=paciente_id)
+    tutor = paciente.tutor
+
+    if request.method == 'POST':
+        form = LaudoForms(request.POST)
+        if form.is_valid():
+            # Define o paciente associado ao laudo antes de salvar
+            form.instance.paciente = paciente
+            form.instance.tutor = tutor
+            form.instance.nome = paciente.nome
+            form.instance.especie = paciente.especie
+            form.instance.sexo = paciente.sexo
+            form.instance.peso = paciente.peso
+            form.instance.email = tutor.email
+            # Adicione mais campos conforme necessário
+
+            form.save()
+            messages.success(request, 'Laudo salvo com sucesso')
+            return redirect('lista_pacientes')  # Altere para a URL desejada após salvar o laudo
+        else:
+            # Adicione mensagens de erro ou lógica adicional aqui, se necessário
+            messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
+    else:
+        # Passa tanto o paciente quanto o tutor para o formulário
+        form = LaudoForms(initial={'paciente': paciente.nome}, tutor=tutor)
+
+    return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})

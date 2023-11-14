@@ -50,10 +50,13 @@
 </script>
 <!-- Fim dos scripts do TinyMCE -->
 
-
 <div class="container mt-5">
-    <form action="{% url 'nova_clinica' %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'laudo' paciente.id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        <!-- Adiciona campos hidden para paciente_id e tutor_id -->
+        <input type="hidden" name="paciente_id" value="{{ paciente_id }}">
+        <input type="hidden" name="tutor_id" value="{{ tutor_id }}">
+
         <div class="row">
             {% for field in form.visible_fields %}
                 <div class="col-12 col-lg-6 mb-3">
@@ -79,5 +82,3 @@
 </script>
 
 {% endblock %}
-
-
