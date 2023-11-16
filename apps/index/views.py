@@ -300,35 +300,42 @@ def exibicao_tutor(request, tutor_id):
     return render(request, 'index/exibicao_tutor.html', {'tutor': tutor})
 
 
-def laudo(request, paciente_id):
+def laudo(request, paciente_id, tutor_id):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
 
-    paciente = Paciente.objects.get(id=paciente_id)
-    tutor = paciente.tutor
+    try:
+        paciente = Paciente.objects.select_related('tutor').get(id=paciente_id)
+        tutor = Tutor.objects.get(id=tutor_id)
+    except Paciente.DoesNotExist or Tutor.DoesNotExist:
+        messages.error(request, "Paciente ou Tutor não encontrado")
+        return redirect('alguma_pagina_de_erro')
 
     if request.method == 'POST':
         form = LaudoForms(request.POST)
         if form.is_valid():
-            # Define o paciente associado ao laudo antes de salvar
             form.instance.paciente = paciente
             form.instance.tutor = tutor
-            form.instance.nome = paciente.nome
-            form.instance.especie = paciente.especie
-            form.instance.sexo = paciente.sexo
-            form.instance.peso = paciente.peso
-            form.instance.email = tutor.email
-            # Adicione mais campos conforme necessário
+            # Preencha outros campos conforme necessário
 
             form.save()
             messages.success(request, 'Laudo salvo com sucesso')
             return redirect('lista_pacientes')  # Altere para a URL desejada após salvar o laudo
         else:
-            # Adicione mensagens de erro ou lógica adicional aqui, se necessário
             messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
     else:
-        # Passa tanto o paciente quanto o tutor para o formulário
-        form = LaudoForms(initial={'paciente': paciente.nome}, tutor=tutor)
+        form = LaudoForms(initial={
+            'paciente': paciente.nome,
+            'especie': paciente.especie,
+            'raca': paciente.raca,
+            'sexo': paciente.sexo,
+            'tutor': tutor.nome,
+            'email': tutor.email,
+            'idade': paciente.idade,
+            'peso': paciente.peso,
+            'nome_paciente': paciente.nome,  # Adicione esta linha para incluir o nome do paciente
+            'nome_tutor': tutor.nome,  # Adicione esta linha para incluir o nome do tutor
+        })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})

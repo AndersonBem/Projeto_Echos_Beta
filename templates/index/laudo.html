@@ -51,7 +51,7 @@
 <!-- Fim dos scripts do TinyMCE -->
 
 <div class="container mt-5">
-    <form action="{% url 'laudo' paciente.id %}" method="POST" enctype="multipart/form-data">
+    <a href="{% url 'laudo' paciente_id=paciente.id tutor_id=paciente.tutor.id %}" class="btn btn-primary">Criar laudo</a>
         {% csrf_token %}
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
         <input type="hidden" name="paciente_id" value="{{ paciente_id }}">

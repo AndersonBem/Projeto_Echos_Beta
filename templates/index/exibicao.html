@@ -22,7 +22,7 @@
                 <a href="{% url 'editar_paciente_canino' paciente.id %}" class="btn btn-success">Editar</a>
                 <a href="{% url 'deletar_paciente_canino' paciente.id %}" class="btn btn-danger">Deletar</a>
             {% endif %}
-            <a href="{% url 'laudo' paciente.id %}" class="btn btn-primary">Criar laudo</a>
+            <a href="{% url 'laudo' paciente.id tutor.id %}" class="btn btn-primary">Criar laudo</a>
             {% if paciente.foto %}
                 <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}

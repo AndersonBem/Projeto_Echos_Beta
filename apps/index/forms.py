@@ -134,6 +134,16 @@ class TutorForms(forms.ModelForm):
         }
 
 class LaudoForms(forms.ModelForm):
+    tutor = forms.ModelChoiceField(
+        queryset=Tutor.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
+    paciente = forms.ModelChoiceField(
+        queryset=Paciente.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
     class Meta:
         model = Laudo
         fields = '__all__'
@@ -157,11 +167,9 @@ class LaudoForms(forms.ModelForm):
         }
 
         widgets = {
-            'paciente': forms.Select(attrs={'class': 'form-control'}),
             'especie': forms.TextInput(attrs={'class': 'form-control'}),
             'raca': forms.TextInput(attrs={'class': 'form-control'}),
             'sexo': forms.TextInput(attrs={'class': 'form-control'}),
-            'tutor': forms.Select(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
             'idade': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
@@ -182,27 +190,15 @@ class LaudoForms(forms.ModelForm):
                 mce_attrs={'toolbar': 'bold italic | link | alignleft aligncenter alignright | undo redo |'},
             ),
         }
+
     data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
 
     def __init__(self, *args, **kwargs):
         # Aceita um argumento adicional chamado 'tutor'
         tutor = kwargs.pop('tutor', None)
-        paciente = kwargs.pop('paciente', None)
         super(LaudoForms, self).__init__(*args, **kwargs)
 
         # Preenche o campo 'email' com o email do tutor se disponível
         if tutor:
             self.fields['email'].initial = tutor.email
-
-        # Preenche os campos do paciente se disponíveis
-        if paciente:
-            self.fields['paciente'].initial = paciente.nome
-            self.fields['especie'].initial = paciente.especie
-            self.fields['raca'].initial = str(paciente.raca_felino) if paciente.raca_felino else str(paciente.raca_canino) if paciente.raca_canino else ''
-            self.fields['sexo'].initial = paciente.sexo
-            self.fields['peso'].initial = paciente.peso
-
-            # Preenche o campo 'idade' usando o método de propriedade 'idade' do modelo
-            self.fields['idade'].initial = str(paciente.idade)
-
             

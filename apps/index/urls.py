@@ -42,5 +42,5 @@ urlpatterns = [
     path('exibicao/<int:paciente_id>/', exibicao, name='exibicao'),
     path('exibicao_tutor/<int:tutor_id>/', exibicao_tutor, name='exibicao_tutor'),
     path('tinymce/', include('tinymce.urls')),
-    path('laudo/<int:paciente_id>/',laudo,name='laudo')
+    path('laudo/<int:paciente_id>/<int:tutor_id>/',laudo,name='laudo')
 ]
