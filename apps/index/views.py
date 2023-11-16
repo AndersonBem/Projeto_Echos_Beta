@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms
 from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -343,6 +343,8 @@ def buscar_clinica(request):
 def selecao(request, tutor_id):
     return render(request, 'index/selecao.html', {'tutor_id': tutor_id})
 
+def selecao_raca_criacao(request):
+    return render(request, 'index/selecao_raca_criacao.html')
 
 def exibicao(request, paciente_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
@@ -360,6 +362,7 @@ def exibicao_tutor(request, tutor_id):
 
 
 def laudo(request, paciente_id, tutor_id):
+
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
@@ -397,3 +400,34 @@ def laudo(request, paciente_id, tutor_id):
         })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})
+
+
+#Criação de novas raças
+
+def nova_raca_felino(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    form = RacaFelinoForms
+    if request.method == 'POST':
+        form = RacaFelinoForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Nova raça Cadastrada')
+            return redirect('novo_paciente')
+    return render(request,'index/nova_raca_felino.html', {'form':form})
+
+def nova_raca_canino(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    form = RacaCaninoForms
+    if request.method == 'POST':
+        form = RacaCaninoForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Nova raça Cadastrada')
+            return redirect('novo_paciente_canino')
+    return render(request,'index/nova_raca_canino.html', {'form':form})
+
+

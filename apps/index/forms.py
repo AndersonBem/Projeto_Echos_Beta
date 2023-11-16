@@ -201,4 +201,31 @@ class LaudoForms(forms.ModelForm):
         # Preenche o campo 'email' com o email do tutor se disponível
         if tutor:
             self.fields['email'].initial = tutor.email
-            
+
+
+class RacaFelinoForms(forms.ModelForm):
+    class Meta: 
+        model = RacaFelino
+        fields = '__all__'
+
+        labels = {
+            'raca': 'Raça'
+        }
+
+        widgets = {
+            'raca': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    
+class RacaCaninoForms(forms.ModelForm):
+    class Meta: 
+        model = RacaCanino
+        fields = '__all__'
+
+        labels = {
+            'raca': 'Raça'
+        }
+
+        widgets = {
+            'raca': forms.TextInput(attrs={'class': 'form-control'}),
+        }

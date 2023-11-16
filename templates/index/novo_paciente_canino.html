@@ -7,6 +7,7 @@
 <section class="galeria-centralizada" style="margin-left: 5em">
     
         <form action="{% url 'novo_paciente_canino' %}" method="POST" enctype="multipart/form-data">
+            <a href="{% url 'nova_raca_canino' %}" class="btn btn-primary">Criar Raça</a>
             {% csrf_token %}
                 <div class="row">
                     {% for field in form.visible_fields %}
