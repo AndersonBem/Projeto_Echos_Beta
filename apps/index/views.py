@@ -343,8 +343,7 @@ def buscar_clinica(request):
 def selecao(request, tutor_id):
     return render(request, 'index/selecao.html', {'tutor_id': tutor_id})
 
-def selecao_raca_criacao(request):
-    return render(request, 'index/selecao_raca_criacao.html')
+
 
 def exibicao(request, paciente_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
