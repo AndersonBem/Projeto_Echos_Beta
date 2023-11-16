@@ -57,7 +57,7 @@ class Paciente(models.Model):
 
     @property
     def data_atual_sem_hora(self):
-        return timezone.now().strftime('%Y-%m-%d')
+        return timezone.now().strftime('%d/%m/%Y')
     def calcular_idade(self):
         today = date.today()
         age_years = today.year - self.nascimento.year
@@ -78,7 +78,7 @@ class Paciente(models.Model):
     
     @property
     def nascimento_formatado(self):
-        return self.nascimento.strftime('%Y-%m-%d')
+        return self.nascimento.strftime('%d/%m/%Y')
     
     
     nome = models.CharField(max_length=100, null=False, blank=False)
