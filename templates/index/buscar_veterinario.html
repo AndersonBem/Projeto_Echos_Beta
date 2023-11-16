@@ -41,7 +41,10 @@
                         <a href="{% url 'editar_veterinario' veterinario.id %}"   class="btn btn-success" >Editar</a>
                     </td>
                     <td>
-                        <a href="{% url 'deletar_veterinario' veterinario.id %}"  class="btn btn-danger" >Deletar</a>                    
+                        <form method="post" action="{% url 'deletar_veterinario' veterinario.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este veterinário?')">Deletar</button>
+                        </form>
                     </td>
                 </tr>
 

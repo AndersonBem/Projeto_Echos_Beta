@@ -15,7 +15,10 @@
             
 
             <a href="{% url 'editar_tutor' tutor.id %}" class="btn btn-success">Editar</a>
-            <a href="{% url 'deletar_tutor' tutor.id %}" class="btn btn-danger">Deletar</a>
+            <form method="post" action="{% url 'deletar_tutor' tutor.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este tutor?')">Deletar</button>
+            </form>            
             <a href="{% url 'selecao' tutor.id %}" class="btn btn-success">Adicionar Paciente</a>
             {% if tutor.foto %}
             <img class="card__imagem" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">

@@ -1,4 +1,5 @@
 from django.urls import path, include
+from .views import DeletarTutorView, DeletarPacienteView, DeletarClinicaView, DeletarVeterinarioView
 from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
@@ -42,5 +43,10 @@ urlpatterns = [
     path('exibicao/<int:paciente_id>/', exibicao, name='exibicao'),
     path('exibicao_tutor/<int:tutor_id>/', exibicao_tutor, name='exibicao_tutor'),
     path('tinymce/', include('tinymce.urls')),
-    path('laudo/<int:paciente_id>/<int:tutor_id>/',laudo,name='laudo')
+    path('laudo/<int:paciente_id>/<int:tutor_id>/',laudo,name='laudo'),
+
+    path('deletar_tutor/<int:pk>/', DeletarTutorView.as_view(), name='deletar_tutor'),
+    path('deletar_paciente/<int:pk>/', DeletarPacienteView.as_view(), name='deletar_paciente'),
+    path('deletar_clinica/<int:pk>/', DeletarClinicaView.as_view(), name='deletar_clinica'),
+    path('deletar_veterinario/<int:pk>/', DeletarVeterinarioView.as_view(), name='deletar_veterinario'),
 ]

@@ -2,9 +2,13 @@ from django.shortcuts import render,redirect, get_object_or_404
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms
-
-
+from apps.index.mixins import ConfirmacaoMixin
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
 # lista de funções de listas
+
+
 
 def index(request):
     if not request.user.is_authenticated:
@@ -37,7 +41,7 @@ def lista_tutores(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    tutores = Tutor.objects.order_by("nome").all()
+    tutores = Tutor.objects.exclude(nome='Sem tutor').order_by("nome").all()
     return render(request, 'index/lista_tutores.html', {"tutores": tutores})
 
 #Lista de funções de novo
@@ -66,6 +70,20 @@ def editar_clinica(request, clinica_id):
             messages.success(request, 'Cliníca alterada')
             return redirect('lista_clinicas')
     return render (request, 'index/editar_clinica.html', {'form':form, 'clinica_id': clinica_id})
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarClinicaView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_clinicas'
+
+    def get(self, request, pk):
+        clinica = get_object_or_404(Clinica, pk=pk)
+        return render(request, self.template_name, {'clinica': clinica})
+
+    def post(self, request, pk):
+        clinica = get_object_or_404(Clinica, pk=pk)
+        clinica.delete()
+        return redirect(self.success_url)
 
 def deletar_clinica(request, clinica_id):
     clinica = Clinica.objects.get(id=clinica_id)
@@ -107,6 +125,20 @@ def editar_paciente(request, paciente_id):
             messages.success(request, 'Paciente alterado')
             return redirect('lista_pacientes')
     return render (request, 'index/editar_paciente.html', {'form':form, 'paciente_id': paciente_id})
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarPacienteView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_pacientes'
+
+    def get(self, request, pk):
+        paciente = get_object_or_404(Paciente, pk=pk)
+        return render(request, self.template_name, {'paciente': paciente})
+
+    def post(self, request, pk):
+        paciente = get_object_or_404(Paciente, pk=pk)
+        paciente.delete()
+        return redirect(self.success_url)
 
 def deletar_paciente(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
@@ -182,6 +214,19 @@ def editar_tutor(request, tutor_id):
             return redirect('lista_tutores')
     return render (request, 'index/editar_tutor.html', {'form':form, 'tutor_id': tutor_id})
 
+@method_decorator(require_POST, name='dispatch')
+class DeletarTutorView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_tutores'
+
+    def get(self, request, pk):
+        tutor = get_object_or_404(Tutor, pk=pk)
+        return render(request, self.template_name, {'tutor': tutor})
+
+    def post(self, request, pk):
+        tutor = get_object_or_404(Tutor, pk=pk)
+        tutor.delete()
+        return redirect(self.success_url)
 
 def deletar_tutor(request, tutor_id):
     tutor = Tutor.objects.get(id=tutor_id)
@@ -214,6 +259,20 @@ def editar_veterinario(request, veterinario_id):
             messages.success(request, "Veterinário salvo")
             return redirect('lista_veterinarios')
     return render(request, 'index/editar_veterinario.html', {'form': form, 'veterinario_id': veterinario_id})
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarVeterinarioView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_veterinarios'
+
+    def get(self, request, pk):
+        veterinario = get_object_or_404(Veterinario, pk=pk)
+        return render(request, self.template_name, {'veterinario': veterinario})
+
+    def post(self, request, pk):
+        veterinario = get_object_or_404(Veterinario, pk=pk)
+        veterinario.delete()
+        return redirect(self.success_url)
 
 def deletar_veterinario(request, veterinario_id):
     veterinario = Veterinario.objects.get(id=veterinario_id)
@@ -326,16 +385,15 @@ def laudo(request, paciente_id, tutor_id):
             messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
     else:
         form = LaudoForms(initial={
-            'paciente': paciente.nome,
+            'paciente': paciente,
             'especie': paciente.especie,
             'raca': paciente.raca,
             'sexo': paciente.sexo,
-            'tutor': tutor.nome,
+            'tutor': tutor,
             'email': tutor.email,
             'idade': paciente.idade,
             'peso': paciente.peso,
-            'nome_paciente': paciente.nome,  # Adicione esta linha para incluir o nome do paciente
-            'nome_tutor': tutor.nome,  # Adicione esta linha para incluir o nome do tutor
+            
         })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})

@@ -3,6 +3,8 @@ from datetime import datetime, date
 from django.utils import timezone
 import os
 from tinymce.models import HTMLField
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -48,7 +50,6 @@ class Tutor(models.Model):
         return self.nome
 
 class Paciente(models.Model):
-    
     GENERO_CHOICES = [
         ('Macho', 'Macho'),
         ('Fêmea', 'Fêmea'),
@@ -69,13 +70,12 @@ class Paciente(models.Model):
         return age_years, age_months
     @property
     def idade(self):
-        age_years, age_months = self.calcular_idade()
-        if age_years == 0:
-            return f"{age_months} meses"
-        elif age_months == 0:
-            return f"{age_years} anos"
-        else:
-            return f"{age_years} anos e {age_months} meses"
+        today = date.today()
+        delta = today - self.nascimento
+        years = delta.days // 365
+        months = (delta.days % 365) // 30
+        return f"{years} anos e {months} meses" if years > 0 else f"{months} meses"
+    
     @property
     def nascimento_formatado(self):
         return self.nascimento.strftime('%Y-%m-%d')
@@ -114,15 +114,21 @@ class Paciente(models.Model):
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
     foto = models.ImageField(upload_to=get_upload_path, blank=True)
     tutor = models.ForeignKey(
-        Tutor, 
-        on_delete=models.CASCADE,
+        'Tutor',
+        on_delete=models.SET_NULL,
         null=True,
-        blank=False, 
+        blank=False,
+        default=None,
         related_name='pacientes'
     )
     
     def __str__(self):
         return self.nome
+    
+    @receiver(pre_delete, sender='index.Tutor')
+    def set_default_tutor(sender, instance, **kwargs):
+        default_tutor = Tutor.objects.get(nome='Sem tutor')  # Substitua com a consulta correta
+        Paciente.objects.filter(tutor=instance).update(tutor=default_tutor)
 
 
 

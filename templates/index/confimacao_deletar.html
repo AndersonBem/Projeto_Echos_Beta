@@ -1,0 +1,15 @@
+<!-- confirmacao_deletar.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Confirmar Deleção</h2>
+    <p>Você tem certeza de que deseja deletar "{{ objeto }}"?</p>
+
+    <form method="post" action="{% url 'confirmar_delecao' objeto.id %}">
+        {% csrf_token %}
+        <input type="submit" value="Confirmar Deleção">
+    </form>
+
+    <a href="{% url 'lista_objetos' %}">Cancelar</a>
+{% endblock %}

@@ -17,12 +17,19 @@
 
             {% if paciente.especie|lower|striptags == 'felino' %}
                 <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
-                <a href="{% url 'deletar_paciente' paciente.id %}" class="btn btn-danger">Deletar</a>
+                <form method="post" action="{% url 'deletar_paciente' paciente.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
+                </form>              
             {% else %}
                 <a href="{% url 'editar_paciente_canino' paciente.id %}" class="btn btn-success">Editar</a>
-                <a href="{% url 'deletar_paciente_canino' paciente.id %}" class="btn btn-danger">Deletar</a>
+                <form method="post" action="{% url 'deletar_paciente_canino' paciente.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
+                </form>
+                
             {% endif %}
-            <a href="{% url 'laudo' paciente.id tutor.id %}" class="btn btn-primary">Criar laudo</a>
+            <a href="{% url 'laudo' paciente.id paciente.tutor.id %}" class="btn btn-primary">Criar laudo</a>
             {% if paciente.foto %}
                 <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}

@@ -35,25 +35,27 @@
     </thead>
     <tbody>
         {% for tutor in tutores %}
-            <tr>
-                <td><a href="{% url 'exibicao_tutor' tutor.id %}">{{ tutor.nome }}</a></td>
-                <td>{{ tutor.telefone }}</td>
-                <td>{{ tutor.email }}</td>
-                <td>{{ tutor.endereco }}</td>
-                <td>
-                    <label for="{{ tutor.id }}-pacientes-toggle" class="btn btn-primary">
-                        Visualizar Pacientes
-                    </label>
-                    <input type="checkbox" id="{{ tutor.id }}-pacientes-toggle" class="hide" />
-                    <ul class="pacientes-list" id="{{ tutor.id }}-pacientes-list">
-                        {% for paciente in tutor.pacientes.all %}
-                            <a href="{% url 'exibicao' paciente.id %}">
-                                <li>{{ paciente.nome }} ({{ paciente.especie }})</li>
-                            </a>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
+            
+                <tr>
+                    <td><a href="{% url 'exibicao_tutor' tutor.id %}">{{ tutor.nome }}</a></td>
+                    <td>{{ tutor.telefone }}</td>
+                    <td>{{ tutor.email }}</td>
+                    <td>{{ tutor.endereco }}</td>
+                    <td>
+                        <label for="{{ tutor.id }}-pacientes-toggle" class="btn btn-primary">
+                            Visualizar Pacientes
+                        </label>
+                        <input type="checkbox" id="{{ tutor.id }}-pacientes-toggle" class="hide" />
+                        <ul class="pacientes-list" id="{{ tutor.id }}-pacientes-list">
+                            {% for paciente in tutor.pacientes.all %}
+                                <a href="{% url 'exibicao' paciente.id %}">
+                                    <li>{{ paciente.nome }} ({{ paciente.especie }})</li>
+                                </a>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            
         {% endfor %}
     </tbody>
 </table>
