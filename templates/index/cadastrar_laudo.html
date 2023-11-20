@@ -2,37 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <!-- Início dos scripts do CKEditor -->
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-    <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/lang/pt-br.js"></script>
-
-    <style>
-        .ckeditor-container {
-            width: 100%;
-        }
-    </style>
-
-    <script>
-        $(document).ready(function () {
-            CKEDITOR.replace('laudo', {
-                extraPlugins: 'autocomplete,table',
-                language: 'pt-br',
-                autocomplete: {
-                    enable: true,
-                    minChars: 2,
-                    delay: 1,
-                    suggestions: ['Exemplo 1', 'Exemplo 2', 'Exemplo 3']
-                },
-                width: '100%',  // Garante que o CKEditor ocupe 100% da largura
-                // Outras configurações do CKEditor conforme necessário
-            });
-
-            // Aplica o estilo diretamente ao campo 'laudo'
-            CKEDITOR.instances.laudo.container.$.style.width = '100%';
-        });
-    </script>
-    <!-- Fim dos scripts do CKEditor -->
+{% include 'partials/_tinyMCE.html' %}
 
     <section class="galeria-centralizada-2" style="margin-left: 5em">
         <form action="{% url 'cadastrar_laudo' %}" method="POST" enctype="multipart/form-data">

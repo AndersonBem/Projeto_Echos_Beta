@@ -52,7 +52,7 @@ class ListandoLaudoPadrao(admin.ModelAdmin):
     search_fields = ("raca","nome_exame")
     list_per_page = 10
 
-class ListandoFrases(admin.ModelAdmin):
+class ListandoFrase(admin.ModelAdmin):
     list_display = ("id", "texto")
     list_display_links = ("id", "texto")
     search_fields = ("id", "texto")
@@ -70,4 +70,4 @@ admin.site.register(RacaFelino, ListandoRacaFelino)
 admin.site.register(RacaCanino, ListandoRacaCanino)
 admin.site.register(Laudo, ListandoLaudo)
 admin.site.register(LaudosPadrao, ListandoLaudoPadrao)
-admin.site.register(Frases, ListandoFrases)
+admin.site.register(Frases, ListandoFrase)

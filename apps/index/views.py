@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm
 from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -448,3 +448,16 @@ def escolha_exame(request):
 def obter_frases(request):
     frases = Frases.objects.values_list('texto', flat=True)
     return JsonResponse({'frases': list(frases)})
+
+def nova_frase(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    form = FrasesForm
+    if request.method == 'POST':
+        form = FrasesForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Nova frase Cadastrada')
+            return redirect('lista_pacientes')
+    return render(request,'index/nova_frase.html', {'form':form})

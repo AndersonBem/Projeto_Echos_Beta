@@ -1,0 +1,118 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Início dos scripts do TinyMCE -->
+<script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+
+<!-- Adicione a biblioteca Bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Função para buscar frases do banco de dados
+        async function fetchFrases() {
+            try {
+                const response = await fetch('/api/frases/');  // Substitua pela URL real da sua API
+                const data = await response.json();
+                return data.frases;  // Suponha que as frases estejam em uma propriedade chamada "frases" no JSON
+            } catch (error) {
+                console.error('Erro ao buscar frases do banco de dados:', error);
+                return [];
+            }
+        }
+
+        tinymce.init({
+            selector: 'textarea[name=texto]',
+            plugins: 'autolink lists link',  // Adiciona plugins desejados
+            toolbar: 'undo redo | formatselect | ' +
+               'bold italic backcolor | alignleft aligncenter ' +
+               'alignright alignjustify | bullist numlist outdent indent | ' +
+               'removeformat | help',// Adiciona a ferramenta ao menu de ferramentas
+            language: 'pt_BR',  // Defina o idioma para português brasileiro
+            setup: async function(editor) {
+                // Buscar frases do banco de dados
+                const frasesPreDefinidas = await fetchFrases();
+
+                // Verifica se o modal já existe antes de criá-lo novamente
+                if (!$('#fraseModal').length) {
+                    // Crie um modal Bootstrap para exibir as opções
+                    var modalContent = '<div class="modal fade" id="fraseModal" tabindex="-1" role="dialog" aria-labelledby="fraseModalLabel" aria-hidden="true">'
+                        + '<div class="modal-dialog" role="document">'
+                        + '<div class="modal-content">'
+                        + '<div class="modal-header">'
+                        + '<h5 class="modal-title" id="fraseModalLabel">Escolha uma frase</h5>'
+                        + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+                        + '<span aria-hidden="true">&times;</span>'
+                        + '</button>'
+                        + '</div>'
+                        + '<div class="modal-body">'
+                        + '<ul class="list-group">';
+
+                    frasesPreDefinidas.forEach(function(frase) {
+                        modalContent += '<li class="list-group-item">' + frase + '</li>';
+                    });
+
+                    modalContent += '</ul>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>';
+
+                    // Adicione o modal ao corpo do documento
+                    $('body').append(modalContent);
+
+                    // Adicione um ouvinte de eventos para capturar a frase escolhida
+                    $('#fraseModal').on('click', 'li', function() {
+                        var selectedFrase = $(this).text();
+                        if (selectedFrase) {
+                            editor.insertContent(selectedFrase);
+                            // Feche o modal
+                            $('#fraseModal').modal('hide');
+                        }
+                    });
+                }
+
+                // Adicione um ouvinte de eventos de teclado ao editor
+                editor.on('keypress', function(e) {
+                    if (e.key === '/') {
+                        // Impede a tecla '/' de ser inserida no editor
+                        e.preventDefault();
+
+                        // Exiba o modal
+                        $('#fraseModal').modal('show');
+                    }
+                });
+            }
+            // Outras configurações do TinyMCE conforme necessário
+        });
+    });
+</script>
+<!-- Fim dos scripts do TinyMCE -->
+
+
+<div class="container mt-5">
+    <form action="{% url 'nova_frase' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            {% for field in form.visible_fields %}
+                <div class="col-12 col-lg-6 mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn btn-success col-12">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

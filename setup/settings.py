@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'apps.index.apps.IndexConfig',
     'django.contrib.postgres',
     'apps.usuarios.apps.UsuariosConfig',
-    'ckeditor',
-    'ckeditor_uploader',
     'storages',
     'tinymce'
 ]
@@ -187,57 +185,17 @@ MESSAGE_TAGS = {
     messages.SUCCESS : 'success',
 }
 
+
+
+
+
 TINYMCE_DEFAULT_CONFIG = {
-    'height': 360,
-    'width': 800,
-    'menubar': True,
-    'plugins': [
-        'advlist autolink lists link image charmap print preview anchor',
-        'searchreplace visualblocks code fullscreen',
-        'insertdatetime media table paste code help wordcount',
-    ],
+    
+    'language': 'pt_BR',
+    'plugins': 'autolink lists link',
     'toolbar': 'undo redo | formatselect | ' +
                'bold italic backcolor | alignleft aligncenter ' +
                'alignright alignjustify | bullist numlist outdent indent | ' +
                'removeformat | help',
-    'content_css': [
-        '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
-        '//www.tiny.cloud/css/codepen.min.css',
-    ],
-}
-
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
-CKEDITOR_BASEPATH = "https://cdn.ckeditor.com/4.17.1/standard/"
-
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar' : 'Custom',
-        'height': '500px',
-        'width': '200%',
-        'toolbar_custom': [
-            {'name': 'document', 'groups': ['mode', 'document', 'doctools']},
-            {'name': 'clipboard', 'groups': ['clipboard', 'undo']},
-            {'name': 'editing', 'groups': ['find', 'selection', 'spellchecker', 'editing']},
-            {'name': 'forms', 'groups': ['forms']},
-            '/',
-            {'name': 'basicstyles', 'groups': ['basicstyles', 'cleanup']},
-            {'name': 'paragraph', 'groups': ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph']},
-            {'name': 'links', 'groups': ['links']},
-            {'name': 'insert', 'groups': ['insert']},
-            '/',
-            {'name': 'styles', 'groups': ['styles']},
-            {'name': 'colors', 'groups': ['colors']},
-            {'name': 'tools', 'groups': ['tools']},
-            {'name': 'others', 'groups': ['others']},
-            {'name': 'about', 'groups': ['about']},
-        ],
-        
-    },
-}
-
-TINYMCE_DEFAULT_CONFIG = {
-    'plugins': 'autolink lists link',
-    'toolbar': 'undo redo | bold italic | bullist numlist | link',
+    'language_url': "{% static 'langs/pt_BR.js' %}"
 }

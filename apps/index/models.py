@@ -193,9 +193,9 @@ class Laudo(models.Model):
 class LaudosPadrao(models.Model):
     nome_exame = models.CharField(max_length=100, null=False, blank=False)
     tipo_exame = models.CharField(max_length=100, null=False, blank=False)
-    laudo = RichTextField(null=True)
+    laudo = HTMLField(null=True)
 
 
 class Frases(models.Model):
-    texto = models.CharField(max_length=500, null=True, blank=False)
+    texto = HTMLField(null=True)
 
