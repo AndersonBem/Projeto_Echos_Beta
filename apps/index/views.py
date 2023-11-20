@@ -349,9 +349,9 @@ def selecao(request, tutor_id):
 def exibicao(request, paciente_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
     paciente = Paciente.objects.get(id=paciente_id)
-
+    laudo = LaudosPadrao.objects.all()
     # Agora, você pode passar o objeto do paciente para o template
-    return render(request, 'index/exibicao.html', {'paciente': paciente})
+    return render(request, 'index/exibicao.html', {'paciente': paciente, 'laudo':laudo})
 
 def exibicao_tutor(request, tutor_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
@@ -361,7 +361,7 @@ def exibicao_tutor(request, tutor_id):
     return render(request, 'index/exibicao_tutor.html', {'tutor': tutor})
 
 
-def laudo(request, paciente_id, tutor_id):
+def laudo(request, paciente_id, tutor_id, laudo_id):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
@@ -369,6 +369,7 @@ def laudo(request, paciente_id, tutor_id):
     try:
         paciente = Paciente.objects.select_related('tutor').get(id=paciente_id)
         tutor = Tutor.objects.get(id=tutor_id)
+        laudopadrao = LaudosPadrao.objects.get(id=laudo_id)
     except (Paciente.DoesNotExist, Tutor.DoesNotExist):
         messages.error(request, "Paciente ou Tutor não encontrado")
         return redirect('alguma_pagina_de_erro')
@@ -395,6 +396,7 @@ def laudo(request, paciente_id, tutor_id):
             'email': tutor.email,
             'idade': paciente.idade,
             'peso': paciente.peso,
+            'laudo': laudopadrao.laudo
         })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})

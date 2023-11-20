@@ -43,7 +43,7 @@ urlpatterns = [
     path('exibicao/<int:paciente_id>/', exibicao, name='exibicao'),
     path('exibicao_tutor/<int:tutor_id>/', exibicao_tutor, name='exibicao_tutor'),
     path('tinymce/', include('tinymce.urls')),
-    path('laudo/<int:paciente_id>/<int:tutor_id>/',laudo,name='laudo'),
+    path('laudo/<int:paciente_id>/<int:tutor_id>/<int:laudo_id>/',laudo,name='laudo'),
 
     path('deletar_tutor/<int:pk>/', DeletarTutorView.as_view(), name='deletar_tutor'),
     path('deletar_paciente/<int:pk>/', DeletarPacienteView.as_view(), name='deletar_paciente'),

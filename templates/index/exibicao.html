@@ -29,7 +29,13 @@
                 </form>
                 
             {% endif %}
-            <a href="{% url 'laudo' paciente.id paciente.tutor.id %}" class="btn btn-primary">Criar laudo</a>
+            
+            {% for laudo in laudo %}
+                
+                <a href="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}" class="btn btn-primary">Criar {{ laudo.nome_exame }}</a>
+            
+            {% endfor %}
+            
             {% if paciente.foto %}
                 <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}
