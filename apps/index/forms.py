@@ -2,7 +2,7 @@ from django import forms
 
 from datetime import date
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases
 
 from tinymce.widgets import TinyMCE
 
@@ -237,5 +237,19 @@ class LaudoPadraoForms(forms.ModelForm):
         widgets = {
             'nome_exame': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_exame': forms.TextInput(attrs={'class': 'form-control'}),
-            'laudo': CKEditorWidget()
+            'laudo': TinyMCE(attrs={'cols': 80, 'rows': 10}),
+        }
+
+
+class FrasesForm(forms.ModelForm):
+    class Meta:
+        model = Frases
+        fields = ['texto'] 
+
+        labels = {
+            'texto': 'Frase padrão',
+        }
+
+        widgets = {
+            'texto': TinyMCE(attrs={'cols': 80, 'rows': 10}),
         }

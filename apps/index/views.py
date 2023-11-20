@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms
 from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 # lista de funções de listas
 
 
@@ -443,3 +444,7 @@ def cadastrar_laudo(request):
 def escolha_exame(request):
     laudo = LaudosPadrao.objects.all()
     return render(request, 'index/escolha_exame.html', {'laudo': laudo})
+
+def obter_frases(request):
+    frases = Frases.objects.values_list('texto', flat=True)
+    return JsonResponse({'frases': list(frases)})

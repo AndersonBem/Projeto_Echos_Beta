@@ -11,16 +11,28 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
-    // Defina a variável frasesPreDefinidas no escopo global
-    var frasesPreDefinidas = ['Frase 1', 'Frase 2', 'Frase 3'];
-
     document.addEventListener("DOMContentLoaded", function() {
+        // Função para buscar frases do banco de dados
+        async function fetchFrases() {
+            try {
+                const response = await fetch('/api/frases/');  // Substitua pela URL real da sua API
+                const data = await response.json();
+                return data.frases;  // Suponha que as frases estejam em uma propriedade chamada "frases" no JSON
+            } catch (error) {
+                console.error('Erro ao buscar frases do banco de dados:', error);
+                return [];
+            }
+        }
+
         tinymce.init({
             selector: 'textarea[name=laudo]',
             plugins: 'autolink lists link',  // Adiciona plugins desejados
             toolbar: 'undo redo | bold italic | bullist numlist | link',  // Adiciona a ferramenta ao menu de ferramentas
 
-            setup: function(editor) {
+            setup: async function(editor) {
+                // Buscar frases do banco de dados
+                const frasesPreDefinidas = await fetchFrases();
+
                 // Verifica se o modal já existe antes de criá-lo novamente
                 if (!$('#fraseModal').length) {
                     // Crie um modal Bootstrap para exibir as opções
