@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms
 from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -361,7 +361,6 @@ def exibicao_tutor(request, tutor_id):
 
 
 def laudo(request, paciente_id, tutor_id):
-
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
@@ -369,7 +368,7 @@ def laudo(request, paciente_id, tutor_id):
     try:
         paciente = Paciente.objects.select_related('tutor').get(id=paciente_id)
         tutor = Tutor.objects.get(id=tutor_id)
-    except Paciente.DoesNotExist or Tutor.DoesNotExist:
+    except (Paciente.DoesNotExist, Tutor.DoesNotExist):
         messages.error(request, "Paciente ou Tutor não encontrado")
         return redirect('alguma_pagina_de_erro')
 
@@ -395,11 +394,9 @@ def laudo(request, paciente_id, tutor_id):
             'email': tutor.email,
             'idade': paciente.idade,
             'peso': paciente.peso,
-            
         })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})
-
 
 #Criação de novas raças
 
@@ -429,4 +426,20 @@ def nova_raca_canino(request):
             return redirect('novo_paciente_canino')
     return render(request,'index/nova_raca_canino.html', {'form':form})
 
+def cadastrar_laudo(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    form = LaudoPadraoForms
+    if request.method == 'POST':
+        form = LaudoPadraoForms(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Laudo cadastrado')
+            return redirect('lista_pacientes')
+    return render(request,'index/cadastrar_laudo.html', {'form':form})
 
+
+def escolha_exame(request):
+    laudo = LaudosPadrao.objects.all()
+    return render(request, 'index/escolha_exame.html', {'laudo': laudo})

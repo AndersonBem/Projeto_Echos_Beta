@@ -1,0 +1,22 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <h1 class="mb-4">Selecione</h1>
+        <form id="exameForm" method="POST"> <!-- Alterado para POST -->
+            {% csrf_token %} <!-- Adicione o token CSRF aqui -->
+            <div class="form-group">
+                <label for="exame">Escolha:</label>
+                <select class="form-control" id="exame" name="exame">
+                    {% for laudo in laudo %}
+                        <option value="{{ laudo.id }}">{{ laudo.nome_exame }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="redirecionar()">Próximo</button>
+        </form>
+    </div>
+
+    
+    
+{% endblock %}

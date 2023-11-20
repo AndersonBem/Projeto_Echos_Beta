@@ -2,9 +2,11 @@ from django import forms
 
 from datetime import date
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao
 
 from tinymce.widgets import TinyMCE
+
+from ckeditor.widgets import CKEditorWidget
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
@@ -174,7 +176,7 @@ class LaudoForms(forms.ModelForm):
             'idade': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'email_extra': forms.TextInput(attrs={'class': 'form-control'}),
-            'telefone_extra': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone_extra': forms.TextInput(attrs={'class': 'form-control', 'data-mask': '(00) 00000-0000'}),
             'suspeita': forms.TextInput(attrs={'class': 'form-control'}),
             'clinica': forms.Select(attrs={'class': 'form-control'}),
             'veterinario': forms.Select(attrs={'class': 'form-control'}),
@@ -185,22 +187,13 @@ class LaudoForms(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
-            'laudo': TinyMCE(
-                attrs={'cols': 80, 'rows': 30},
-                mce_attrs={'toolbar': 'bold italic | link | alignleft aligncenter alignright | undo redo |'},
-            ),
+            'laudo':TinyMCE(attrs={'cols': 80, 'rows': 10}),
         }
 
     data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
 
-    def __init__(self, *args, **kwargs):
-        # Aceita um argumento adicional chamado 'tutor'
-        tutor = kwargs.pop('tutor', None)
-        super(LaudoForms, self).__init__(*args, **kwargs)
-
-        # Preenche o campo 'email' com o email do tutor se disponível
-        if tutor:
-            self.fields['email'].initial = tutor.email
+    
+        
 
 
 class RacaFelinoForms(forms.ModelForm):
@@ -228,4 +221,21 @@ class RacaCaninoForms(forms.ModelForm):
 
         widgets = {
             'raca': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class LaudoPadraoForms(forms.ModelForm):
+    class Meta:
+        model = LaudosPadrao
+        fields = '__all__'
+
+        labels = {
+            'nome_exame': 'Nome do Exame',
+            'tipo_exame': 'Tipo do Exame',
+            'laudo': "Laudo padrão"
+        }
+
+        widgets = {
+            'nome_exame': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo_exame': forms.TextInput(attrs={'class': 'form-control'}),
+            'laudo': CKEditorWidget()
         }

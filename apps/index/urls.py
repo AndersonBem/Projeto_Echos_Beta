@@ -3,7 +3,7 @@ from .views import DeletarTutorView, DeletarPacienteView, DeletarClinicaView, De
 from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
-    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino
+    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame
 
 urlpatterns = [
     path('',index, name='index'),
@@ -52,4 +52,7 @@ urlpatterns = [
 
     path('nova_raca_felino', nova_raca_felino, name='nova_raca_felino'),
     path('nova_raca_canino', nova_raca_canino, name='nova_raca_canino'),
+
+    path('cadastrar_laudo', cadastrar_laudo, name='cadastrar_laudo'),
+    path('escolha_exame',escolha_exame, name='escolha_exame')
 ]

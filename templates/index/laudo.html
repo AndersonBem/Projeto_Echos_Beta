@@ -3,58 +3,87 @@
 {% block content %}
 
 <!-- Início dos scripts do TinyMCE -->
-<script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-<script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/5/langs/pt_BR.js"></script>
+<script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<!-- Adicione a biblioteca Bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
+    // Defina a variável frasesPreDefinidas no escopo global
+    var frasesPreDefinidas = ['Frase 1', 'Frase 2', 'Frase 3'];
+
     document.addEventListener("DOMContentLoaded", function() {
         tinymce.init({
-            selector: 'textarea',
-            plugins: 'lists link image',
-            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link image',
-            language: 'pt_BR',
-            valid_elements: '*[*]',
-            extended_valid_elements: '*[*]',
-            image_advtab: true,  // Habilita a guia de configuração avançada de imagem
+            selector: 'textarea[name=laudo]',
+            plugins: 'autolink lists link',  // Adiciona plugins desejados
+            toolbar: 'undo redo | bold italic | bullist numlist | link',  // Adiciona a ferramenta ao menu de ferramentas
 
-            file_picker_types: 'image',  // Define os tipos de arquivo que podem ser escolhidos
+            setup: function(editor) {
+                // Verifica se o modal já existe antes de criá-lo novamente
+                if (!$('#fraseModal').length) {
+                    // Crie um modal Bootstrap para exibir as opções
+                    var modalContent = '<div class="modal fade" id="fraseModal" tabindex="-1" role="dialog" aria-labelledby="fraseModalLabel" aria-hidden="true">'
+                        + '<div class="modal-dialog" role="document">'
+                        + '<div class="modal-content">'
+                        + '<div class="modal-header">'
+                        + '<h5 class="modal-title" id="fraseModalLabel">Escolha uma frase</h5>'
+                        + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+                        + '<span aria-hidden="true">&times;</span>'
+                        + '</button>'
+                        + '</div>'
+                        + '<div class="modal-body">'
+                        + '<ul class="list-group">';
 
-            // Configuração da função de seleção de arquivo personalizada
-            file_picker_callback: function(callback, value, meta) {
-                // Abre uma janela de diálogo de seleção de arquivo
-                var input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/*');
+                    frasesPreDefinidas.forEach(function(frase) {
+                        modalContent += '<li class="list-group-item">' + frase + '</li>';
+                    });
 
-                // Configura o manipulador de eventos para processar a seleção de arquivo
-                input.onchange = function() {
-                    var file = this.files[0];
-                    var reader = new FileReader();
+                    modalContent += '</ul>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>'
+                        + '</div>';
 
-                    // Configura o manipulador de eventos para processar a leitura do arquivo
-                    reader.onload = function(e) {
-                        callback(e.target.result, {
-                            alt: file.name
-                        });
-                    };
+                    // Adicione o modal ao corpo do documento
+                    $('body').append(modalContent);
 
-                    // Lê o conteúdo do arquivo como um URL de dados
-                    reader.readAsDataURL(file);
-                };
+                    // Adicione um ouvinte de eventos para capturar a frase escolhida
+                    $('#fraseModal').on('click', 'li', function() {
+                        var selectedFrase = $(this).text();
+                        if (selectedFrase) {
+                            editor.insertContent(selectedFrase);
+                            // Feche o modal
+                            $('#fraseModal').modal('hide');
+                        }
+                    });
+                }
 
-                // Simula um clique no botão de seleção de arquivo
-                input.click();
+                // Adicione um ouvinte de eventos de teclado ao editor
+                editor.on('keypress', function(e) {
+                    if (e.key === '/') {
+                        // Impede a tecla '/' de ser inserida no editor
+                        e.preventDefault();
+
+                        // Exiba o modal
+                        $('#fraseModal').modal('show');
+                    }
+                });
             }
+            // Outras configurações do TinyMCE conforme necessário
         });
     });
 </script>
 <!-- Fim dos scripts do TinyMCE -->
 
+
 <div class="container mt-5">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
-        <input type="hidden" name="paciente_id" value="{{ paciente_id }}">
-        <input type="hidden" name="tutor_id" value="{{ tutor_id }}">
+        <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
+        <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
 
         <div class="row">
             {% for field in form.visible_fields %}
@@ -72,11 +101,14 @@
     </form>
 </div>
 
+<!-- Seção de scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+<!-- Seu script de inicialização da máscara -->
 <script>
     $(document).ready(function () {
-        $('#telefone').mask('(00) 00000-0000');
+        $('[data-mask]').mask('(00) 0000-0000');
     });
 </script>
 

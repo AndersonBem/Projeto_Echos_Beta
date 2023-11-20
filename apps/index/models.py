@@ -5,6 +5,7 @@ import os
 from tinymce.models import HTMLField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -156,8 +157,8 @@ class Laudo(models.Model):
         related_name='laudos'
     )
     especie = models.CharField(max_length=100, null=False, blank=False)
-    raca = models.CharField(max_length=100, null=False, blank=False)
-    sexo = models.CharField(max_length=100, null=False, blank=False)
+    raca = models.CharField(max_length=100, null=True, blank=False)
+    sexo = models.CharField(max_length=100, null=True, blank=False)
     tutor = models.ForeignKey(
         'index.Tutor', 
         on_delete=models.CASCADE,
@@ -165,25 +166,31 @@ class Laudo(models.Model):
         blank=False, 
         related_name='tutor'
     )
-    email = models.CharField(max_length=100, null=False, blank=False)
-    idade = models.CharField(max_length=100, null=False, blank=False)
-    peso = models.CharField(max_length=100, null=False, blank=False)
-    email_extra = models.CharField(max_length=100, null=False, blank=False)
-    telefone_extra = models.CharField(max_length=100, null=False, blank=False)
-    suspeita = models.CharField(max_length=100, null=False, blank=False)
+    email = models.CharField(max_length=100, null=True, blank=False)
+    idade = models.CharField(max_length=100, null=True, blank=False)
+    peso = models.CharField(max_length=100, null=True, blank=False)
+    email_extra = models.CharField(max_length=100, null=True, blank=True)
+    telefone_extra = models.CharField(max_length=100, null=True, blank=True)
+    suspeita = models.CharField(max_length=100, null=True, blank=True)
     clinica = models.ForeignKey(
         Clinica, 
         on_delete=models.CASCADE,
         null=True,
-        blank=False, 
+        blank=True, 
         related_name='clinicas'
     )
     veterinario = models.ForeignKey(
         Veterinario, 
         on_delete=models.CASCADE,
         null=True,
-        blank=False, 
+        blank=True, 
         related_name='pacientes'
     )
     data = models.DateTimeField(default=datetime.now, blank=False)
-    laudo = models.TextField(null=True, blank=True)
+    laudo = HTMLField(null=True)
+
+
+class LaudosPadrao(models.Model):
+    nome_exame = models.CharField(max_length=100, null=False, blank=False)
+    tipo_exame = models.CharField(max_length=100, null=False, blank=False)
+    laudo = RichTextField(null=True)

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'apps.index.apps.IndexConfig',
     'django.contrib.postgres',
     'apps.usuarios.apps.UsuariosConfig',
-
+    'ckeditor',
+    'ckeditor_uploader',
     'storages',
     'tinymce'
 ]
@@ -203,4 +204,40 @@ TINYMCE_DEFAULT_CONFIG = {
         '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
         '//www.tiny.cloud/css/codepen.min.css',
     ],
+}
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+CKEDITOR_BASEPATH = "https://cdn.ckeditor.com/4.17.1/standard/"
+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar' : 'Custom',
+        'height': '500px',
+        'width': '200%',
+        'toolbar_custom': [
+            {'name': 'document', 'groups': ['mode', 'document', 'doctools']},
+            {'name': 'clipboard', 'groups': ['clipboard', 'undo']},
+            {'name': 'editing', 'groups': ['find', 'selection', 'spellchecker', 'editing']},
+            {'name': 'forms', 'groups': ['forms']},
+            '/',
+            {'name': 'basicstyles', 'groups': ['basicstyles', 'cleanup']},
+            {'name': 'paragraph', 'groups': ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph']},
+            {'name': 'links', 'groups': ['links']},
+            {'name': 'insert', 'groups': ['insert']},
+            '/',
+            {'name': 'styles', 'groups': ['styles']},
+            {'name': 'colors', 'groups': ['colors']},
+            {'name': 'tools', 'groups': ['tools']},
+            {'name': 'others', 'groups': ['others']},
+            {'name': 'about', 'groups': ['about']},
+        ],
+        
+    },
+}
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': 'autolink lists link',
+    'toolbar': 'undo redo | bold italic | bullist numlist | link',
 }
