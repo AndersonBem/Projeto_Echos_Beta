@@ -36,6 +36,11 @@
             
             {% endfor %}
             
+            {% for laudos_paciente in laudos_paciente %}
+                <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a><a href="{% url 'exibir_laudo' laudos_paciente.id %}"class="btn btn-success">Exibir</a></p> 
+            {% endfor %}
+
+
             {% if paciente.foto %}
                 <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}

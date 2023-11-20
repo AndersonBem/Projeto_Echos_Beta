@@ -1,6 +1,7 @@
 from django.contrib import admin
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino, Laudo, LaudosPadrao, Frases
 
+
 class ListandoVeterinario(admin.ModelAdmin):
     list_display = ("id", "nome", "telefone", "email")
     list_display_links = ("id", "nome")
@@ -39,11 +40,17 @@ class ListandoRacaCanino(admin.ModelAdmin):
     search_fields = ("raca",)
     list_per_page = 10
 
+
+
 class ListandoLaudo(admin.ModelAdmin):
-    list_display = ("id", "paciente","especie", "raca", "sexo","tutor", "email", "idade", "peso","email_extra","telefone_extra", "suspeita", "clinica", "veterinario", "data", "laudo")
-    list_display_links = ("id", "raca")
+    list_display = (
+        "id", "tipo_laudo", "paciente", "especie", "raca", "sexo", "tutor", "email", "idade", "peso",
+        "email_extra", "telefone_extra", "suspeita", "clinica", "veterinario", "data"
+    )
+    list_display_links = ("id", "paciente")
     search_fields = ("raca",)
-    list_per_page = 10
+    list_per_page = 100
+    
 
 
 class ListandoLaudoPadrao(admin.ModelAdmin):
@@ -57,6 +64,7 @@ class ListandoFrase(admin.ModelAdmin):
     list_display_links = ("id", "texto")
     search_fields = ("id", "texto")
     list_per_page = 10
+
 
 # Register your models here.
 

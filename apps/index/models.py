@@ -5,7 +5,8 @@ import os
 from tinymce.models import HTMLField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from ckeditor.fields import RichTextField
+
+from multiupload.fields import MultiFileField
 
 
 # Create your models here.
@@ -20,6 +21,7 @@ def get_upload_path(instance, filename):
     # Define o caminho de upload como "fotos/nome_objeto/ano/mes/dia/nome_do_arquivo.extensao"
     caminho = os.path.join(nome_objeto, data_atual.strftime('Ano %Y/ Mês %m/ Dia %d'))
     return os.path.join(caminho, f"{filename}.{extensao}")
+
 
 class Veterinario(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
@@ -113,7 +115,7 @@ class Paciente(models.Model):
     peso = models.CharField(max_length=100, null=True, blank=True)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    foto = models.ImageField(upload_to=get_upload_path, blank=True)
+    foto = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
     tutor = models.ForeignKey(
         'Tutor',
         on_delete=models.SET_NULL,
@@ -132,9 +134,6 @@ class Paciente(models.Model):
         Paciente.objects.filter(tutor=instance).update(tutor=default_tutor)
 
 
-
-
-
 class RacaFelino(models.Model):
     raca = models.CharField(max_length=100, null=False, blank=False)
 
@@ -147,6 +146,7 @@ class RacaCanino(models.Model):
     def __str__(self):
         return self.raca
     
+
 
 class Laudo(models.Model):
     paciente = models.ForeignKey(
@@ -168,6 +168,7 @@ class Laudo(models.Model):
     )
     email = models.CharField(max_length=100, null=True, blank=False)
     idade = models.CharField(max_length=100, null=True, blank=False)
+    
     peso = models.CharField(max_length=100, null=True, blank=False)
     email_extra = models.CharField(max_length=100, null=True, blank=True)
     telefone_extra = models.CharField(max_length=100, null=True, blank=True)
@@ -187,6 +188,14 @@ class Laudo(models.Model):
         related_name='pacientes'
     )
     data = models.DateTimeField(default=datetime.now, blank=False)
+    tipo_laudo = models.ForeignKey(
+        to='index.LaudosPAdrao',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tipo_laudo",
+    )
+    
     laudo = HTMLField(null=True)
 
 
@@ -195,6 +204,8 @@ class LaudosPadrao(models.Model):
     tipo_exame = models.CharField(max_length=100, null=False, blank=False)
     laudo = HTMLField(null=True)
 
+    def __str__(self):
+        return self.nome_exame
 
 class Frases(models.Model):
     texto = HTMLField(null=True)

@@ -3,7 +3,7 @@ from .views import DeletarTutorView, DeletarPacienteView, DeletarClinicaView, De
 from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
-    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase
+    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo
 
 urlpatterns = [
     path('',index, name='index'),
@@ -57,5 +57,10 @@ urlpatterns = [
     path('escolha_exame',escolha_exame, name='escolha_exame'),
 
     path('api/frases/', obter_frases, name='obter_frases'),
-    path('nova_frase',nova_frase, name='nova_frase')
+    path('nova_frase',nova_frase, name='nova_frase'),
+
+    path('exibir_laudo/<int:laudos_paciente_id>/', exibir_laudo, name='exibir_laudo'),
+
+    path('deletar_laudo/<int:laudo_paciente_id>/', deletar_laudo, name='deletar_laudo'),
+    path('editar_laudo/<int:laudo_paciente_id>/',editar_laudo, name='editar_laudo')
 ]

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm
 from apps.index.mixins import ConfirmacaoMixin
@@ -350,8 +350,9 @@ def exibicao(request, paciente_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
     paciente = Paciente.objects.get(id=paciente_id)
     laudo = LaudosPadrao.objects.all()
+    laudos_paciente = paciente.laudos.all()
     # Agora, você pode passar o objeto do paciente para o template
-    return render(request, 'index/exibicao.html', {'paciente': paciente, 'laudo':laudo})
+    return render(request, 'index/exibicao.html', {'paciente': paciente, 'laudo':laudo, 'laudos_paciente':laudos_paciente})
 
 def exibicao_tutor(request, tutor_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
@@ -396,7 +397,9 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
             'email': tutor.email,
             'idade': paciente.idade,
             'peso': paciente.peso,
-            'laudo': laudopadrao.laudo
+            'tipo_laudo': laudopadrao,
+            'laudo': laudopadrao.laudo,
+            
         })
 
     return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})
@@ -463,3 +466,40 @@ def nova_frase(request):
             messages.success(request, 'Nova frase Cadastrada')
             return redirect('lista_pacientes')
     return render(request,'index/nova_frase.html', {'form':form})
+
+def exibir_laudo(request,laudos_paciente_id):
+    laudo_paciente = Laudo.objects.get(id=laudos_paciente_id)
+    return render(request, 'index/exibir_laudo.html', {'laudo_paciente': laudo_paciente})
+
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarLaudoView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_pacientes'
+
+    def get(self, request, pk):
+        laudo_paciente = get_object_or_404(laudo_paciente, pk=pk)
+        return render(request, self.template_name, {'laudo_paciente': laudo_paciente})
+
+    def post(self, request, pk):
+        laudo_paciente = get_object_or_404(Laudo, pk=pk)
+        laudo.delete()
+        return redirect(self.success_url)
+
+def deletar_laudo(request, laudo_paciente_id):
+    tutor = Laudo.objects.get(id=laudo_paciente_id)
+    tutor.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_pacientes')
+
+def editar_laudo(request, laudo_paciente_id):
+    laudo_paciente = Laudo.objects.get(id=laudo_paciente_id)
+    form = LaudoForms(instance=laudo_paciente)
+
+    if request.method == 'POST':
+        form=LaudoForms(request.POST, request.FILES, instance=laudo_paciente)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Laudo salvo")
+            return redirect('lista_pacientes')
+    return render(request, 'index/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})

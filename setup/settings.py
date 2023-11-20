@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'apps.usuarios.apps.UsuariosConfig',
     'storages',
-    'tinymce'
+    'tinymce',
+    'multiupload'
 ]
 
 MIDDLEWARE = [

@@ -6,7 +6,7 @@ from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino,
 
 from tinymce.widgets import TinyMCE
 
-from ckeditor.widgets import CKEditorWidget
+
 
 class VeterinarioForms(forms.ModelForm):
     class Meta:
@@ -135,6 +135,7 @@ class TutorForms(forms.ModelForm):
 
         }
 
+
 class LaudoForms(forms.ModelForm):
     tutor = forms.ModelChoiceField(
         queryset=Tutor.objects.all(),
@@ -165,7 +166,9 @@ class LaudoForms(forms.ModelForm):
             'clinica': 'Cliníca',
             'veterinario': 'Veterinário',
             'data': 'Data',
-            'laudo': 'Laudo'
+            'tipo_laudo': 'Tipo de laudo',
+            'laudo': 'Laudo',
+            
         }
 
         widgets = {
@@ -187,13 +190,17 @@ class LaudoForms(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
-            'laudo':TinyMCE(attrs={'cols': 80, 'rows': 10}),
+            'tipo_laudo': forms.Select(attrs={'class': 'form-control'}),
+            
+            'laudo':TinyMCE(attrs={'cols': 80, 'rows': 50, 'class': 'form-control'}),
         }
-
     data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
 
-    
+
+
+
         
+
 
 
 class RacaFelinoForms(forms.ModelForm):
