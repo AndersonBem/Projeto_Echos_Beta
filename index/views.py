@@ -48,7 +48,7 @@ def buscar_paciente(request):
         if nome_a_buscar:
             pacientes = pacientes.filter(nome__unaccent__icontains=nome_a_buscar)
     
-    return render (request, "index/buscar_paciente.html", {"pacientes":pacientes} )
+    return render (request, "index/busca/buscar_paciente.html", {"pacientes":pacientes} )
 
 def buscar_veterinario(request):
 
@@ -59,7 +59,7 @@ def buscar_veterinario(request):
         if nome_a_buscar:
             veterinarios = veterinarios.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_veterinario.html", {"veterinarios":veterinarios} )
+    return render (request, "index/busca/buscar_veterinario.html", {"veterinarios":veterinarios} )
 
 def buscar_tutor(request):
     
@@ -70,7 +70,7 @@ def buscar_tutor(request):
         if nome_a_buscar:
             tutores = tutores.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_tutor.html", {"tutores":tutores} )
+    return render (request, "index/busca/buscar_tutor.html", {"tutores":tutores} )
 
 def buscar_clinica(request):
     
@@ -81,4 +81,4 @@ def buscar_clinica(request):
         if nome_a_buscar:
             clinicas = clinicas.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_clinica.html", {"clinicas":clinicas} )
+    return render (request, "index/busca/buscar_clinica.html", {"clinicas":clinicas} )

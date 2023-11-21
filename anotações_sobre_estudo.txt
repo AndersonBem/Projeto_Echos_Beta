@@ -362,7 +362,7 @@
 
         3-   Em views.py do app:
                 def buscar_paciente(request):
-                    return render (request, "index/buscar_paciente.html" ) 
+                    return render (request, "index/busca/buscar_paciente.html" ) 
         
         4-  No codigo da busca, usar o  <form class="form-inline" action="{% url 'buscar_paciente' %}">
 
@@ -380,7 +380,7 @@
                     if nome_a_buscar:
                         pacientes = pacientes.filter(nome__unaccent__icontains=nome_a_buscar)
                 
-                return render (request, "index/buscar_paciente.html", {"pacientes":pacientes} )
+                return render (request, "index/busca/buscar_paciente.html", {"pacientes":pacientes} )
 
 
                 Curso Django: autenticação de formulários e alerta

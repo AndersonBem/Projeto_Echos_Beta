@@ -7,6 +7,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.urls import reverse
 # lista de funções de listas
 
 
@@ -23,6 +24,21 @@ def lista_veterinarios(request):
         return redirect('login')
     veterinarios = Veterinario.objects.order_by("nome").all()
     return render(request, 'index/lista_veterinarios.html', {"veterinarios": veterinarios})
+
+def lista_frases(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    frases = Frases.objects.all()
+    return render(request, 'index/lista_frases.html', {"frases": frases})
+
+def lista_laudos(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
+    lista_laudos = LaudosPadrao.objects.all()
+    return render(request, 'index/lista_laudos.html', {"lista_laudos": lista_laudos})
+
 
 def lista_clinicas(request):
     if not request.user.is_authenticated:
@@ -63,14 +79,17 @@ def nova_clinica(request):
 def editar_clinica(request, clinica_id):
     clinica = Clinica.objects.get(id=clinica_id)
     form = ClinicaForms(instance=clinica)
-
+    clinica_nome = clinica.nome
+    params = f"?buscar={clinica_nome.replace(' ', '+')}"
+    url = reverse('buscar_clinica')
     if request.method == 'POST':
         form = ClinicaForms(request.POST, request.FILES, instance=clinica)
         if form.is_valid():
             form.save()
             messages.success(request, 'Cliníca alterada')
-            return redirect('lista_clinicas')
-    return render (request, 'index/editar_clinica.html', {'form':form, 'clinica_id': clinica_id})
+            
+            return redirect(url + params)
+    return render (request, 'index/editar/editar_clinica.html', {'form':form, 'clinica_id': clinica_id})
 
 @method_decorator(require_POST, name='dispatch')
 class DeletarClinicaView(View):
@@ -124,8 +143,8 @@ def editar_paciente(request, paciente_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Paciente alterado')
-            return redirect('lista_pacientes')
-    return render (request, 'index/editar_paciente.html', {'form':form, 'paciente_id': paciente_id})
+            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
+    return render (request, 'index/editar/editar_paciente.html', {'form':form, 'paciente_id': paciente_id})
 
 @method_decorator(require_POST, name='dispatch')
 class DeletarPacienteView(View):
@@ -178,8 +197,8 @@ def editar_paciente_canino(request, paciente_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Paciente alterado')
-            return redirect('lista_pacientes')
-    return render (request, 'index/editar_paciente_canino.html', {'form':form, 'paciente_id': paciente_id})
+            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
+    return render (request, 'index/editar/editar_paciente_canino.html', {'form':form, 'paciente_id': paciente_id})
 
 def deletar_paciente_canino(request, paciente_id):
     paciente = Paciente.objects.get(id=paciente_id)
@@ -203,17 +222,17 @@ def novo_tutor(request):
             return redirect('exibicao_tutor', tutor_id=novo_tutor.id)
     
     return render(request, 'index/novo_tutor.html', {'form': form})
+
 def editar_tutor(request, tutor_id):
     tutor = Tutor.objects.get(id=tutor_id)
     form = TutorForms(instance=tutor)
-
     if request.method == 'POST':
         form = TutorForms(request.POST, request.FILES, instance=tutor)
         if form.is_valid():
             form.save()
             messages.success(request, 'Tutor alterado')
-            return redirect('lista_tutores')
-    return render (request, 'index/editar_tutor.html', {'form':form, 'tutor_id': tutor_id})
+            return redirect(reverse('exibicao_tutor', kwargs={'tutor_id': tutor_id}))
+    return render (request, 'index/editar/editar_tutor.html', {'form':form, 'tutor_id': tutor_id})
 
 @method_decorator(require_POST, name='dispatch')
 class DeletarTutorView(View):
@@ -252,14 +271,16 @@ def novo_veterinario(request):
 def editar_veterinario(request, veterinario_id):
     veterinario = Veterinario.objects.get(id=veterinario_id)
     form = VeterinarioForms(instance=veterinario)
-
+    veterinario_nome = veterinario.nome
+    params = f"?buscar={veterinario_nome.replace(' ', '+')}"
+    url = reverse('buscar_veterinario')
     if request.method == 'POST':
         form=VeterinarioForms(request.POST, request.FILES, instance=veterinario)
         if form.is_valid():
             form.save()
             messages.success(request, "Veterinário salvo")
-            return redirect('lista_veterinarios')
-    return render(request, 'index/editar_veterinario.html', {'form': form, 'veterinario_id': veterinario_id})
+            return redirect(url + params)
+    return render(request, 'index/editar/editar_veterinario.html', {'form': form, 'veterinario_id': veterinario_id})
 
 @method_decorator(require_POST, name='dispatch')
 class DeletarVeterinarioView(View):
@@ -296,7 +317,7 @@ def buscar_paciente(request):
         if nome_a_buscar:
             pacientes = pacientes.filter(nome__unaccent__icontains=nome_a_buscar)
     
-    return render (request, "index/buscar_paciente.html", {"pacientes":pacientes} )
+    return render (request, "index/busca/buscar_paciente.html", {"pacientes":pacientes} )
 
 def buscar_veterinario(request):
     if not request.user.is_authenticated:
@@ -310,7 +331,7 @@ def buscar_veterinario(request):
         if nome_a_buscar:
             veterinarios = veterinarios.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_veterinario.html", {"veterinarios":veterinarios} )
+    return render (request, "index/busca/buscar_veterinario.html", {"veterinarios":veterinarios} )
 
 def buscar_tutor(request):
     if not request.user.is_authenticated:
@@ -324,7 +345,7 @@ def buscar_tutor(request):
         if nome_a_buscar:
             tutores = tutores.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_tutor.html", {"tutores":tutores} )
+    return render (request, "index/busca/buscar_tutor.html", {"tutores":tutores} )
 
 def buscar_clinica(request):
     if not request.user.is_authenticated:
@@ -338,7 +359,7 @@ def buscar_clinica(request):
         if nome_a_buscar:
             clinicas = clinicas.filter(nome__unaccent__icontains=nome_a_buscar)
 
-    return render (request, "index/buscar_clinica.html", {"clinicas":clinicas} )
+    return render (request, "index/busca/buscar_clinica.html", {"clinicas":clinicas} )
 
 
 def selecao(request, tutor_id):
@@ -352,14 +373,14 @@ def exibicao(request, paciente_id):
     laudo = LaudosPadrao.objects.all()
     laudos_paciente = paciente.laudos.all()
     # Agora, você pode passar o objeto do paciente para o template
-    return render(request, 'index/exibicao.html', {'paciente': paciente, 'laudo':laudo, 'laudos_paciente':laudos_paciente})
+    return render(request, 'index/exibir/exibicao.html', {'paciente': paciente, 'laudo':laudo, 'laudos_paciente':laudos_paciente})
 
 def exibicao_tutor(request, tutor_id):
     # Buscar o paciente pelo ID, retornar 404 se não encontrado
     tutor = Tutor.objects.get(id=tutor_id)
 
     # Agora, você pode passar o objeto do paciente para o template
-    return render(request, 'index/exibicao_tutor.html', {'tutor': tutor})
+    return render(request, 'index/exibir/exibicao_tutor.html', {'tutor': tutor})
 
 
 def laudo(request, paciente_id, tutor_id, laudo_id):
@@ -386,7 +407,7 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
 
             form.save()
             messages.success(request, 'Laudo salvo com sucesso')
-            return redirect('lista_pacientes')  # Altere para a URL desejada após salvar o laudo
+            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
         else:
             messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
     else:
@@ -444,7 +465,7 @@ def cadastrar_laudo(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Laudo cadastrado')
-            return redirect('lista_pacientes')
+            return redirect('lista_laudos')
     return render(request,'index/cadastrar_laudo.html', {'form':form})
 
 
@@ -469,9 +490,66 @@ def nova_frase(request):
             return redirect('lista_pacientes')
     return render(request,'index/nova_frase.html', {'form':form})
 
+
+def editar_frases(request, frases_id):
+    frases = Frases.objects.get(id=frases_id)
+    form = FrasesForm(instance=frases)
+    if request.method == 'POST':
+        form = FrasesForm(request.POST, request.FILES, instance=frases)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Frase alterado')
+            return redirect('lista_frases')
+    return render (request, 'index/editar/editar_frases.html', {'form':form, 'frases_id': frases_id})
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarFraseView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_frases'
+
+    def get(self, request, pk):
+        frases = get_object_or_404(Frases, pk=pk)
+        return render(request, self.template_name, {'frases': frases})
+
+    def post(self, request, pk):
+        frases = get_object_or_404(Frases, pk=pk)
+        frases.delete()
+        return redirect(self.success_url)
+
+def deletar_frase(request, frases_id):
+    frases = Frases.objects.get(id=frases_id)
+    frases.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_frases')
+
+
+@method_decorator(require_POST, name='dispatch')
+class DeletarLaudosPadraoView(View):
+    template_name = 'confirmacao_deletar.html'
+    success_url = 'lista_laudos'
+
+    def get(self, request, pk):
+        laudospadrao = get_object_or_404(LaudosPadrao, pk=pk)
+        return render(request, self.template_name, {'laudospadrao': laudospadrao})
+
+    def post(self, request, pk):
+        laudospadrao = get_object_or_404(LaudosPadrao, pk=pk)
+        laudospadrao.delete()
+        return redirect(self.success_url)
+
+def deletar_laudospadrao(request, laudo_id):
+    laudo = LaudosPadrao.objects.get(id=laudo_id)
+    laudo.delete()
+    messages.success(request, 'Deleção feita com sucesso')
+    return redirect('lista_laudos')
+
+
+
+
+
 def exibir_laudo(request,laudos_paciente_id):
     laudo_paciente = Laudo.objects.get(id=laudos_paciente_id)
-    return render(request, 'index/exibir_laudo.html', {'laudo_paciente': laudo_paciente})
+    return render(request, 'index/exibir/exibir_laudo.html', {'laudo_paciente': laudo_paciente})
 
 
 @method_decorator(require_POST, name='dispatch')
@@ -489,10 +567,11 @@ class DeletarLaudoView(View):
         return redirect(self.success_url)
 
 def deletar_laudo(request, laudo_paciente_id):
-    tutor = Laudo.objects.get(id=laudo_paciente_id)
-    tutor.delete()
+    laudo = Laudo.objects.get(id=laudo_paciente_id)
+    paciente_id = laudo.paciente.id
+    laudo.delete()
     messages.success(request, 'Deleção feita com sucesso')
-    return redirect('lista_pacientes')
+    return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
 
 def editar_laudo(request, laudo_paciente_id):
     laudo_paciente = Laudo.objects.get(id=laudo_paciente_id)
@@ -503,5 +582,23 @@ def editar_laudo(request, laudo_paciente_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Laudo salvo")
-            return redirect('lista_pacientes')
-    return render(request, 'index/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})
+            return redirect(reverse('exibir_laudo', kwargs={'laudos_paciente_id': laudo_paciente_id}))
+    return render(request, 'index/editar/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})
+
+
+def editar_laudopadrao(request, laudo_id):
+    
+    laudo = get_object_or_404(LaudosPadrao, id=laudo_id)
+    form = LaudoPadraoForms(instance=laudo)
+    if request.method == 'POST':
+        form = LaudoPadraoForms(request.POST, request.FILES, instance=laudo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Laudo padrão alterado')
+            return redirect('lista_laudos')
+    return render (request, 'index/editar/editar_laudopadrao.html', {'form':form, 'laudo_id': laudo_id})
+
+
+
+
+

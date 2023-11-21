@@ -212,3 +212,5 @@ class Frases(models.Model):
     palavra_chave = HTMLField(null=True)
     texto = HTMLField(null=True)
 
+    def __str__(self):
+        return self.tipo

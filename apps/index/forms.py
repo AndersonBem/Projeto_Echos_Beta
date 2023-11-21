@@ -42,10 +42,7 @@ class ClinicaForms(forms.ModelForm):
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone', 'id': 'telefone'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
-            'endereco': TinyMCE(
-                attrs={'cols': 80, 'rows': 30},  # Isso é opcional, ajuste conforme necessário
-                mce_attrs={'toolbar': 'bold italic | link | alignleft aligncenter alignright | undo redo |'},
-            ),
+            'endereco': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class PacienteForms(forms.ModelForm):

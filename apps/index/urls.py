@@ -3,7 +3,9 @@ from .views import DeletarTutorView, DeletarPacienteView, DeletarClinicaView, De
 from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
-    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo
+    novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo, lista_frases, lista_laudos,deletar_frase, deletar_laudospadrao,\
+    editar_frases, editar_laudopadrao
+    
 
 urlpatterns = [
     path('',index, name='index'),
@@ -11,6 +13,8 @@ urlpatterns = [
     path('lista_clinicas/', lista_clinicas, name='lista_clinicas'),
     path('lista_pacientes/',lista_pacientes, name='lista_pacientes'),
     path('lista_tutores', lista_tutores, name='lista_tutores'),
+    path('lista_frases/', lista_frases, name='lista_frases'),
+    path('lista_laudos/', lista_laudos, name='lista_laudos'),
 
     path('nova_clinica', nova_clinica, name='nova_clinica'),
     path('editar_clinica/<int:clinica_id>', editar_clinica, name='editar_clinica'),
@@ -48,7 +52,9 @@ urlpatterns = [
     path('deletar_tutor/<int:pk>/', DeletarTutorView.as_view(), name='deletar_tutor'),
     path('deletar_paciente/<int:pk>/', DeletarPacienteView.as_view(), name='deletar_paciente'),
     path('deletar_clinica/<int:pk>/', DeletarClinicaView.as_view(), name='deletar_clinica'),
-    path('deletar_veterinario/<int:pk>/', DeletarVeterinarioView.as_view(), name='deletar_veterinario'),
+    path('deletar_veterinario/<int:veterinario_id>', deletar_veterinario, name='deletar_veterinario'),
+    path('deletar_frase/<int:frases_id>', deletar_frase, name='deletar_frase'),
+    path('deletar_laudospadrao/<int:laudo_id>', deletar_laudospadrao, name='deletar_laudospadrao'),
 
     path('nova_raca_felino', nova_raca_felino, name='nova_raca_felino'),
     path('nova_raca_canino', nova_raca_canino, name='nova_raca_canino'),
@@ -62,5 +68,8 @@ urlpatterns = [
     path('exibir_laudo/<int:laudos_paciente_id>/', exibir_laudo, name='exibir_laudo'),
 
     path('deletar_laudo/<int:laudo_paciente_id>/', deletar_laudo, name='deletar_laudo'),
-    path('editar_laudo/<int:laudo_paciente_id>/',editar_laudo, name='editar_laudo')
+    path('editar_laudo/<int:laudo_paciente_id>/',editar_laudo, name='editar_laudo'),
+
+    path('editar_frases/<int:frases_id>', editar_frases, name='editar_frases'),
+    path('editar_laudopadrao/<int:laudo_id>', editar_laudopadrao, name='editar_laudopadrao'),
 ]
