@@ -208,5 +208,7 @@ class LaudosPadrao(models.Model):
         return self.nome_exame
 
 class Frases(models.Model):
+    tipo = HTMLField(null=True)
+    palavra_chave = HTMLField(null=True)
     texto = HTMLField(null=True)
 

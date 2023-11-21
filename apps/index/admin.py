@@ -60,7 +60,7 @@ class ListandoLaudoPadrao(admin.ModelAdmin):
     list_per_page = 10
 
 class ListandoFrase(admin.ModelAdmin):
-    list_display = ("id", "texto")
+    list_display = ("id", "texto", "tipo", "palavra_chave")
     list_display_links = ("id", "texto")
     search_fields = ("id", "texto")
     list_per_page = 10

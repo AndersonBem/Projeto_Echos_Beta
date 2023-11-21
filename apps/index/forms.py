@@ -251,12 +251,16 @@ class LaudoPadraoForms(forms.ModelForm):
 class FrasesForm(forms.ModelForm):
     class Meta:
         model = Frases
-        fields = ['texto'] 
+        fields = '__all__' 
 
         labels = {
+            'tipo': "Tipo",
+            'palavra_chave': "Palavras chave",
             'texto': 'Frase padrão',
         }
 
         widgets = {
+            'tipo': TinyMCE(attrs={'cols': 40, 'rows': 1}),
+            'palavra_chave': TinyMCE(attrs={'cols': 40, 'rows': 1}),
             'texto': TinyMCE(attrs={'cols': 80, 'rows': 10}),
         }

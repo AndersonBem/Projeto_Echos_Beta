@@ -367,6 +367,8 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
         messages.error(request, "Usuário não logado")
         return redirect('login')
 
+    frases = Frases.objects.all()
+
     try:
         paciente = Paciente.objects.select_related('tutor').get(id=paciente_id)
         tutor = Tutor.objects.get(id=tutor_id)
@@ -402,7 +404,7 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
             
         })
 
-    return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor})
+    return render(request, 'index/laudo.html', {'form': form, 'paciente': paciente, 'tutor': tutor, 'frases':frases})
 
 #Criação de novas raças
 
@@ -451,7 +453,7 @@ def escolha_exame(request):
     return render(request, 'index/escolha_exame.html', {'laudo': laudo})
 
 def obter_frases(request):
-    frases = Frases.objects.values_list('texto', flat=True)
+    frases = Frases.objects.values('tipo', 'palavra_chave', 'texto')
     return JsonResponse({'frases': list(frases)})
 
 def nova_frase(request):
