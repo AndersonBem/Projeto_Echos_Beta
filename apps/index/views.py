@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem
 from django.contrib import messages
-from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm
+from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
+NovaImagemForm
 from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -400,13 +401,20 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
         return redirect('alguma_pagina_de_erro')
 
     if request.method == 'POST':
-        form = LaudoForms(request.POST)
+        form = LaudoForms(request.POST, request.FILES)
         if form.is_valid():
             form.instance.paciente = paciente
             form.instance.tutor = tutor
             # Preencha outros campos conforme necessário
 
-            form.save()
+            laudo_imagem = form.save()
+            files = request.FILES.getlist('laudo_imagem')
+            if files:
+                for f in files:
+                    LaudoImagem.objects.create(
+                        laudo=laudo_imagem,
+                        image=f
+                    )
             messages.success(request, 'Laudo salvo com sucesso')
             return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
         else:
@@ -581,7 +589,14 @@ def editar_laudo(request, laudo_paciente_id):
     if request.method == 'POST':
         form=LaudoForms(request.POST, request.FILES, instance=laudo_paciente)
         if form.is_valid():
-            form.save()
+            laudo_imagem = form.save()
+            files = request.FILES.getlist('laudo_imagem')
+            if files:
+                for f in files:
+                    LaudoImagem.objects.create(
+                        laudo=laudo_imagem,
+                        image=f
+                    )
             messages.success(request, "Laudo salvo")
             return redirect(reverse('exibir_laudo', kwargs={'laudos_paciente_id': laudo_paciente_id}))
     return render(request, 'index/editar/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})
@@ -600,6 +615,28 @@ def editar_laudopadrao(request, laudo_id):
     return render (request, 'index/editar/editar_laudopadrao.html', {'form':form, 'laudo_id': laudo_id})
 
 
+def deletar_imagem(request, imagem_id):
+    imagem = get_object_or_404(LaudoImagem, id=imagem_id)
+    laudo_id = imagem.laudo.id  # Captura o ID do laudo antes de deletar a imagem
+    imagem.delete()
+    return redirect('exibir_laudo', laudos_paciente_id=laudo_id)
 
 
+def adicionar_imagem(request, laudo_id):
+    laudo = Laudo.objects.get(id=laudo_id)
 
+    if request.method == 'POST':
+        form = NovaImagemForm(request.POST, request.FILES)
+        if form.is_valid():
+            files = request.FILES.getlist('laudo_imagem')
+            if files:
+                for f in files:
+                    LaudoImagem.objects.create(
+                        laudo=laudo,
+                        image=f
+                    )
+            return redirect(reverse('exibir_laudo', kwargs={'laudos_paciente_id': laudo_id}))
+    else:
+        form = NovaImagemForm()
+
+    return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})

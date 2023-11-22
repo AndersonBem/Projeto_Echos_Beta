@@ -13,7 +13,7 @@ from multiupload.fields import MultiFileField
 
 def get_upload_path(instance, filename):
     # Obtém o nome do objeto
-    nome_objeto = instance.nome
+    nome_objeto = instance.laudo.paciente.nome
     # Obtém a extensão do arquivo
     extensao = filename.split('.')[-1]
     # Obtém a data atual
@@ -204,6 +204,19 @@ class Laudo(models.Model):
     laudo = HTMLField(null=True)
 
 
+class LaudoImagem(models.Model):
+    image = models.FileField('Arquivos', upload_to=get_upload_path, null=True, blank=False)
+    laudo = models.ForeignKey(
+        Laudo,
+        related_name='laudo_imagem',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return str(self.laudo.paciente)
+
+
+
 class LaudosPadrao(models.Model):
     nome_exame = models.CharField(max_length=100, null=False, blank=False)
     tipo_exame = models.CharField(max_length=100, null=False, blank=False)
@@ -219,3 +232,6 @@ class Frases(models.Model):
 
     def __str__(self):
         return self.tipo
+
+
+

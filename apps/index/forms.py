@@ -1,8 +1,11 @@
 from django import forms
 
+from multiupload.fields import MultiFileField
+
 from datetime import date
 
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases,\
+LaudoImagem
 
 from tinymce.widgets import TinyMCE
 
@@ -134,6 +137,7 @@ class TutorForms(forms.ModelForm):
 
 
 class LaudoForms(forms.ModelForm):
+    laudo_imagem = MultiFileField(min_num=1, max_num=100)
     tutor = forms.ModelChoiceField(
         queryset=Tutor.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
@@ -261,3 +265,11 @@ class FrasesForm(forms.ModelForm):
             'palavra_chave': TinyMCE(attrs={'cols': 40, 'rows': 1}),
             'texto': TinyMCE(attrs={'cols': 80, 'rows': 10}),
         }
+
+
+class NovaImagemForm(forms.ModelForm):
+    laudo_imagem = MultiFileField(min_num=1, max_num=100)
+    class Meta:
+        model = LaudoImagem
+        fields = ['laudo_imagem']
+

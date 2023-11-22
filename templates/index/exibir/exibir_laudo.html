@@ -21,6 +21,18 @@
             <p>Clínica: {{ laudo_paciente.clinica.nome }}</p>
             <p>Veterinário: {{ laudo_paciente.veterinario.nome }}</p>
             <p>Data: {{ laudo_paciente.data|date:'d/m/Y' }}</p>
+            <p>
+                <a href="{% url 'adicionar_imagem' laudo_id=laudo_paciente.id %}" class="btn btn-primary">Adicionar Nova Imagem</a>
+            </p>
+            <p>
+                {% for imagem in laudo_paciente.laudo_imagem.all %}
+                    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid">
+                    <form method="post" action="{% url 'deletar_imagem' imagem.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir esta imagem?')">Deletar Imagem</button>
+                    </form>
+                {% endfor %}
+            </p>
             
             <!-- Adicione aqui os detalhes específicos do Laudo que deseja exibir -->
             

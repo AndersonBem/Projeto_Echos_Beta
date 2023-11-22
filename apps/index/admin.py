@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino, Laudo, LaudosPadrao, Frases
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino, Laudo, LaudosPadrao, Frases, LaudoImagem
 
 
 class ListandoVeterinario(admin.ModelAdmin):
@@ -79,3 +79,4 @@ admin.site.register(RacaCanino, ListandoRacaCanino)
 admin.site.register(Laudo, ListandoLaudo)
 admin.site.register(LaudosPadrao, ListandoLaudoPadrao)
 admin.site.register(Frases, ListandoFrase)
+admin.site.register(LaudoImagem)
