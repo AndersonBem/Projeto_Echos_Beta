@@ -127,9 +127,10 @@ def novo_paciente(request):
 
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            paciente = form.save()
+            paciente_id = paciente.id
             messages.success(request, 'Novo Paciente Cadastrado')
-            return redirect('lista_pacientes')
+            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
 
     return render(request, 'index/novo_paciente.html', {'form': form})
 

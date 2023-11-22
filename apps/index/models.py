@@ -61,6 +61,8 @@ class Paciente(models.Model):
     @property
     def data_atual_sem_hora(self):
         return timezone.now().strftime('%d/%m/%Y')
+    
+
     def calcular_idade(self):
         today = date.today()
         age_years = today.year - self.nascimento.year
@@ -73,6 +75,9 @@ class Paciente(models.Model):
         return age_years, age_months
     @property
     def idade(self):
+        if self.nascimento is None or self.nascimento == "":
+            return "Idade não informada"
+        
         today = date.today()
         delta = today - self.nascimento
         years = delta.days // 365
@@ -111,7 +116,7 @@ class Paciente(models.Model):
         else:
             return None
         
-    nascimento = models.DateField(default=data_atual_sem_hora)
+    nascimento = models.DateField(null=True, blank=True)
     peso = models.CharField(max_length=100, null=True, blank=True)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
@@ -166,10 +171,10 @@ class Laudo(models.Model):
         blank=False, 
         related_name='tutor'
     )
-    email = models.CharField(max_length=100, null=True, blank=False)
-    idade = models.CharField(max_length=100, null=True, blank=False)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    idade = models.CharField(max_length=100, null=True, blank=True)
     
-    peso = models.CharField(max_length=100, null=True, blank=False)
+    peso = models.CharField(max_length=100, null=True, blank=True)
     email_extra = models.CharField(max_length=100, null=True, blank=True)
     telefone_extra = models.CharField(max_length=100, null=True, blank=True)
     suspeita = models.CharField(max_length=100, null=True, blank=True)

@@ -3,11 +3,10 @@
 {% block content %}
 <div class="page-header">
     <h1>Detalhes do Paciente</h1>
-    
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6">
             <h2>Nome: {{ paciente.nome }}</h2>
             <p>Espécie: {{ paciente.especie }}</p>
             <p>Raça: {{ paciente.raca }}</p>
@@ -16,35 +15,36 @@
             <p>Castração: {{ paciente.castracao }}</p>
 
             {% if paciente.especie|lower|striptags == 'felino' %}
-                <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
-                <form method="post" action="{% url 'deletar_paciente' paciente.id %}" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
-                </form>              
+                <div class="mb-3">
+                    <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
+                    <form method="post" action="{% url 'deletar_paciente' paciente.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
+                    </form>
+                </div>
             {% else %}
-                <a href="{% url 'editar_paciente_canino' paciente.id %}" class="btn btn-success">Editar</a>
-                <form method="post" action="{% url 'deletar_paciente_canino' paciente.id %}" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
-                </form>
-                
+                <div class="mb-3">
+                    <a href="{% url 'editar_paciente_canino' paciente.id %}" class="btn btn-success">Editar</a>
+                    <form method="post" action="{% url 'deletar_paciente_canino' paciente.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
+                    </form>
+                </div>
             {% endif %}
-            
+
             {% for laudo in laudo %}
-                
                 <a href="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}" class="btn btn-primary">Criar {{ laudo.nome_exame }}</a>
-            
             {% endfor %}
-            
+
             {% for laudos_paciente in laudos_paciente %}
-                <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a><a href="{% url 'exibir_laudo' laudos_paciente.id %}"class="btn btn-success">Exibir</a></p> 
+                <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir</a></p>
             {% endfor %}
-
-
+        </div>
+        <div class="col-md-6 text-center"> <!-- Adiciona uma coluna para a imagem -->
             {% if paciente.foto %}
-                <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
+                <img class="img-fluid" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
             {% else %}
-                <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+                <img class="img-fluid" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
             {% endif %}
         </div>
     </div>

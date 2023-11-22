@@ -7,26 +7,26 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6">
             <h2>Nome: {{ tutor.nome }}</h2>
             <p>Telefone: {{ tutor.telefone }}</p>
             <p>E-mail: {{ tutor.email }}</p>
             <p>Endereço: {{ tutor.endereco }}</p>
-            
 
             <a href="{% url 'editar_tutor' tutor.id %}" class="btn btn-success">Editar</a>
             <form method="post" action="{% url 'deletar_tutor' tutor.id %}" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este tutor?')">Deletar</button>
-            </form>            
+            </form>
             <a href="{% url 'selecao' tutor.id %}" class="btn btn-success">Adicionar Paciente</a>
+        </div>
+        <div class="col-md-6 text-center"> <!-- Adiciona uma coluna para a imagem -->
             {% if tutor.foto %}
-            <img class="card__imagem" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">
+                <img class="img-fluid" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">
             {% else %}
-            <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
+                <img class="img-fluid" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
             {% endif %}
         </div>
     </div>
 </div>
 {% endblock %}
-

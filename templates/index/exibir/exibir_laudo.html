@@ -6,7 +6,7 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6">
             <h2>Paciente: {{ laudo_paciente.paciente.nome }}</h2>
             <p>Espécie: {{ laudo_paciente.especie }}</p>
             <p>Raça: {{ laudo_paciente.raca }}</p>
@@ -21,7 +21,6 @@
             <p>Clínica: {{ laudo_paciente.clinica.nome }}</p>
             <p>Veterinário: {{ laudo_paciente.veterinario.nome }}</p>
             <p>Data: {{ laudo_paciente.data|date:'d/m/Y' }}</p>
-            <p>Laudo: {{ laudo_paciente.laudo|safe }}</p> <!-- Utilize |safe para renderizar HTML -->
             
             <!-- Adicione aqui os detalhes específicos do Laudo que deseja exibir -->
             
@@ -29,7 +28,11 @@
             <form method="post" action="{% url 'deletar_laudo' laudo_paciente.id %}" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este laudo?')">Deletar</button>
-            </form>              
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h2>Laudo</h2>
+            <p>{{ laudo_paciente.laudo|safe }}</p> <!-- Utilize |safe para renderizar HTML -->
         </div>
     </div>
 </div>
