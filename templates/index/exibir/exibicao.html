@@ -34,11 +34,15 @@
 
             {% for laudo in laudo %}
                 <a href="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}" class="btn btn-primary">Criar {{ laudo.nome_exame }}</a>
+                
             {% endfor %}
 
             {% for laudos_paciente in laudos_paciente %}
                 <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir</a></p>
-            {% endfor %}
+                <p>
+                    <a href="{% url 'venue_pdf' laudos_paciente.id %}" class="btn btn-success">PDF</a></p>
+                </p>
+                {% endfor %}
         </div>
         <div class="col-md-6 text-center"> <!-- Adiciona uma coluna para a imagem -->
             {% if paciente.foto %}

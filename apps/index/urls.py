@@ -4,7 +4,7 @@ from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
     novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo, lista_frases, lista_laudos,deletar_frase, deletar_laudospadrao,\
-    editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem
+    editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem, venue_pdf
     
 
 urlpatterns = [
@@ -75,4 +75,8 @@ urlpatterns = [
 
     path('deletar_imagem/<int:imagem_id>/', deletar_imagem, name='deletar_imagem'),
     path('adicionar_imagem/<int:laudo_id>/', adicionar_imagem, name='adicionar_imagem'),
+
+    path('venue_pdf/<int:laudo_paciente_id>/',venue_pdf, name='venue_pdf')
+
+    
 ]

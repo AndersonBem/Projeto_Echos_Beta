@@ -7,8 +7,16 @@ from apps.index.mixins import ConfirmacaoMixin
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
 from django.urls import reverse
+from html2text import html2text
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import A4
+
+
+
 # lista de funções de listas
 
 
@@ -640,3 +648,43 @@ def adicionar_imagem(request, laudo_id):
         form = NovaImagemForm()
 
     return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})
+
+
+def venue_pdf(request, laudo_paciente_id):
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=A4, bottomup=0)
+    textob = c.beginText()
+    textob.setFont("Helvetica", 12)  # Reduza o tamanho da fonte
+
+    laudo = Laudo.objects.get(id=laudo_paciente_id)
+
+    lines = [
+        laudo.paciente.nome,
+        laudo.especie,
+        laudo.raca,
+        laudo.sexo,
+        laudo.tutor.nome,  # Substitua por atributos reais do modelo Tutor
+        laudo.email,
+        laudo.idade,
+        laudo.peso,
+        laudo.email_extra,
+        laudo.telefone_extra,
+        laudo.suspeita,
+        laudo.clinica,  # Substitua por atributos reais do modelo Clinica
+        laudo.veterinario,  # Substitua por atributos reais do modelo Veterinario
+        html2text(laudo.laudo),
+        "  ",
+    ]
+
+    for line in lines:
+        textob.textLine(str(line))
+
+    c.drawText(textob)
+    c.save()
+    buf.seek(0)
+
+    response = HttpResponse(buf.read(), content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename=venue.pdf'
+
+    return response
+    #return FileResponse(buf, as_attachment=True, filename="venue.pdf")
