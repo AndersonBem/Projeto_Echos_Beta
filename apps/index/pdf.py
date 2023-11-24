@@ -1,30 +1,25 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter import messagebox
 
 
 from reportlab.pdfgen import canvas
-
+from reportlab.lib.units import cm
 from reportlab.lib.pagesizes import A4
-
-import os 
-
-pastaApp=os.path.dirname(__file__)
+from reportlab.lib import colors
 
 
-def criarPDF():
-    cnv = canvas.Canvas(pastaApp+"\\cbfcursos.pdf", pagesize=A4)
-    cnv.drawString(100,100,"CBF Cursos")
-    
-    cnv.save()
 
-app=Tk()
-app.title("CFB Cursos")
-app.geometry("600x450")
+def mp(mm):
+    return mm/0.352777
 
+caminho_imagem = "C:\\Anderson\\Alura\\Projeto Echos Em Uso\\setup\\static\\assets\\not-found.png"
 
-btn_criarPDF= Button(app, text='Criar PDF', command=criarPDF)
-btn_criarPDF.pack(side="left",padx=10)
+pdf = canvas.Canvas("teste.pdf")
 
-app.mainloop()
+pdf.setPageSize(A4)
+pdf.setStrokeColor(colors.green)
+pdf.setFillColor(colors.green)
+pdf.rect(mp(55),mp(143),mp(100),mp(10),stroke=1,fill=0)
+pdf.drawImage(caminho_imagem,mp(0),mp(0))
+pdf.circle(mp(105),mp(147),mp(50))
+
+pdf.save()
 

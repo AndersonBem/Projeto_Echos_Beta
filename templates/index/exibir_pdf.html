@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laudo Médico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 100px;
+            margin-bottom: 10px;
+        }
+
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #e0e0e0;
+        }
+
+        .patient-info .column {
+            width: 48%;
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img class="logo" src="{% static 'assets/not-found.png' %}" alt="Logo">
+        <h1>Laudo Médico</h1>
+    </div>
+
+    <div class="patient-info">
+        <div class="column">
+            <h2>Paciente: {{ laudo.paciente.nome }}</h2>
+            <p>Espécie: {{ laudo.especie }}</p>
+            <p>Raça: {{ laudo.raca }}</p>
+            <p>Sexo: {{ laudo.sexo }}</p>
+            <p>Tutor: {{ laudo.tutor.nome }}</p>
+        </div>
+
+        <div class="column">
+            <p>E-mail do Tutor: {{ laudo.email }}</p>
+            <p>Idade: {{ laudo.idade }}</p>
+            <p>Peso: {{ laudo.peso }}</p>
+            <p>E-mail Extra: {{ laudo.email_extra }}</p>
+            <p>Telefone Extra: {{ laudo.telefone_extra }}</p>
+        </div>
+    </div>
+
+    <div class="full-width">
+        <h2>Laudo:</h2>
+        <p>{{ laudo.laudo|safe }}</p>
+    </div>
+    <!-- Adicione esta parte para as imagens -->
+    <div class="full-width">
+        <h2>Imagens:</h2>
+        <table style="width: 100%;">
+            {% for imagem in laudo.laudo_imagem.all %}
+                {% if forloop.counter0|divisibleby:2 %}
+                    </tr><tr>
+                {% endif %}
+                <td style="width: 50%;">
+                    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%;">
+                </td>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

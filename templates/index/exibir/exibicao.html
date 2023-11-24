@@ -40,7 +40,8 @@
             {% for laudos_paciente in laudos_paciente %}
                 <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir</a></p>
                 <p>
-                    <a href="{% url 'venue_pdf' laudos_paciente.id %}" class="btn btn-success">PDF</a></p>
+                    <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}">ExibirPDF</a>
+                    <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">ExportPDF</a>
                 </p>
                 {% endfor %}
         </div>

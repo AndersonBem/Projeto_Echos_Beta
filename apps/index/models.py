@@ -192,7 +192,7 @@ class Laudo(models.Model):
         blank=True, 
         related_name='pacientes'
     )
-    data = models.DateTimeField(default=datetime.now, blank=False)
+    data = models.DateField()
     tipo_laudo = models.ForeignKey(
         to='index.LaudosPAdrao',
         on_delete=models.SET_NULL,
@@ -204,8 +204,17 @@ class Laudo(models.Model):
     laudo = HTMLField(null=True)
 
 
+    def save(self, *args, **kwargs):
+        # Antes de salvar, configure o campo 'data' para ter apenas a data atual
+        self.data = datetime.now().date()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        # Retorna a representação em string da instância do modelo
+        return self.data.strftime('%d%m%Y')
+
 class LaudoImagem(models.Model):
-    image = models.FileField('Arquivos', upload_to=get_upload_path, null=True, blank=False)
+    image = models.FileField('Arquivos', upload_to=get_upload_path, null=True, blank=True)
     laudo = models.ForeignKey(
         Laudo,
         related_name='laudo_imagem',

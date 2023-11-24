@@ -45,8 +45,11 @@ INSTALLED_APPS = [
     'apps.usuarios.apps.UsuariosConfig',
     'storages',
     'tinymce',
-    'multiupload'
+    'multiupload',
+    'pdfkit'
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

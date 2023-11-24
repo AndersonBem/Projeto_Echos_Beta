@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laudo Médico</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            margin-left: 3%; /* Adicione a margem lateral esquerda desejada */
+            margin-right: 3%; /* Adicione a margem lateral direita desejada */
+        }
+
+        .header1 {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .header2 {
+            text-align: center;
+            padding: 10px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+    
+        .logo {
+            width: 100px;
+            margin-bottom: 0%;
+            margin-top: 0px;
+        }
+    
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 1px; /* Reduza o padding para diminuir a distância entre o retângulo e o conteúdo */
+            
+            border: 1px solid #ddd; /* Borda suave */
+            margin: 0 20px;
+        }
+    
+        .patient-info .column {
+            width: 48%;
+            font-size: 12px; /* Ajuste o tamanho da fonte */
+        }
+        
+        .patient-info p {
+            margin: 5px 0; /* Reduza o espaçamento vertical entre os parágrafos */
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9; /* Cor de fundo suave */
+            border: 2px solid #ddd; /* Borda suave */
+            margin: 10px 20px; /* Margem superior e inferior reduzida para 10px */
+            font-size: 18px;
+        }
+    
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header1">
+        <img class="logo" src="{% static 'assets/not-found.png' %}" alt="Logo">
+    </div>
+
+    <div class="patient-info">
+        <div class="column">
+            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.raca %}
+                <p><strong>Raça:</strong> {{ laudo.raca }}</p>
+            {% endif %}
+            {% if laudo.sexo %}
+                <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
+            {% endif %}
+            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+        </div>
+    
+        <div class="column">
+            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email_extra %}
+                <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
+            {% endif %}
+            {% if laudo.telefone_extra %}
+                <p><strong>Telefone Extra:</strong> {{ laudo.telefone_extra }}</p>
+            {% endif %}
+            {% if laudo.Clinica %}
+                <p><strong>Clínica:</strong> {{ laudo.clinica }}</p>
+            {% endif %}
+            {% if laudo.veterinario %}
+                <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+    <div class="header2">
+        <h1>RELATÓRIO DE {{ laudo.tipo_laudo}}</h1>
+    </div>
+        
+    <div class="full-width">
+        <p>{{ laudo.laudo|safe }}</p>
+    </div>
+    <div class="header1">
+        <img class="logo" src="{% static 'assets/not-found.png' %}" alt="Logo">
+    </div>
+    <div class="full-width">
+        
+        <table style="width: 100%;">
+            {% for imagem in laudo.laudo_imagem.all %}
+                {% if forloop.counter0|divisibleby:3 %}
+                    </tr><tr>
+                {% endif %}
+                <td style="width: 33.33%; padding: 5px;">
+                    <a href="{{ imagem.image.url }}" target="_blank">
+                        <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 200px; margin: 0;">
+                    </a>
+                </td>
+            {% endfor %}
+        </table>
+    </div>
+    
+</body>
+</html>
