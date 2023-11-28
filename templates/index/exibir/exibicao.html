@@ -42,6 +42,10 @@
                 <p>
                     <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}">ExibirPDF</a>
                     <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">ExportPDF</a>
+                    <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Enviar E-mail</button>
+                    </form>
                 </p>
                 {% endfor %}
         </div>

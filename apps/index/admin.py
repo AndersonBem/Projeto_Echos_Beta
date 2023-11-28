@@ -66,7 +66,15 @@ class ListandoFrase(admin.ModelAdmin):
     list_per_page = 10
 
 
+
+
+
+
 # Register your models here.
+
+
+
+
 
 
 

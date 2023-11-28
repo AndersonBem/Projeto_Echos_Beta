@@ -41,13 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.index.apps.IndexConfig',
-    'django.contrib.postgres',
     'apps.usuarios.apps.UsuariosConfig',
     'storages',
     'tinymce',
     'multiupload',
-    'pdfkit'
+    'pdfkit',
+    'django_q'
+    
+    
+    
 ]
+
 
 
 
@@ -202,4 +206,30 @@ TINYMCE_DEFAULT_CONFIG = {
                'alignright alignjustify | bullist numlist outdent indent | ' +
                'removeformat | help',
     'language_url': "{% static 'langs/pt_BR.js' %}"
+}
+
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+
+
+
+
+Q_CLUSTER = {
+    
+    'name': 'setup',
+    'workers': 4,
+    'recycle': 500,
+    'timeout': 60,  # Tempo máximo de execução de uma tarefa
+    'retry': 180,   # Intervalo para reexecutar tarefas com falha
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
 }

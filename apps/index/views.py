@@ -3,30 +3,31 @@ from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadra
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
 NovaImagemForm
-
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse
-
-
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, get_template
 import tempfile
-
 from reportlab.lib.pagesizes import A4
-
-
-
 from django.http import HttpResponse
 import tempfile
 from django.template.loader import render_to_string  
 import weasyprint
+from django.core.mail import EmailMessage
+from django.conf import settings
 
-
-
-
-
+#agendamento -email
+from django.conf import settings
+from django_q.tasks import async_task
+from .tasks import enviar_pdf_task
+from datetime import datetime, timedelta
+from django_q.tasks import schedule
+from django.utils import timezone
+import asyncio
+from django_q.tasks import Schedule
+from django import forms
 # lista de funções de listas
 
 
@@ -669,7 +670,7 @@ def export_pdf(request, laudos_paciente_id):
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=Laudo - '+str(laudo.paciente)+' - '+str(laudo.data)+'.pdf'
+    response['Content-Disposition'] = 'attachment; filename=Laudo - '+str(laudo.tipo_laudo)+' - '+str(laudo.paciente)+' - '+str(laudo.data)+'.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
     with tempfile.NamedTemporaryFile(delete=True) as output:
         output.write(pdf)
@@ -694,3 +695,85 @@ def exibir_pdf(request, laudos_paciente_id):
         output.seek(0)
         response.write(output.read()) 
     return response
+
+
+def enviar_pdf(request, laudos_paciente_id):
+    laudo = Laudo.objects.get(id=laudos_paciente_id)
+    html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+
+    # Enviar o e-mail
+    subject = f'Laudo de {laudo.paciente}'
+    message_body = f'Prezado(a) Senhor(a) {laudo.tutor}, \n\nSegue em anexo o laudo do exame de {laudo.paciente}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário '  # Modifique conforme necessário
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = [laudo.email]
+
+    email = EmailMessage(subject, message_body, from_email, to_email)
+    email.content_subtype = ''
+    email.attach(f'Laudo - {laudo.paciente} - {laudo.data}.pdf', pdf, 'application/pdf')
+    # email.send()  # Remova ou mantenha dependendo se deseja enviar o email imediatamente ou não
+
+    # Configurar o fuso horário padrão
+    utc_minus3 = timezone.get_default_timezone()
+
+    # Obter a hora atual no fuso horário padrão
+    now_utc_minus3 = timezone.now().astimezone(utc_minus3)
+
+    # Criar a hora_agendada respeitando o fuso horário padrão
+    hora_agendada = now_utc_minus3.replace(hour=13, minute=12, second=0, microsecond=0)
+
+    # Verificar se já passou da hora agendada
+    if now_utc_minus3 > hora_agendada:
+        # Se sim, agendar para amanhã às 20h
+        hora_agendada += timedelta(days=1)
+
+    try:
+        task = schedule(
+            'apps.index.tasks.enviar_pdf_task',
+            laudo.id,
+            name=f'Email para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
+            schedule_type='O',
+            next_run=hora_agendada
+        )
+        messages.success(request, "Tarefa agendada com sucesso")
+
+        # Redirecione para a página de edição de horário com o ID da tarefa
+        return redirect('editar_horario_tarefa', task.id)
+    except Exception as e:
+        messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
+        return redirect('exibicao', paciente_id=laudo.paciente.id)
+
+
+
+def lista_tarefas_agendadas(request):
+    tarefas_agendadas = Schedule.objects.all()
+    return render(request, 'index/exibir/lista_tarefas_agendadas.html', {'tarefas_agendadas': tarefas_agendadas})
+   
+def deletar_tarefa(request, tarefa_id):
+    tarefa = Schedule.objects.get(id=tarefa_id)
+    tarefa.delete()
+    return redirect('lista_tarefas_agendadas')
+
+
+class EditarHorarioForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ['next_run']
+
+def editar_horario_tarefa(request, tarefa_id):
+    tarefa = get_object_or_404(Schedule, id=tarefa_id)
+
+    if request.method == 'POST':
+        form = EditarHorarioForm(request.POST, instance=tarefa)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_tarefas_agendadas')
+    else:
+        form = EditarHorarioForm(instance=tarefa)
+
+    return render(request, 'index/editar/editar_horario_tarefa.html', {'form': form, 'tarefa': tarefa})
+
+
+
+

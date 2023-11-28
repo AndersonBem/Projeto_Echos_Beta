@@ -1,0 +1,34 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <title>E-mails programados</title>
+</head>
+<body>
+
+<h1>E-mails programados</h1>
+
+{% if tarefas_agendadas %}
+    <ul>
+        {% for tarefa in tarefas_agendadas %}
+            <li>
+                {{ tarefa.name }} - Agendada para: {{ tarefa.next_run }}
+                
+                <!-- Botão para Deletar Tarefa -->
+                <form method="post" action="{% url 'deletar_tarefa' tarefa.id %} " >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Deletar</button>
+                </form>
+                
+                <!-- Botão para Editar Tarefa -->
+                <a href="{% url 'editar_horario_tarefa' tarefa.id %}" class="btn btn-success">Editar Horário</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Nenhuma tarefa agendada.</p>
+{% endif %}
+
+</body>
+
+{% endblock %}

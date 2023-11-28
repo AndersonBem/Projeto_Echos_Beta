@@ -1,0 +1,45 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<html>
+<head>
+    <title>Editar Horário de envio do e-mail</title>
+    <!-- Inclua as folhas de estilo e scripts necessários -->
+    <link rel="stylesheet" href="{% static 'flatpickr/flatpickr.min.css' %}" />
+    <script src="{% static 'flatpickr/flatpickr.min.js' %}"></script>
+</head>
+<body>
+
+<h1>Editar Horário da Tarefa</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- Campo de Data e Hora -->
+    <div class="form-group">
+        <label for="{{ form.next_run.id_for_label }}">Horário de Envio:</label>
+        <input type="text" class="form-control flatpickr" name="{{ form.next_run.name }}" value="{{ form.next_run.value }}" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+
+<script>
+    // Obtém a data atual no formato ISO (YYYY-MM-DDTHH:mm:ss)
+    var dataAtual = new Date().toISOString();
+
+    // Inicializa o seletor de data e hora usando flatpickr
+    flatpickr('.flatpickr', {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        defaultDate: dataAtual,  // Define a data inicial como a data atual
+        time_24hr: true  // Usa formato de 24 horas
+    });
+</script>
+
+</body>
+</html>
+{% endblock %}

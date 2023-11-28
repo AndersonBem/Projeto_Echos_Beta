@@ -137,7 +137,7 @@ class TutorForms(forms.ModelForm):
 
 
 class LaudoForms(forms.ModelForm):
-    laudo_imagem = MultiFileField(min_num=1, max_num=100)
+    laudo_imagem = MultiFileField(min_num=1, max_num=100, required=False)
     tutor = forms.ModelChoiceField(
         queryset=Tutor.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
@@ -272,4 +272,6 @@ class NovaImagemForm(forms.ModelForm):
     class Meta:
         model = LaudoImagem
         fields = ['laudo_imagem']
+
+
 
