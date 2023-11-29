@@ -1,0 +1,4 @@
+Conan - Ecocardiograma - 2023-11-29 16:48:22.724914
+Conan - USG ABDOMINAL - 2023-11-29 16:52:31.624964- Exception: <class 'Exception'>
+Conan - Ecocardiograma - 2023-11-29 16:52:38.591029- Exception: <class 'Exception'>
+Conan - Ecocardiograma - 2023-11-29 16:54:04.390153- Exception: <class 'Exception'>

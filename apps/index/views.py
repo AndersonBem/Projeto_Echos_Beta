@@ -767,13 +767,53 @@ def editar_horario_tarefa(request, tarefa_id):
     if request.method == 'POST':
         form = EditarHorarioForm(request.POST, instance=tarefa)
         if form.is_valid():
-            form.save()
+            # Obtenha o novo horário escolhido pelo usuário
+            novo_horario = form.cleaned_data['next_run']
+
+            # Verifique se já existe uma tarefa agendada para o novo horário
+            while Schedule.objects.filter(next_run=novo_horario).exclude(id=tarefa.id).exists():
+                # Se sim, adicione 1 minuto ao novo horário
+                novo_horario += timedelta(minutes=2)
+
+            # Atualize o horário da tarefa
+            tarefa.next_run = novo_horario
+            tarefa.save()
+
             return redirect('lista_tarefas_agendadas')
     else:
         form = EditarHorarioForm(instance=tarefa)
 
     return render(request, 'index/editar/editar_horario_tarefa.html', {'form': form, 'tarefa': tarefa})
 
+def enviar_whatsapp(request, laudos_paciente_id):
+    laudo = Laudo.objects.get(id=laudos_paciente_id)
+    
+    # Configurar o fuso horário padrão
+    utc_minus3 = timezone.get_default_timezone()
 
+    # Obter a hora atual no fuso horário padrão
+    now_utc_minus3 = timezone.now().astimezone(utc_minus3)
 
+    # Criar a hora_agendada respeitando o fuso horário padrão
+    hora_agendada = now_utc_minus3.replace(hour=0, minute=1, second=0, microsecond=0)
 
+    # Verificar se já passou da hora agendada
+    if now_utc_minus3 > hora_agendada:
+        # Se sim, agendar para amanhã às 20h
+        hora_agendada += timedelta(days=1)
+
+    try:
+        task = schedule(
+            'apps.index.tasks.enviar_whatsapp_task',
+            laudo.id,
+            name=f'Whatsapp para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
+            schedule_type='O',
+            next_run=hora_agendada
+        )
+        messages.success(request, "Tarefa agendada com sucesso")
+
+        # Redirecione para a página de edição de horário com o ID da tarefa
+        return redirect('editar_horario_tarefa', task.id)
+    except Exception as e:
+        messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
+        return redirect('exibicao', paciente_id=laudo.paciente.id)

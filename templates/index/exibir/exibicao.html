@@ -46,6 +46,10 @@
                         {% csrf_token %}
                         <button type="submit">Enviar E-mail</button>
                     </form>
+                    <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
+                        {% csrf_token %}
+                        <button type="submit">enviar_whatsapp</button>
+                    </form>
                 </p>
                 {% endfor %}
         </div>
