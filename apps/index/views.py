@@ -721,7 +721,7 @@ def enviar_pdf(request, laudos_paciente_id):
     now_utc_minus3 = timezone.now().astimezone(utc_minus3)
 
     # Criar a hora_agendada respeitando o fuso horário padrão
-    hora_agendada = now_utc_minus3.replace(hour=13, minute=12, second=0, microsecond=0)
+    hora_agendada = now_utc_minus3.replace(hour=20, minute=00, second=0, microsecond=0)
 
     # Verificar se já passou da hora agendada
     if now_utc_minus3 > hora_agendada:
@@ -773,7 +773,7 @@ def editar_horario_tarefa(request, tarefa_id):
             # Verifique se já existe uma tarefa agendada para o novo horário
             while Schedule.objects.filter(next_run=novo_horario).exclude(id=tarefa.id).exists():
                 # Se sim, adicione 1 minuto ao novo horário
-                novo_horario += timedelta(minutes=2)
+                novo_horario += timedelta(minutes=10)
 
             # Atualize o horário da tarefa
             tarefa.next_run = novo_horario
@@ -795,7 +795,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
     now_utc_minus3 = timezone.now().astimezone(utc_minus3)
 
     # Criar a hora_agendada respeitando o fuso horário padrão
-    hora_agendada = now_utc_minus3.replace(hour=0, minute=1, second=0, microsecond=0)
+    hora_agendada = now_utc_minus3.replace(hour=20, minute=0, second=0, microsecond=0)
 
     # Verificar se já passou da hora agendada
     if now_utc_minus3 > hora_agendada:

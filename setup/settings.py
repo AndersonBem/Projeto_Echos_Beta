@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'tinymce',
     'multiupload',
     'pdfkit',
-    'django_q'
+    'django_q',
+    'django.contrib.postgres',
     
     
     
@@ -227,8 +228,8 @@ Q_CLUSTER = {
     'name': 'setup',
     'workers': 4,
     'recycle': 500,
-    'timeout': 60,  # Tempo máximo de execução de uma tarefa
-    'retry': 180,   # Intervalo para reexecutar tarefas com falha
+    'timeout': 210,  # Tempo máximo de execução de uma tarefa
+    'retry': 240,   # Intervalo para reexecutar tarefas com falha
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default',

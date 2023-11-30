@@ -42,7 +42,7 @@ def enviar_pdf_task(laudo_id):
     subject = f'Laudo de {laudo.paciente}'
     message_body = f'Prezado(a) Senhor(a) {laudo.tutor}, \n\nSegue em anexo o laudo do exame de {laudo.paciente}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário '
     from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = [laudo.email]
+    to_email = [laudo.email, laudo.email_extra, laudo.veterinario.email, laudo.clinica.email]
     data_laudo = laudo.data.strftime("%d/%m/%Y") 
     email = EmailMessage(subject, message_body, from_email, to_email)
     email.content_subtype = ''
@@ -85,28 +85,44 @@ def enviar_whatsapp_task(laudo_id):
     # Montar a mensagem do WhatsApp com o link do PDF
     mensagem = f"Olá! Aqui está o laudo do paciente: {pdf_link}"
 
-    # Enviar a mensagem no WhatsApp
-    telefone_original = str(laudo.tutor.telefone)
-    telefone = re.sub(r'\D', '', telefone_original)
-    if not telefone.startswith('55'):
-        telefone = '55' + telefone
+    lista_de_telefones = [
+        laudo.tutor.telefone if laudo.tutor else None,                   # junior
+        laudo.veterinario.telefone if laudo.veterinario else None,       # alexia
+        laudo.clinica.telefone if laudo.clinica else None,               # katia
+        laudo.telefone_extra if laudo.telefone_extra else None           # Jessica
+    ]
 
-    try:
-        link_mensagem_whatsapp = f'https://web.whatsapp.com/send?phone={telefone}&text={quote(mensagem)}'
-        webbrowser.open(link_mensagem_whatsapp)
+    # Criar uma lista para armazenar os números de telefone válidos
+    telefones_validos = []
 
-        # Aguardar um pouco antes de fechar a janela (opcional)
-        sleep(10)
-        # Fechar a janela do navegador
-        seta = pyautogui.locateCenterOnScreen('seta.png')
-        sleep(5)
-        pyautogui.click(seta[0], seta[1])
-        sleep(5)
-        pyautogui.hotkey('ctrl', 'w')
-    except Exception as e:
-        pyautogui.hotkey('ctrl', 'w')
+    # Adicionar números de telefone à lista apenas se não forem nulos ou vazios
+    for telefone_original in lista_de_telefones:
+        if telefone_original is not None and telefone_original != '':
+            telefones_validos.append(telefone_original)
 
-        with open('erros.txt','a', newline='',encoding='utf-8') as arquivo:
-            arquivo.write(f'{laudo.paciente} - {laudo.tipo_laudo} - {datetime.now()}- Exception: {str(Exception)}\n')
-        logger.error(f"Erro durante o envio do WhatsApp: {str(e)}")
+    # Enviar a mensagem no WhatsApp para números válidos
+    for telefone_original in telefones_validos:
+        telefone = re.sub(r'\D', '', str(telefone_original))
+        if not telefone.startswith('55'):
+            telefone = '55' + telefone
 
+        try:
+            link_mensagem_whatsapp = f'https://web.whatsapp.com/send?phone={telefone}&text={quote(mensagem)}'
+            webbrowser.open(link_mensagem_whatsapp)
+
+            # Aguardar um pouco antes de fechar a janela (opcional)
+            sleep(10)
+            # Fechar a janela do navegador
+            seta = pyautogui.locateCenterOnScreen('seta.png')
+            sleep(5)
+            pyautogui.click(seta[0], seta[1])
+            sleep(5)
+            pyautogui.hotkey('ctrl', 'w')
+            sleep(5)
+        except Exception as e:
+            pyautogui.hotkey('ctrl', 'w')
+            sleep(5)
+
+            with open('erros.txt', 'a', newline='', encoding='utf-8') as arquivo:
+                arquivo.write(f'{laudo.paciente} - {laudo.tipo_laudo} - {datetime.now()}- Exception: {str(Exception)}\n')
+            logger.error(f"Erro durante o envio do WhatsApp: {str(e)}")
