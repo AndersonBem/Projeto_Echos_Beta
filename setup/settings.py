@@ -228,8 +228,8 @@ Q_CLUSTER = {
     'name': 'setup',
     'workers': 4,
     'recycle': 500,
-    'timeout': 210,  # Tempo máximo de execução de uma tarefa
-    'retry': 240,   # Intervalo para reexecutar tarefas com falha
+    'timeout': 300,  # Tempo máximo de execução de uma tarefa
+    'retry': 350,   # Intervalo para reexecutar tarefas com falha
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default',

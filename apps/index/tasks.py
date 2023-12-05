@@ -24,6 +24,8 @@ from django.utils import timezone  # Adicione esta linha para importar timezone
 from django.db import IntegrityError
 import pywhatkit as kt
 
+import asyncio
+
 import pywhatkit
 
 logger = logging.getLogger(__name__)
@@ -58,7 +60,14 @@ def enviar_pdf_task(laudo_id):
         email.content_subtype = ''
         email.attach(f'Laudo - {laudo.paciente} - {data_laudo}.pdf', pdf, 'application/pdf')
         email.send()     
-    
+
+
+async def enviar_whatsapp_async(telefone, mensagem):
+    telefone = re.sub(r'\D', '', str(telefone))
+    if not telefone.startswith('55'):
+        telefone = '+55' + telefone
+    pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 7, True, 3)
+
     
 def enviar_whatsapp_task(laudo_id):
     laudo = Laudo.objects.get(id=laudo_id)
@@ -96,10 +105,10 @@ def enviar_whatsapp_task(laudo_id):
     mensagem = f"Olá! Aqui está o laudo do paciente: {pdf_link}"
 
     lista_de_telefones = [
-        laudo.tutor.telefone if laudo.tutor else None,                   # junior
+        laudo.tutor.telefone if laudo.tutor else None,                   # empresa
         laudo.veterinario.telefone if laudo.veterinario else None,       # alexia
         laudo.clinica.telefone if laudo.clinica else None,               # katia
-        laudo.telefone_extra if laudo.telefone_extra else None           # Jessica
+        laudo.telefone_extra if laudo.telefone_extra else None           # anderson
     ]
 
     # Criar uma lista para armazenar os números de telefone válidos
@@ -114,10 +123,16 @@ def enviar_whatsapp_task(laudo_id):
             telefones_validos.append(telefone_original)
 
     # Enviar a mensagem no WhatsApp para números válidos
-    for telefone_original in telefones_validos:
-        telefone = re.sub(r'\D', '', str(telefone_original))
-        if not telefone.startswith('55'):
-            telefone = '+55' + telefone
+    
+    # Criar uma lista para armazenar as tarefas assíncronas
+    tasks = []
 
+    # Iterar sobre os números de telefone válidos
+    for telefone_original in telefones_validos:
+        task = enviar_whatsapp_async(telefone_original, mensagem)
+        tasks.append(task)
+
+     # Criar e executar um evento de loop asyncio manualmente
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.gather(*tasks))
         
-    pywhatkit.sendwhatmsg(telefone, mensagem,datetime.now().hour,minuto, 7, True, 5)

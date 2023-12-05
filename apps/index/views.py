@@ -773,7 +773,7 @@ def editar_horario_tarefa(request, tarefa_id):
             # Verifique se já existe uma tarefa agendada para o novo horário
             while Schedule.objects.filter(next_run=novo_horario).exclude(id=tarefa.id).exists():
                 # Se sim, adicione 1 minuto ao novo horário
-                novo_horario += timedelta(minutes=10)
+                novo_horario += timedelta(minutes=2)
 
             # Atualize o horário da tarefa
             tarefa.next_run = novo_horario
