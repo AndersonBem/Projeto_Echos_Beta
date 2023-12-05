@@ -19,9 +19,12 @@ import os
 import io
 import boto3
 from botocore.exceptions import NoCredentialsError
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.utils import timezone  # Adicione esta linha para importar timezone
 from django.db import IntegrityError
+import pywhatkit as kt
+
+import pywhatkit
 
 logger = logging.getLogger(__name__)
 
@@ -29,25 +32,32 @@ logger = logging.getLogger(__name__)
 def enviar_pdf_task(laudo_id):
     laudo = Laudo.objects.get(id=laudo_id)
 
-    # Adquire a trava antes de executar a tarefa
-    
-    
-    
     # Seção crítica
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+    html_index = render_to_string('export-pdf.html', {'laudo': laudo})
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
 
-    # Enviar o e-mail
-    subject = f'Laudo de {laudo.paciente}'
-    message_body = f'Prezado(a) Senhor(a) {laudo.tutor}, \n\nSegue em anexo o laudo do exame de {laudo.paciente}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário '
-    from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = [laudo.email, laudo.email_extra, laudo.veterinario.email, laudo.clinica.email]
-    data_laudo = laudo.data.strftime("%d/%m/%Y") 
-    email = EmailMessage(subject, message_body, from_email, to_email)
-    email.content_subtype = ''
-    email.attach(f'Laudo - {laudo.paciente} - {data_laudo}.pdf', pdf, 'application/pdf')
-    email.send()        
+    lista_de_email = [
+        laudo.tutor.email if laudo.tutor and laudo.tutor.email else None,                   # junior
+        laudo.veterinario.email if laudo.veterinario and laudo.veterinario.email else None, # alexia
+        laudo.clinica.email if laudo.clinica and laudo.clinica.email else None,             # katia
+        laudo.email if laudo.email else None                                              # Jessica
+    ]
+
+    # Criar uma lista para armazenar os e-mails válidos
+    emails_validos = [email for email in lista_de_email if email]
+
+    # Enviar o e-mail apenas se houver e-mails válidos
+    if emails_validos:
+        subject = f'Laudo de {laudo.paciente}'
+        message_body = f'Prezado(a) Senhor(a) {laudo.tutor}, \n\nSegue em anexo o laudo do exame de {laudo.paciente}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário '
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = emails_validos
+        data_laudo = laudo.data.strftime("%d/%m/%Y") 
+        email = EmailMessage(subject, message_body, from_email, to_email)
+        email.content_subtype = ''
+        email.attach(f'Laudo - {laudo.paciente} - {data_laudo}.pdf', pdf, 'application/pdf')
+        email.send()     
     
     
 def enviar_whatsapp_task(laudo_id):
@@ -94,6 +104,9 @@ def enviar_whatsapp_task(laudo_id):
 
     # Criar uma lista para armazenar os números de telefone válidos
     telefones_validos = []
+    agora = datetime.now()
+    hora_atual = agora.hour
+    minuto = datetime.now().minute+1
 
     # Adicionar números de telefone à lista apenas se não forem nulos ou vazios
     for telefone_original in lista_de_telefones:
@@ -104,25 +117,7 @@ def enviar_whatsapp_task(laudo_id):
     for telefone_original in telefones_validos:
         telefone = re.sub(r'\D', '', str(telefone_original))
         if not telefone.startswith('55'):
-            telefone = '55' + telefone
+            telefone = '+55' + telefone
 
-        try:
-            link_mensagem_whatsapp = f'https://web.whatsapp.com/send?phone={telefone}&text={quote(mensagem)}'
-            webbrowser.open(link_mensagem_whatsapp)
-
-            # Aguardar um pouco antes de fechar a janela (opcional)
-            sleep(10)
-            # Fechar a janela do navegador
-            seta = pyautogui.locateCenterOnScreen('seta.png')
-            sleep(5)
-            pyautogui.click(seta[0], seta[1])
-            sleep(5)
-            pyautogui.hotkey('ctrl', 'w')
-            sleep(5)
-        except Exception as e:
-            pyautogui.hotkey('ctrl', 'w')
-            sleep(5)
-
-            with open('erros.txt', 'a', newline='', encoding='utf-8') as arquivo:
-                arquivo.write(f'{laudo.paciente} - {laudo.tipo_laudo} - {datetime.now()}- Exception: {str(Exception)}\n')
-            logger.error(f"Erro durante o envio do WhatsApp: {str(e)}")
+        
+    pywhatkit.sendwhatmsg(telefone, mensagem,datetime.now().hour,minuto, 7, True, 5)

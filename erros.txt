@@ -1,8 +1,12 @@
-Conan - Ecocardiograma - 2023-11-30 09:49:26.925915- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 09:49:35.674520- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 09:49:44.869006- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 09:49:53.215773- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 10:00:28.493820- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 10:00:38.001190- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 10:00:46.409374- Exception: <class 'Exception'>
-Conan - Ecocardiograma - 2023-11-30 10:00:55.267442- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 09:48:10.683636- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 09:50:11.594142- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 10:01:10.750567- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 10:03:11.900098- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 10:44:25.721391- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 10:49:22.422303- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:01:25.509692- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:02:25.383049- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:10:28.399428- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:11:27.383119- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:17:28.549067- Exception: <class 'Exception'>
+Conan - USG ABDOMINAL - 2023-12-05 11:27:31.132582- Exception: <class 'Exception'>
