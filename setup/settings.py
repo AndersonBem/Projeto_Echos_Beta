@@ -29,7 +29,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#'192.168.0.132', '192.168.0.74', "192.168.0.19"
 
 # Application definition
 
@@ -201,11 +201,11 @@ MESSAGE_TAGS = {
 TINYMCE_DEFAULT_CONFIG = {
     
     'language': 'pt_BR',
-    'plugins': 'autolink lists link',
+    'plugins': 'autolink lists link table',
     'toolbar': 'undo redo | formatselect | ' +
                'bold italic backcolor | alignleft aligncenter ' +
                'alignright alignjustify | bullist numlist outdent indent | ' +
-               'removeformat | help',
+               'removeformat | help | table',
     'language_url': "{% static 'langs/pt_BR.js' %}"
 }
 

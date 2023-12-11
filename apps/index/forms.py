@@ -193,7 +193,7 @@ class LaudoForms(forms.ModelForm):
             ),
             'tipo_laudo': forms.Select(attrs={'class': 'form-control'}),
             
-            'laudo':TinyMCE(attrs={'cols': 80, 'rows': 50, 'class': 'form-control'}),
+            'laudo':TinyMCE(attrs={'cols': 80, 'rows': 30, 'class': 'form-control'}),
         }
     data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
 
@@ -245,7 +245,7 @@ class LaudoPadraoForms(forms.ModelForm):
         widgets = {
             'nome_exame': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_exame': forms.TextInput(attrs={'class': 'form-control'}),
-            'laudo': TinyMCE(attrs={'cols': 80, 'rows': 10}),
+            'laudo': TinyMCE(attrs={'cols': 80, 'rows': 30,'class': 'form-control'}),
         }
 
 

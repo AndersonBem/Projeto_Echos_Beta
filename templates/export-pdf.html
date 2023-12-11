@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laudo Médico</title>
+    {% if laudo.tipo_laudo|slugify == 'usg-abdominal' %}
     <style>
         body, html {
             margin: 0;
@@ -21,33 +22,48 @@
 
         .header2 {
             text-align: center;
-            padding: 10px;
-            font-size: 10px;
+            padding: 0px;
+            font-size: 8px;
             text-transform: uppercase;
         }
     
         .logo {
-            width: 100px;
+            width: 30%;
             margin-bottom: 0%;
             margin-top: 0px;
+        }
+        .header3 {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 0; /* Remover margem inferior da imagem */
+        }
+        
+
+        .ass {
+            text-align: center;
+            padding: 10px;
+            width: 20%;
+            margin-bottom: 0%;
+            margin-top: 0px;
+            max-height: 20%; /* ou qualquer valor desejado */
         }
     
         .patient-info {
             display: flex;
             justify-content: space-between;
             padding: 1px; /* Reduza o padding para diminuir a distância entre o retângulo e o conteúdo */
-            
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             border: 1px solid #ddd; /* Borda suave */
-            margin: 0 20px;
+            margin: 0 10px;
         }
     
         .patient-info .column {
             width: 48%;
-            font-size: 12px; /* Ajuste o tamanho da fonte */
+            font-size: 13px; /* Ajuste o tamanho da fonte */
         }
         
         .patient-info p {
-            margin: 5px 0; /* Reduza o espaçamento vertical entre os parágrafos */
+            margin: 0px 0; /* Reduza o espaçamento vertical entre os parágrafos */
         }
 
         .content {
@@ -55,7 +71,7 @@
             background-color: #f9f9f9; /* Cor de fundo suave */
             border: 2px solid #ddd; /* Borda suave */
             margin: 10px 20px; /* Margem superior e inferior reduzida para 10px */
-            font-size: 18px;
+            font-size: 12px;
         }
     
         .full-width {
@@ -63,11 +79,43 @@
             box-sizing: border-box;
             font-size: 12px;
         }
+        .laudo-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 10px;
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 0%;
+            page-break-inside:auto /* Evitar quebras de página dentro do bloco */
+        }
+        .spaced-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            margin: 0%;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        
+        .frase {
+            text-align: center;
+            border-top: 1px solid black; /* Adicionar borda superior preta */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin: 0%;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        .unindo-laudo-info-vet {
+            font-size: 1px; /* ou o tamanho desejado */
+            line-height: 1; /* ou ajuste conforme necessário */
+            page-break-before:avoid;
+        }
+        
     </style>
 </head>
 <body>
+<div class="unindo-laudo-info-vet">  
     <div class="header1">
-        <img class="logo" src="{% static 'assets/not-found.png' %}" alt="Logo">
+        <img class="logo" src="{% static 'assets/logo-degrade.png' %}" alt="Logo">
     </div>
 
     <div class="patient-info">
@@ -104,32 +152,558 @@
             {% endif %}
         </div>
     </div>
-    </div>
+    
     <div class="header2">
-        <h1>RELATÓRIO DE {{ laudo.tipo_laudo}}</h1>
-    </div>
         
-    <div class="full-width">
-        <p>{{ laudo.laudo|safe }}</p>
-    </div>
-    <div class="header1">
-        <img class="logo" src="{% static 'assets/not-found.png' %}" alt="Logo">
-    </div>
-    <div class="full-width">
+        <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">RELATÓRIO DE ULTRASSONOGRAFIA ABDOMINAL</h1>
         
+            
+    </div>
+     
+        <div class="laudo-section">
+            <p>{{ laudo.laudo|safe }}</p>
+        
+            <div class="header3">
+                <img class="ass" src="{% static 'assets/ass_jessica.jpg' %}" alt="Logo">
+            </div>
+        </div>
+        
+        <!-- Adicione a frase abaixo da seção de informações da médica veterinária -->
+        <div class="frase">
+            <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
+        </div>
+</div>  
+    <div class="full-width" >
         <table style="width: 100%;">
-            {% for imagem in laudo.laudo_imagem.all %}
-                {% if forloop.counter0|divisibleby:3 %}
-                    </tr><tr>
-                {% endif %}
-                <td style="width: 33.33%; padding: 5px;">
-                    <a href="{{ imagem.image.url }}" target="_blank">
-                        <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 200px; margin: 0;">
-                    </a>
-                </td>
-            {% endfor %}
+            {% if laudo.laudo_imagem.count == 1 %}
+                <tr>
+                    <td style="width: 100%; padding: 5px;">
+                        <a href="{{ laudo.laudo_imagem.first.image.url }}" target="_blank">
+                            <img src="{{ laudo.laudo_imagem.first.image.url }}" alt="Imagem {{ laudo.laudo_imagem.first.id }}" class="img-fluid" style="width: 100%; max-width: 100%; height: 50vh; margin: 0;">
+                        </a>
+                    </td>
+                </tr>
+            {% elif laudo.laudo_imagem.count == 2 %}
+                <tr>
+                    {% for imagem in laudo.laudo_imagem.all %}
+                        <td style="width: 50%; padding: 10px;">
+                            <a href="{{ imagem.image.url }}" target="_blank">
+                                <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 100%; height: 300vh; margin: 0;">
+                            </a>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% else %}
+                {% for imagem in laudo.laudo_imagem.all %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        </tr><tr>
+                    {% endif %}
+                    <td style="width: 33.33%; padding: 5px;">
+                        <a href="{{ imagem.image.url }}" target="_blank">
+                            <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 200px; margin: 0;">
+                        </a>
+                    </td>
+                {% endfor %}
+            {% endif %}
         </table>
     </div>
     
 </body>
 </html>
+
+    {% elif laudo.tipo_laudo|slugify == 'ecocardiograma' %}
+    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            margin-left: 3%; /* Adicione a margem lateral esquerda desejada */
+            margin-right: 3%; /* Adicione a margem lateral direita desejada */
+        }
+
+        .header1 {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .header2 {
+            text-align: center;
+            padding: 0px;
+            font-size: 8px;
+            text-transform: uppercase;
+        }
+    
+        .logo {
+            width: 30%;
+            margin-bottom: 0%;
+            margin-top: 0px;
+        }
+        .header3 {
+            text-align: center;
+            margin-top: 0px; /* ou outro valor desejado */
+            
+        }
+        .header3 img {
+            margin: 0; /* Remover margens */
+        }
+
+        .ass {
+            width: 15%;
+            max-height: 15%;
+            
+        }
+        .reduce-spacing {
+            margin-bottom: -10px; /* Ajuste conforme necessário para reduzir o espaçamento */
+        }
+    
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 1px; /* Reduza o padding para diminuir a distância entre o retângulo e o conteúdo */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            border: 1px solid #ddd; /* Borda suave */
+            margin: 0 10px;
+            width: 100%;
+        }
+    
+        .patient-info .column {
+            width: 100%;
+            font-size: 12px; /* Ajuste o tamanho da fonte */
+            line-height: 1.5; /* ou ajuste conforme necessário */
+        }
+        
+        .patient-info p {
+            margin: 0px 0; /* Reduza o espaçamento vertical entre os parágrafos */
+        }
+
+        .content {
+            margin-top: 5px; /* ou outro valor desejado */
+            margin-bottom: 0px; /* ou outro valor desejado */
+        }
+    
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 12px;
+        }
+        
+ 
+        .laudo-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 9px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            page-break-inside: avoid;
+            line-height: 1.5;
+            
+            
+        }
+
+        .laudo-section-container {
+            
+            margin-top: 0;  /* Ajuste a margem superior conforme necessário */
+            margin-bottom: 0;  /* Ajuste a margem inferior conforme necessário */
+        }
+
+        .laudo-section p {
+            margin-bottom: 0px; /* ou outro valor desejado */
+        }
+        
+        
+        .spaced-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            margin: 0%;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        
+        .frase {
+            text-align: center;
+            border-top: 1px solid black; /* Adicionar borda superior preta */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin: 0%;
+            margin-top: 10px;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        .unindo-laudo-info-vet {
+            font-size: 1px; /* ou o tamanho desejado */
+            line-height: 1; /* ou ajuste conforme necessário */
+            page-break-before:auto;
+        }
+        .header1,
+        .patient-info,
+        .header2,
+        .laudo-section {
+            page-break-before: avoid; /* Evitar quebras de página antes desses elementos */
+        }
+        .column,
+        .header2,
+        .laudo-section {
+            font-size: 10px; /* ou outro valor desejado */
+        }
+        .patient-info .column {
+            margin-bottom: 5px; /* ou outro valor desejado */
+        }
+
+        .header2,
+        .laudo-section {
+            margin-top: 5px; /* ou outro valor desejado */
+        }
+        .texto-laudo {
+            margin-bottom: 0px; /* ou o valor desejado para ajustar o espaçamento */
+        }
+        .full-width-height {
+            width: 100%;
+            height: 100%;
+        }
+        
+    </style>
+</head>
+<body>
+<div class="unindo-laudo-info-vet">  
+    <div class="header1">
+        <img class="logo" src="{% static 'assets/logo-degrade.png' %}" alt="Logo">
+    </div>
+
+    <div class="patient-info">
+        <div class="column">
+            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.raca %}
+                <p><strong>Raça:</strong> {{ laudo.raca }}</p>
+            {% endif %}
+            {% if laudo.sexo %}
+                <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
+            {% endif %}
+            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+        </div>
+    
+        <div class="column">
+            
+            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email_extra %}
+                <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
+            {% endif %}
+            {% if laudo.telefone_extra %}
+                <p><strong>Telefone Extra:</strong> {{ laudo.telefone_extra }}</p>
+            {% endif %}
+            {% if laudo.Clinica %}
+                <p><strong>Clínica:</strong> {{ laudo.clinica }}</p>
+            {% endif %}
+            {% if laudo.veterinario %}
+                <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="header2">
+        
+        
+        <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">RELATÓRIO DE ECODOPPLERCARDIOGRAFIA</h1>
+        
+    </div>
+    <div class="laudo-section-container">
+        <div class="laudo-section">
+            <p>
+                <table>
+                {{ laudo.laudo|safe }}
+                </table>
+            </p>       
+        </div>
+        <div class="header3">
+            <img class="ass" src="{% static 'assets/ass_jessica.jpg' %}" alt="Logo">  
+        </div>
+    </div>
+       
+            
+    
+</div>  
+    
+    <div class="full-width" >
+        <table style="width: 100%;">
+            {% if laudo.laudo_imagem.count == 1 %}
+                <tr>
+                    <td style="width: 100%; padding: 5px;">
+                        <a href="{{ laudo.laudo_imagem.first.image.url }}" target="_blank">
+                            <img src="{{ laudo.laudo_imagem.first.image.url }}" alt="Imagem {{ laudo.laudo_imagem.first.id }}" class="img-fluid" style="width: 100%; max-width: 100%; height: 50vh; margin: 0;">
+                        </a>
+                    </td>
+                </tr>
+            {% elif laudo.laudo_imagem.count == 2 %}
+                <tr>
+                    {% for imagem in laudo.laudo_imagem.all %}
+                        <td style="width: 50%; padding: 10px;">
+                            <a href="{{ imagem.image.url }}" target="_blank">
+                                <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 100%; height: 300vh; margin: 0;">
+                            </a>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% else %}
+                {% for imagem in laudo.laudo_imagem.all %}
+                    {% if forloop.counter0|divisibleby:3 %}
+                        </tr><tr>
+                    {% endif %}
+                    <td style="width: 33.33%; padding: 5px;">
+                        <a href="{{ imagem.image.url }}" target="_blank">
+                            <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 200px; margin: 0;">
+                        </a>
+                    </td>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    <div class="frase">
+        <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
+    </div>
+    
+</body>
+</html>
+    {% elif laudo.tipo_laudo|slugify == 'eletrocardiograma' %}
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            margin-left: 3%; /* Adicione a margem lateral esquerda desejada */
+            margin-right: 3%; /* Adicione a margem lateral direita desejada */
+        }
+
+        .header1 {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .header2 {
+            text-align: center;
+            padding: 0px;
+            font-size: 8px;
+            text-transform: uppercase;
+        }
+    
+        .logo {
+            width: 30%;
+            margin-bottom: 0%;
+            margin-top: 0px;
+        }
+        .header3 {
+            text-align: center;
+            margin-top: 0px; /* ou outro valor desejado */
+            
+        }
+        .header3 img {
+            margin: 0; /* Remover margens */
+        }
+
+        .ass {
+            width: 15%;
+            max-height: 15%;
+            
+        }
+        .reduce-spacing {
+            margin-bottom: -10px; /* Ajuste conforme necessário para reduzir o espaçamento */
+        }
+    
+        .patient-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 1px; /* Reduza o padding para diminuir a distância entre o retângulo e o conteúdo */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            border: 1px solid #ddd; /* Borda suave */
+            margin: 0 10px;
+            width: 100%;
+        }
+    
+        .patient-info .column {
+            width: 100%;
+            font-size: 12px; /* Ajuste o tamanho da fonte */
+            line-height: 1.5; /* ou ajuste conforme necessário */
+        }
+        
+        .patient-info p {
+            margin: 0px 0; /* Reduza o espaçamento vertical entre os parágrafos */
+        }
+
+        .content {
+            margin-top: 5px; /* ou outro valor desejado */
+            margin-bottom: 0px; /* ou outro valor desejado */
+        }
+    
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 12px;
+        }
+        
+ 
+        .laudo-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 9px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            page-break-inside: avoid;
+            line-height: 1;
+            
+            
+        }
+
+        .laudo-section-container {
+            
+            margin-top: 0;  /* Ajuste a margem superior conforme necessário */
+            margin-bottom: 0;  /* Ajuste a margem inferior conforme necessário */
+        }
+
+        .laudo-section p {
+            margin-bottom: 0px; /* ou outro valor desejado */
+        }
+        
+        
+        .spaced-section {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            margin: 0%;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        
+        .frase {
+            text-align: center;
+            border-top: 1px solid black; /* Adicionar borda superior preta */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin: 0%;
+            margin-top: 10px;
+            page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
+        }
+        .unindo-laudo-info-vet {
+            font-size: 1px; /* ou o tamanho desejado */
+            line-height: 1; /* ou ajuste conforme necessário */
+            page-break-before:auto;
+        }
+        .header1,
+        .patient-info,
+        .header2,
+        .laudo-section {
+            page-break-before: avoid; /* Evitar quebras de página antes desses elementos */
+        }
+        .column,
+        .header2,
+        .laudo-section {
+            font-size: 10px; /* ou outro valor desejado */
+        }
+        .patient-info .column {
+            margin-bottom: 5px; /* ou outro valor desejado */
+        }
+
+        .header2,
+        .laudo-section {
+            margin-top: 5px; /* ou outro valor desejado */
+        }
+        .texto-laudo {
+            margin-bottom: 0px; /* ou o valor desejado para ajustar o espaçamento */
+        }
+        .full-width-height {
+            width: 100%;
+            height: 100%;
+        }
+        
+    </style>
+</head>
+<body>
+<div class="unindo-laudo-info-vet">  
+    <div class="header1">
+        <img class="logo" src="{% static 'assets/logo-degrade.png' %}" alt="Logo">
+    </div>
+
+    <div class="patient-info">
+        <div class="column">
+            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.raca %}
+                <p><strong>Raça:</strong> {{ laudo.raca }}</p>
+            {% endif %}
+            {% if laudo.sexo %}
+                <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
+            {% endif %}
+            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+        </div>
+    
+        <div class="column">
+            
+            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email_extra %}
+                <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
+            {% endif %}
+            {% if laudo.telefone_extra %}
+                <p><strong>Telefone Extra:</strong> {{ laudo.telefone_extra }}</p>
+            {% endif %}
+            {% if laudo.Clinica %}
+                <p><strong>Clínica:</strong> {{ laudo.clinica }}</p>
+            {% endif %}
+            {% if laudo.veterinario %}
+                <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="header2">
+        
+        <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">RELATÓRIO DE ELETROCARDIOGRAMA</h1>
+            
+        
+    </div>
+    <div class="laudo-section-container">
+        <div class="laudo-section">
+            <p>
+                <table>
+                {{ laudo.laudo|safe }}
+                </table>
+            </p>       
+        </div>
+        <div class="header3">
+            <img class="ass" src="{% static 'assets/ass_jessica.jpg' %}" alt="Logo">  
+        </div>
+    </div>
+       
+            
+    
+</div>  
+        
+    <div class="full-width">
+        <table style="width: 100%; height: 20%; max-height: 15%;">
+            {% for imagem in laudo.laudo_imagem.all %}
+                <tr>
+                    <td style="width: 100%; padding: 5px; height: 20%; max-height: 15%;"">
+                        <a href="{{ imagem.image.url }}" target="_blank">
+                            <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="width: 100%; max-width: 100%; height: 100%; margin: 0;">
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="frase">
+        <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
+    </div>
+    
+</body>
+</html>
+
+    {% endif %}

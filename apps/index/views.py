@@ -685,7 +685,7 @@ def exibir_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=Products'+str(laudo.paciente)+str(laudo.data)+'.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
