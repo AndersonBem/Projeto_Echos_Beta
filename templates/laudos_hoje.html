@@ -1,0 +1,82 @@
+{% extends 'index/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Lista de Laudos Criados Hoje</h1>
+  </div>
+  <table class="table table-hover custom-rounded-table">
+    <thead class="thead-default">
+      <tr>
+        <th>Data</th>
+        <th>Paciente</th>
+        <th>Espécie</th>
+        <th>Raça</th>
+        <th>Exame</th>
+        <th>Editar</th>
+        <th>Excluir</th>
+      </tr>
+    </thead>
+    <tbody id="laudos-table-body">
+      {% for laudo in laudos %}
+        <tr>
+          <td>{{ laudo.data }}</td>
+          <td>{{ laudo.paciente.nome }}</td>
+          <td>{{ laudo.especie }}</td>
+          <td>{{ laudo.raca }}</td>
+          <td>{{ laudo.tipo_laudo }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="openEditarLaudo({{ laudo.id }})">
+              Editar
+            </button>
+          </td>
+         
+          <td>
+            <form method="post" action="{% url 'deletar_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este laudo?')">
+                Excluir
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Captura o envio do formulário de exclusão
+      $('form').submit(function(e) {
+        e.preventDefault();
+        var form = $(this);
+
+        $.ajax({
+          type: form.attr('method'),
+          url: form.attr('action'),
+          data: form.serialize(),
+          success: function(response) {
+            // Remove a linha da tabela após a exclusão bem-sucedida
+            form.closest('tr').remove();
+            alert(response.mensagem);  // Adapte conforme necessário
+          },
+          error: function(error) {
+            alert('Erro ao excluir o laudo.');
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    function openEditarLaudo(laudoId) {
+      var url = '/editar_laudo/' + laudoId + '/';
+      var novaJanela = window.open(url, '_blank', 'height=600,width=800');
+      if (novaJanela) {
+        novaJanela.focus();
+      } else {
+        window.location.href = url;
+      }
+    }
+  </script>
+{% endblock %}

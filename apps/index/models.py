@@ -59,6 +59,10 @@ class Paciente(models.Model):
     ]
 
     @property
+    def castracao_display(self):
+        return "Castrado" if self.castracao else "Inteiro"
+    
+    @property
     def data_atual_sem_hora(self):
         return timezone.now().strftime('%d/%m/%Y')
     
@@ -120,7 +124,7 @@ class Paciente(models.Model):
     peso = models.CharField(max_length=100, null=True, blank=True)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    foto = models.ImageField(upload_to=get_upload_path, null=True, blank=True)
+    
     tutor = models.ForeignKey(
         'Tutor',
         on_delete=models.SET_NULL,

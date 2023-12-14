@@ -12,7 +12,7 @@
             <p>Raça: {{ paciente.raca }}</p>
             <p>Idade: {{ paciente.idade }}</p>
             <p>Peso: {{ paciente.peso }}</p>
-            <p>Castração: {{ paciente.castracao }}</p>
+            <p>Castração: {{ paciente.castracao_display }}</p>
 
             {% if paciente.especie|lower|striptags == 'felino' %}
                 <div class="mb-3">
@@ -44,11 +44,11 @@
                     <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">ExportPDF</a>
                     <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
                         {% csrf_token %}
-                        <button type="submit">Enviar E-mail</button>
+                        <button type="submit" class="btn btn-warning" >Enviar E-mail</button>
                     </form>
                     <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
                         {% csrf_token %}
-                        <button type="submit">enviar_whatsapp</button>
+                        <button type="submit" class="btn btn-danger" >Enviar Whatsapp</button>
                     </form>
                 </p>
                 {% endfor %}

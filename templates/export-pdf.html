@@ -51,15 +51,19 @@
         .patient-info {
             display: flex;
             justify-content: space-between;
+            font-size:12px;
             padding: 1px; /* Reduza o padding para diminuir a distância entre o retângulo e o conteúdo */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             border: 1px solid #ddd; /* Borda suave */
             margin: 0 10px;
+            width: 100%;
+            
         }
     
         .patient-info .column {
-            width: 48%;
-            font-size: 13px; /* Ajuste o tamanho da fonte */
+            width: 100%;
+            font-size: 12px; /* Ajuste o tamanho da fonte */
+            line-height: 1.5; /* ou ajuste conforme necessário */
         }
         
         .patient-info p {
@@ -80,12 +84,7 @@
             font-size: 12px;
         }
         .laudo-section {
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 10px;
-            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin-top: 0%;
-            page-break-inside:auto /* Evitar quebras de página dentro do bloco */
+        
         }
         .spaced-section {
             width: 100%;
@@ -105,9 +104,7 @@
             page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
         }
         .unindo-laudo-info-vet {
-            font-size: 1px; /* ou o tamanho desejado */
-            line-height: 1; /* ou ajuste conforme necessário */
-            page-break-before:avoid;
+            
         }
         
     </style>
@@ -120,36 +117,52 @@
 
     <div class="patient-info">
         <div class="column">
-            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
-            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.paciente.nome %}
+                <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            {% endif %}
+            {% if laudo.especie %}
+                <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% endif %}
             {% if laudo.raca %}
                 <p><strong>Raça:</strong> {{ laudo.raca }}</p>
             {% endif %}
             {% if laudo.sexo %}
                 <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
             {% endif %}
-            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            {% if laudo.tutor.nome %}
+                <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
+            {% if laudo.suspeita %}
+                <p><strong>Suspeita:</strong> {{ laudo.suspeita }}</p> 
+            {% endif %}
         </div>
     
         <div class="column">
-            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
-            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
-            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email %}
+                <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            {% endif %}
+            {% if laudo.idade %}
+                <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            {% endif %}
+            {% if laudo.peso %}
+                <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% endif %}
             {% if laudo.email_extra %}
                 <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
             {% endif %}
             {% if laudo.telefone_extra %}
                 <p><strong>Telefone Extra:</strong> {{ laudo.telefone_extra }}</p>
             {% endif %}
-            {% if laudo.Clinica %}
+            {% if laudo.clinica %}
                 <p><strong>Clínica:</strong> {{ laudo.clinica }}</p>
             {% endif %}
             {% if laudo.veterinario %}
                 <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
             {% endif %}
-            {% if laudo.data %}
-                <p><strong>Data:</strong> {{ laudo.data }}</p>
-            {% endif %}
+            
         </div>
     </div>
     
@@ -372,22 +385,36 @@
 
     <div class="patient-info">
         <div class="column">
-            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
-            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.paciente.nome %}
+                <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            {% endif %}
+            {% if laudo.especie %}
+                <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% endif %}
             {% if laudo.raca %}
                 <p><strong>Raça:</strong> {{ laudo.raca }}</p>
             {% endif %}
             {% if laudo.sexo %}
                 <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
             {% endif %}
-            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
-            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            {% if laudo.tutor.nome %}
+                <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
         </div>
     
         <div class="column">
-            
-            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
-            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email %}
+                <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            {% endif %}
+            {% if laudo.idade %}
+                <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            {% endif %}
+            {% if laudo.peso %}
+                <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% endif %}
             {% if laudo.email_extra %}
                 <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
             {% endif %}
@@ -400,9 +427,7 @@
             {% if laudo.veterinario %}
                 <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
             {% endif %}
-            {% if laudo.data %}
-                <p><strong>Data:</strong> {{ laudo.data }}</p>
-            {% endif %}
+            
         </div>
     </div>
     
@@ -422,6 +447,9 @@
         </div>
         <div class="header3">
             <img class="ass" src="{% static 'assets/ass_jessica.jpg' %}" alt="Logo">  
+        </div>
+        <div class="frase">
+            <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
     </div>
        
@@ -463,9 +491,7 @@
             {% endif %}
         </table>
     </div>
-    <div class="frase">
-        <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
-    </div>
+    
     
 </body>
 </html>
@@ -629,22 +655,36 @@
 
     <div class="patient-info">
         <div class="column">
-            <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
-            <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% if laudo.paciente.nome %}
+                <p><strong>Paciente:</strong> {{ laudo.paciente.nome }}</p>
+            {% endif %}
+            {% if laudo.especie %}
+                <p><strong>Espécie:</strong> {{ laudo.especie }}</p>
+            {% endif %}
             {% if laudo.raca %}
                 <p><strong>Raça:</strong> {{ laudo.raca }}</p>
             {% endif %}
             {% if laudo.sexo %}
                 <p><strong>Sexo:</strong> {{ laudo.sexo }}</p>
             {% endif %}
-            <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
-            <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            {% if laudo.tutor.nome %}
+                <p><strong>Tutor:</strong> {{ laudo.tutor.nome }}</p>
+            {% endif %}
+            {% if laudo.data %}
+                <p><strong>Data:</strong> {{ laudo.data }}</p>
+            {% endif %}
         </div>
     
         <div class="column">
-            
-            <p><strong>Idade:</strong> {{ laudo.idade }}</p>
-            <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% if laudo.email %}
+                <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
+            {% endif %}
+            {% if laudo.idade %}
+                <p><strong>Idade:</strong> {{ laudo.idade }}</p>
+            {% endif %}
+            {% if laudo.peso %}
+                <p><strong>Peso:</strong> {{ laudo.peso }}</p>
+            {% endif %}
             {% if laudo.email_extra %}
                 <p><strong>E-mail Extra:</strong> {{ laudo.email_extra }}</p>
             {% endif %}
@@ -657,9 +697,7 @@
             {% if laudo.veterinario %}
                 <p><strong>Veterinário:</strong> {{ laudo.veterinario }}</p>
             {% endif %}
-            {% if laudo.data %}
-                <p><strong>Data:</strong> {{ laudo.data }}</p>
-            {% endif %}
+            
         </div>
     </div>
     

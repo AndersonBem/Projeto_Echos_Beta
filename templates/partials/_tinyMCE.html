@@ -74,7 +74,7 @@ if (!$('#fraseModal').length) {
     /// Adicione um ouvinte de eventos para capturar a frase escolhida
 $('#fraseModal').on('click', 'tr', function() {
     var selectedFrase = $(this).find('td:nth-child(3)').text();
-
+    console.log('Frase escolhida:', selectedFrase);
     if (selectedFrase) {
         // Insira apenas o texto no editor
         editor.insertContent(selectedFrase);

@@ -61,7 +61,7 @@ class PacienteForms(forms.ModelForm):
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
-            'foto': "Foto",
+            
             'tutor': "Tutor"
         }
 
@@ -77,7 +77,7 @@ class PacienteForms(forms.ModelForm):
             ),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control'}),
+            
             'tutor': forms.Select(attrs={'class': 'form-control'})
         }
 
@@ -95,7 +95,7 @@ class PacienteCaninoForms(forms.ModelForm):
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
-            'foto': "Foto",
+            
             'tutor': "Tutor"
         }
 
@@ -111,7 +111,7 @@ class PacienteCaninoForms(forms.ModelForm):
             ),
             'peso': forms.TextInput(attrs={'class': 'form-control', 'id': 'peso'}),
             'castracao': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control'}),
+            
             'tutor': forms.Select(attrs={'class': 'form-control'})
         }
 

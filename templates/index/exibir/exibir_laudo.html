@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="page-header">
-    <h1>Detalhes do Laudo</h1>
+    <h1>Detalhes do Laudo</h1><a href="{% url 'exibicao' paciente_id=laudo_paciente.paciente.id %}" class="btn btn-success">Lista de laudos</a>
 </div>
 <div class="container">
     <div class="row">

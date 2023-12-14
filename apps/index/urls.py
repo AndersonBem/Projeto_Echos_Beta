@@ -4,7 +4,8 @@ from apps.index.views import \
     index,lista_veterinarios,lista_clinicas,lista_pacientes,lista_tutores,nova_clinica,novo_paciente,novo_tutor,novo_veterinario, buscar_paciente, buscar_veterinario, buscar_tutor, buscar_clinica,\
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
     novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo, lista_frases, lista_laudos,deletar_frase, deletar_laudospadrao,\
-    editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem, export_pdf,exibir_pdf, enviar_pdf, lista_tarefas_agendadas, editar_horario_tarefa, deletar_tarefa,enviar_whatsapp
+    editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem, export_pdf,exibir_pdf, enviar_pdf, lista_tarefas_agendadas, editar_horario_tarefa, deletar_tarefa,enviar_whatsapp, laudos_hoje,\
+    deletar_laudo_ajax
     
 
 urlpatterns = [
@@ -83,6 +84,11 @@ urlpatterns = [
     path('tarefas_agendadas/', lista_tarefas_agendadas, name='lista_tarefas_agendadas'),
     path('editar_horario_tarefa/<int:tarefa_id>/', editar_horario_tarefa, name='editar_horario_tarefa'),
     path('deletar_tarefa/<int:tarefa_id>/', deletar_tarefa, name='deletar_tarefa'),
-    path('enviar_whatsapp/<int:laudos_paciente_id>/',enviar_whatsapp,name='enviar_whatsapp')
+    path('enviar_whatsapp/<int:laudos_paciente_id>/',enviar_whatsapp,name='enviar_whatsapp'),
+
+    path('laudos_hoje', laudos_hoje, name='laudos_hoje'),
+    path('deletar_laudo_ajax/<int:laudo_id>/', deletar_laudo_ajax, name='deletar_laudo_ajax'),
+
+    
     
 ]

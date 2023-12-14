@@ -39,23 +39,17 @@
         {% if pacientes %}
         {% for paciente in pacientes %}
         <tr>
-            <td><a href="{% url 'editar_paciente' paciente.id %}"   >{{ paciente.nome }}</a></td>
+            <td><a href="{% url 'exibicao' paciente.id %}"   >{{ paciente.nome }}</a></td>
             <td>{{ paciente.especie }}</td>
             <td>{{ paciente.raca }}</td>
             <td>{{ paciente.idade }}</td>
             <td>{{ paciente.peso }}</td>
-            <td>{{ paciente.castracao }}</td>
+            <td>{{ paciente.castracao_display }}</td>
             <td>
                 <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
             </td>
             
-            <td>
-                {% if paciente.foto %}
-                <img class="card__imagem" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
-                {% else %}
-                <img class="card__imagem" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
-                {% endif %}
-            </td>
+            
         </tr>
         {% endfor %}
         {% else %}

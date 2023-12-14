@@ -5,7 +5,7 @@
 {% include 'partials/_tinyMCE.html' %}
 
 <div class="container mt-5">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="laudoForm">
         {% csrf_token %}
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
         <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
@@ -41,6 +41,7 @@
 <script>
     $(document).ready(function () {
         $('[data-mask]').mask('(00) 00000-0000');
+        
     });
 </script>
 

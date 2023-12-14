@@ -29,6 +29,8 @@ import asyncio
 from django_q.tasks import Schedule
 from django import forms
 # lista de funções de listas
+from django.utils.decorators import decorator_from_middleware
+from django.middleware.csrf import CsrfViewMiddleware
 
 
 
@@ -49,7 +51,7 @@ def lista_frases(request):
     if not request.user.is_authenticated:
         messages.error(request, "Usuário não logado")
         return redirect('login')
-    frases = Frases.objects.all()
+    frases = Frases.objects.order_by("palavra_chave").all()
     return render(request, 'index/lista_frases.html', {"frases": frases})
 
 def lista_laudos(request):
@@ -515,7 +517,7 @@ def nova_frase(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Nova frase Cadastrada')
-            return redirect('lista_pacientes')
+            return redirect('lista_frases')
     return render(request,'index/nova_frase.html', {'form':form})
 
 
@@ -576,7 +578,7 @@ def deletar_laudospadrao(request, laudo_id):
 
 
 def exibir_laudo(request,laudos_paciente_id):
-    laudo_paciente = Laudo.objects.get(id=laudos_paciente_id)
+    laudo_paciente = get_object_or_404(Laudo, id=laudos_paciente_id)
     return render(request, 'index/exibir/exibir_laudo.html', {'laudo_paciente': laudo_paciente})
 
 
@@ -685,7 +687,7 @@ def exibir_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img {width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { margin: 20px; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=Products'+str(laudo.paciente)+str(laudo.data)+'.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
@@ -773,7 +775,7 @@ def editar_horario_tarefa(request, tarefa_id):
             # Verifique se já existe uma tarefa agendada para o novo horário
             while Schedule.objects.filter(next_run=novo_horario).exclude(id=tarefa.id).exists():
                 # Se sim, adicione 1 minuto ao novo horário
-                novo_horario += timedelta(minutes=2)
+                novo_horario += timedelta(minutes=5)
 
             # Atualize o horário da tarefa
             tarefa.next_run = novo_horario
@@ -786,7 +788,7 @@ def editar_horario_tarefa(request, tarefa_id):
     return render(request, 'index/editar/editar_horario_tarefa.html', {'form': form, 'tarefa': tarefa})
 
 def enviar_whatsapp(request, laudos_paciente_id):
-    laudo = Laudo.objects.get(id=laudos_paciente_id)
+    laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
     
     # Configurar o fuso horário padrão
     utc_minus3 = timezone.get_default_timezone()
@@ -808,8 +810,11 @@ def enviar_whatsapp(request, laudos_paciente_id):
             laudo.id,
             name=f'Whatsapp para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
             schedule_type='O',
-            next_run=hora_agendada
+            next_run=hora_agendada,
+            
         )
+
+        
         messages.success(request, "Tarefa agendada com sucesso")
 
         # Redirecione para a página de edição de horário com o ID da tarefa
@@ -817,3 +822,17 @@ def enviar_whatsapp(request, laudos_paciente_id):
     except Exception as e:
         messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
         return redirect('exibicao', paciente_id=laudo.paciente.id)
+    
+
+def laudos_hoje(request):
+    # Filtra os laudos criados hoje
+    laudos_hoje = Laudo.objects.filter(data=datetime.now().date())
+
+    context = {'laudos': laudos_hoje}
+    return render(request, 'laudos_hoje.html', context)
+
+def deletar_laudo_ajax(request, laudo_id):
+    laudo = Laudo.objects.get(pk=laudo_id)
+    laudo.delete()
+    return JsonResponse({'mensagem': 'Laudo excluído com sucesso'})
+
