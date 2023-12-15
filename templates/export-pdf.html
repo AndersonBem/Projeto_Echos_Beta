@@ -9,10 +9,10 @@
     {% if laudo.tipo_laudo|slugify == 'usg-abdominal' %}
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            margin-left: 3%; /* Adicione a margem lateral esquerda desejada */
-            margin-right: 3%; /* Adicione a margem lateral direita desejada */
+            
+            padding:0;
+            margin-left: 1%; /* Adicione a margem lateral esquerda desejada */
+            margin-right: 1%; /* Adicione a margem lateral direita desejada */
         }
 
         .header1 {
@@ -28,7 +28,7 @@
         }
     
         .logo {
-            width: 30%;
+            width: 40%;
             margin-bottom: 0%;
             margin-top: 0px;
         }
@@ -84,7 +84,11 @@
             font-size: 12px;
         }
         .laudo-section {
-        
+            margin-top: 2%;
+            
+        }
+        .laudo-section:first-of-type {
+            margin-top: 2%;
         }
         .spaced-section {
             width: 100%;

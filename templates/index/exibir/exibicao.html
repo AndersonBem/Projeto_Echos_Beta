@@ -4,9 +4,9 @@
 <div class="page-header">
     <h1>Detalhes do Paciente</h1>
 </div>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <h2>Nome: {{ paciente.nome }}</h2>
             <p>Espécie: {{ paciente.especie }}</p>
             <p>Raça: {{ paciente.raca }}</p>
@@ -32,34 +32,63 @@
                 </div>
             {% endif %}
 
-            {% for laudo in laudo %}
-                <a href="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}" class="btn btn-primary">Criar {{ laudo.nome_exame }}</a>
-                
-            {% endfor %}
-
-            {% for laudos_paciente in laudos_paciente %}
-                <p>Laudos: {{ laudos_paciente.tipo_laudo }} - {{ laudos_paciente.data}}<a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir</a></p>
-                <p>
-                    <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}">ExibirPDF</a>
-                    <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">ExportPDF</a>
-                    <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-warning" >Enviar E-mail</button>
-                    </form>
-                    <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" >Enviar Whatsapp</button>
-                    </form>
-                </p>
+            <label for="laudoSelector">Selecione o Tipo de Laudo que Deseja Criar:</label>
+            <select id="laudoSelector" class="form-select mb-3">
+                {% for laudo in laudo %}
+                    <option value="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}">Criar {{ laudo.nome_exame }}</option>
                 {% endfor %}
-        </div>
-        <div class="col-md-6 text-center"> <!-- Adiciona uma coluna para a imagem -->
-            {% if paciente.foto %}
-                <img class="img-fluid" src="{{ paciente.foto.url }}" alt="Foto de {{ paciente.nome }}">
-            {% else %}
-                <img class="img-fluid" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
-            {% endif %}
+            </select>
+            <button type="button" onclick="redirectToSelected()" class="btn btn-primary">Ir para o Laudo Selecionado</button>
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tipo de Laudo</th>
+                        <th>Data</th>
+                        <th>Exibir/Editar</th>
+                        <th>Exibir PDF</th>
+                        <th>Baixar PDF</th>
+                        <th>Enviar E-mail</th>
+                        <th>Enviar Whatsapp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for laudos_paciente in laudos_paciente %}
+                        <tr>
+                            <td>{{ laudos_paciente.tipo_laudo }}</td>
+                            <td>{{ laudos_paciente.data }}</td>
+                            <td>
+                                <a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir/Editar</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</a>
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning">Enviar E-mail</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Enviar Whatsapp</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+<script>
+    function redirectToSelected() {
+        var selectedUrl = document.getElementById("laudoSelector").value;
+        window.location.href = selectedUrl;
+    }
+</script>
 {% endblock %}

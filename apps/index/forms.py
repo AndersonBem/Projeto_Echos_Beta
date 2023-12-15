@@ -2,7 +2,7 @@ from django import forms
 
 from multiupload.fields import MultiFileField
 
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases,\
 LaudoImagem
@@ -170,6 +170,7 @@ class LaudoForms(forms.ModelForm):
             'tipo_laudo': 'Tipo de laudo',
             'laudo': 'Laudo',
             
+            
         }
 
         widgets = {
@@ -194,8 +195,11 @@ class LaudoForms(forms.ModelForm):
             'tipo_laudo': forms.Select(attrs={'class': 'form-control'}),
             
             'laudo':TinyMCE(attrs={'cols': 80, 'rows': 30, 'class': 'form-control'}),
+            
         }
     data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
+
+    hora_envio = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'), initial=datetime.now().replace(hour=1, minute=0, second=0, microsecond=0))
 
 
 

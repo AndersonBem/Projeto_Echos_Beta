@@ -440,6 +440,7 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
             return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
         else:
             messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
+            print(form.errors)  # Adicione esta linha para imprimir os erros no console
     else:
         form = LaudoForms(initial={
             'paciente': paciente,
@@ -670,7 +671,7 @@ def export_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=Laudo - '+str(laudo.tipo_laudo)+' - '+str(laudo.paciente)+' - '+str(laudo.data)+'.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
@@ -687,7 +688,7 @@ def exibir_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { margin: 20px; } img {width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=Products'+str(laudo.paciente)+str(laudo.data)+'.pdf'
     response['Content-Transfer-Encoding'] = 'binary'
@@ -703,7 +704,7 @@ def enviar_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
 
     # Enviar o e-mail
     subject = f'Laudo de {laudo.paciente}'
@@ -723,12 +724,16 @@ def enviar_pdf(request, laudos_paciente_id):
     now_utc_minus3 = timezone.now().astimezone(utc_minus3)
 
     # Criar a hora_agendada respeitando o fuso horário padrão
-    hora_agendada = now_utc_minus3.replace(hour=20, minute=00, second=0, microsecond=0)
-
+    #hora_agendada = now_utc_minus3.replace(hour=20, minute=00, second=0, microsecond=0)
+    hora_agendada = laudo.hora_envio
     # Verificar se já passou da hora agendada
     if now_utc_minus3 > hora_agendada:
         # Se sim, agendar para amanhã às 20h
         hora_agendada += timedelta(days=1)
+    novo_horario = hora_agendada
+    while Schedule.objects.filter(next_run=novo_horario):
+    # Se sim, adicione 1 minuto ao novo horário
+        novo_horario += timezone.timedelta(minutes=5)
 
     try:
         task = schedule(
@@ -736,12 +741,12 @@ def enviar_pdf(request, laudos_paciente_id):
             laudo.id,
             name=f'Email para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
             schedule_type='O',
-            next_run=hora_agendada
+            next_run=novo_horario
         )
         messages.success(request, "Tarefa agendada com sucesso")
 
         # Redirecione para a página de edição de horário com o ID da tarefa
-        return redirect('editar_horario_tarefa', task.id)
+        return redirect('lista_tarefas_agendadas')
     except Exception as e:
         messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
         return redirect('exibicao', paciente_id=laudo.paciente.id)
@@ -797,12 +802,17 @@ def enviar_whatsapp(request, laudos_paciente_id):
     now_utc_minus3 = timezone.now().astimezone(utc_minus3)
 
     # Criar a hora_agendada respeitando o fuso horário padrão
-    hora_agendada = now_utc_minus3.replace(hour=20, minute=0, second=0, microsecond=0)
-
+    #hora_agendada = now_utc_minus3.replace(hour=20, minute=0, second=0, microsecond=0)
+    hora_agendada = laudo.hora_envio
     # Verificar se já passou da hora agendada
     if now_utc_minus3 > hora_agendada:
         # Se sim, agendar para amanhã às 20h
         hora_agendada += timedelta(days=1)
+
+    novo_horario = hora_agendada
+    while Schedule.objects.filter(next_run=novo_horario):
+    # Se sim, adicione 1 minuto ao novo horário
+        novo_horario += timezone.timedelta(minutes=5)
 
     try:
         task = schedule(
@@ -810,7 +820,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
             laudo.id,
             name=f'Whatsapp para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
             schedule_type='O',
-            next_run=hora_agendada,
+            next_run=novo_horario,
             
         )
 
@@ -818,7 +828,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
         messages.success(request, "Tarefa agendada com sucesso")
 
         # Redirecione para a página de edição de horário com o ID da tarefa
-        return redirect('editar_horario_tarefa', task.id)
+        return redirect('lista_tarefas_agendadas')
     except Exception as e:
         messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
         return redirect('exibicao', paciente_id=laudo.paciente.id)

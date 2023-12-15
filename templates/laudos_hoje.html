@@ -13,6 +13,7 @@
         <th>Espécie</th>
         <th>Raça</th>
         <th>Exame</th>
+        <th>Enviar laudos</th>
         <th>Editar</th>
         <th>Excluir</th>
       </tr>
@@ -25,6 +26,7 @@
           <td>{{ laudo.especie }}</td>
           <td>{{ laudo.raca }}</td>
           <td>{{ laudo.tipo_laudo }}</td>
+          <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-success">Enviar laudos</a></td>
           <td>
             <button class="btn btn-warning btn-sm" onclick="openEditarLaudo({{ laudo.id }})">
               Editar

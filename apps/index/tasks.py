@@ -37,7 +37,7 @@ def enviar_pdf_task(laudo_id):
     # Seção crítica
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
 
     lista_de_email = [
         laudo.tutor.email if laudo.tutor and laudo.tutor.email else None,                   # junior
@@ -80,7 +80,7 @@ def enviar_whatsapp_task(laudo_id):
     # Seção crítica
     html_index = render_to_string('export-pdf.html', {'laudo': laudo})
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 0; } body { font-family: serif; margin: 20px; } img { width: 100%; }')])
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
 
     # Configurar as credenciais do AWS
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
