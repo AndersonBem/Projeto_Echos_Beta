@@ -5,12 +5,38 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Echos</title>
+    <title>Sistema Ekos</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
     <script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        #sidebar.collapsed {
+            width: 10px;
+        }
+    
+        #sidebarCollapseContainer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 10px; 
+        }
+    
+        #sidebar.collapsed .sidebar-btn {
+        display: none;
+        }
+        #sidebar.collapsed #sidebarCollapseContainer button {
+            width: 10px; /* ou qualquer largura desejada para a seta recolhida */
+            height: 30px; /* ou qualquer altura desejada */
+            /* Adicione outros estilos conforme necessário */
+        }
+
+        #sidebar.collapsed #sidebarCollapseContainer i {
+            font-size: 12px; /* ou qualquer tamanho de fonte desejado para a seta recolhida */
+            /* Adicione outros estilos conforme necessário */
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid">
@@ -21,8 +47,6 @@
                 <a class="navbar-brand" href="{% url 'login' %}">Login</a>
                 <a class="navbar-brand" href="{% url 'cadastro' %}">Cadastro</a>
                 <a class="navbar-brand" href="{% url 'logout' %}">Logout</a>
-                <a class="navbar-brand" href="{% url 'lista_tarefas_agendadas' %}">Lista de laudos programados</a>
-                <a class="navbar-brand" href="{% url 'laudos_hoje' %}">Laudos Criados Hoje</a>
                 <a class="navbar-brand" href="/admin/">Admin</a>
             </nav>
         </header>
@@ -34,27 +58,54 @@
                 <div class="position-sticky min-vh-100">
                     <ul class="nav flex-column w-100">
                         <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info" href="{% url 'lista_veterinarios' %}">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_veterinarios' %}">
                                 Veterinários
                             </a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info " href="{% url 'lista_clinicas' %}">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_clinicas' %}">
                                 Clínicas
                             </a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info" href="{% url 'lista_tutores' %}">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_tutores' %}">
                                 Tutores
                             </a>
                         </li>
                         <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info" href="{% url 'lista_pacientes' %}">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_pacientes' %}">
                                 Pacientes
                             </a>
                         </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'laudos_hoje' %}">
+                                Laudos Hoje
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_tarefas_agendadas' %}">
+                                Envios programados
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_frases' %}">
+                                Frases Programadas
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_laudos' %}">
+                                Modelos de Laudos
+                            </a>
+                        </li>
+                        
                     </ul>
+                    <div id="sidebarCollapseContainer">
+                        <button class="btn btn-dark" id="sidebarCollapse">
+                            <i class="fas fa-arrow-left fa-sm"></i>
+                        </button>
+                    </div>
                 </div>
+                
             </nav>
 
             <!-- Conteúdo principal -->
@@ -70,5 +121,18 @@
 
     <!-- Scripts no final do corpo -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarCollapseBtn = document.getElementById('sidebarCollapse');
+            const sidebarCollapseContainer = document.getElementById('sidebarCollapseContainer');
+
+            sidebarCollapseBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                sidebarCollapseContainer.classList.toggle('collapsed');
+            });
+        });
+    </script>
 </body>
 </html>

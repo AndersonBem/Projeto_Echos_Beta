@@ -22,7 +22,7 @@
       {% for laudo in laudos %}
         <tr>
           <td>{{ laudo.data }}</td>
-          <td>{{ laudo.paciente.nome }}</td>
+          <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}">{{ laudo.paciente.nome }}</a></td>
           <td>{{ laudo.especie }}</td>
           <td>{{ laudo.raca }}</td>
           <td>{{ laudo.tipo_laudo }}</td>

@@ -308,11 +308,10 @@
         .laudo-section {
             width: 100%;
             box-sizing: border-box;
-            font-size: 9px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin-top: 0px;
             margin-bottom: 0px;
-            page-break-inside: avoid;
+            
             line-height: 1.5;
             
             
@@ -348,7 +347,6 @@
             page-break-inside: avoid; /* Evitar quebras de página dentro do bloco */
         }
         .unindo-laudo-info-vet {
-            font-size: 1px; /* ou o tamanho desejado */
             line-height: 1; /* ou ajuste conforme necessário */
             page-break-before:auto;
         }
@@ -407,6 +405,9 @@
             {% if laudo.data %}
                 <p><strong>Data:</strong> {{ laudo.data }}</p>
             {% endif %}
+            {% if laudo.suspeita %}
+                <p><strong>Suspeita:</strong> {{ laudo.suspeita }}</p> 
+            {% endif %}
         </div>
     
         <div class="column">
@@ -425,7 +426,7 @@
             {% if laudo.telefone_extra %}
                 <p><strong>Telefone Extra:</strong> {{ laudo.telefone_extra }}</p>
             {% endif %}
-            {% if laudo.Clinica %}
+            {% if laudo.clinica %}
                 <p><strong>Clínica:</strong> {{ laudo.clinica }}</p>
             {% endif %}
             {% if laudo.veterinario %}

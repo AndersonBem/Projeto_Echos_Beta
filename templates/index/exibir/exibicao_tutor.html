@@ -20,12 +20,15 @@
             </form>
             <a href="{% url 'selecao' tutor.id %}" class="btn btn-success">Adicionar Paciente</a>
         </div>
-        <div class="col-md-6 text-center"> <!-- Adiciona uma coluna para a imagem -->
-            {% if tutor.foto %}
-                <img class="img-fluid" src="{{ tutor.foto.url }}" alt="Foto de {{ tutor.nome }}">
-            {% else %}
-                <img class="img-fluid" src="{% static 'assets/not-found.png' %}" alt="Sem foto">
-            {% endif %}
+
+        <!-- Lista de Pacientes -->
+        <div class="col-md-6">
+            <h2>Pacientes:</h2>
+            <ul>
+                {% for paciente in tutor.pacientes.all %}
+                    <li><a href="{% url 'exibicao' paciente.id %}">{{ paciente.nome }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>

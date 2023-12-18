@@ -1,11 +1,6 @@
 <!-- Início dos scripts do TinyMCE -->
 <script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
-<!-- Adicione a biblioteca Bootstrap -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -91,7 +86,7 @@ $('#fraseModal').on('click', 'tr', function() {
 
             // Adicione um ouvinte de eventos de teclado ao editor
             editor.on('keypress', function(e) {
-                if (e.key === '/') {
+                if (e.key === ']') {
                     // Impede a tecla '/' de ser inserida no editor
                     e.preventDefault();
 
@@ -105,4 +100,7 @@ $('#fraseModal').on('click', 'tr', function() {
 });
 
 </script>
+
+
+
 <!-- Fim dos scripts do TinyMCE -->

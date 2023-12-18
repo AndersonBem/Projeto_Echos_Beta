@@ -2,7 +2,25 @@
 {% load static %}
 {% block content %}
 <div class="page-header">
-    <h1>Detalhes do Laudo</h1><a href="{% url 'exibicao' paciente_id=laudo_paciente.paciente.id %}" class="btn btn-success">Lista de laudos</a>
+    <h1>Detalhes do Laudo</h1>
+    <a href="{% url 'exibicao' paciente_id=laudo_paciente.paciente.id %}" class="btn btn-success">Lista de laudos</a>
+    <a href="{% url 'editar_laudo' laudo_paciente.id %}" class="btn btn-success">Editar</a>
+    <form method="post" action="{% url 'deletar_laudo' laudo_paciente.id %}" class="d-inline">
+        {% csrf_token %}
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este laudo?')">Deletar</button>
+    </form>
+    <form method="post" action="{% url 'enviar_pdf' laudos_paciente_id=laudo_paciente.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning">Enviar E-mail</button>
+    </form>
+    <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente_id=laudo_paciente.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Enviar Whatsapp</button>
+    </form>
+    <form method="post" action="{% url 'enviar_laudo' laudos_paciente_id=laudo_paciente.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Enviar Laudo</button>
+    </form>
 </div>
 <div class="container">
     <div class="row">
@@ -26,7 +44,7 @@
             </p>
             <p>
                 {% for imagem in laudo_paciente.laudo_imagem.all %}
-                    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid">
+                    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="max-width: 100px; height: auto;">
                     <form method="post" action="{% url 'deletar_imagem' imagem.id %}" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir esta imagem?')">Deletar Imagem</button>
@@ -36,11 +54,7 @@
             
             <!-- Adicione aqui os detalhes específicos do Laudo que deseja exibir -->
             
-            <a href="{% url 'editar_laudo' laudo_paciente.id %}" class="btn btn-success">Editar</a>
-            <form method="post" action="{% url 'deletar_laudo' laudo_paciente.id %}" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este laudo?')">Deletar</button>
-            </form>
+            
         </div>
         <div class="col-md-6">
             <h2>Laudo</h2>

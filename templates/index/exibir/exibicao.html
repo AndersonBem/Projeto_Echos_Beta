@@ -2,18 +2,19 @@
 {% load static %}
 {% block content %}
 <div class="page-header">
-    <h1>Detalhes do Paciente</h1>
+    <h1>Paciente {{ paciente.nome }}</h1>
 </div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <h2>Nome: {{ paciente.nome }}</h2>
-            <p>Espécie: {{ paciente.especie }}</p>
-            <p>Raça: {{ paciente.raca }}</p>
-            <p>Idade: {{ paciente.idade }}</p>
-            <p>Peso: {{ paciente.peso }}</p>
-            <p>Castração: {{ paciente.castracao_display }}</p>
-
+        <div class="col-md-6">
+            <h2>Detalhes do Paciente</h2>
+            <p><strong>Nome:</strong> {{ paciente.nome }}<p>
+            <p><strong>Espécie:</strong> {{ paciente.especie }}</p>
+            <p><strong>Raça:</strong> {{ paciente.raca }}</p>
+            <p><strong>Idade:</strong> {{ paciente.idade }}</p>
+            <p><strong>Peso:</strong> {{ paciente.peso }}</p>
+            <p><strong>Castração:</strong> {{ paciente.castracao_display }}</p>
+            <p><a href="{% url 'exibicao_tutor' tutor_id=paciente.tutor.id %}">Tutor: {{ paciente.tutor }}</a></p>
             {% if paciente.especie|lower|striptags == 'felino' %}
                 <div class="mb-3">
                     <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
@@ -31,11 +32,26 @@
                     </form>
                 </div>
             {% endif %}
+        </div>
+
+        <!-- Detalhes do Tutor -->
+        <div class="col-md-6">
+            <h2>Detalhes do Tutor</h2>
+            <ul>
+                <li><strong>Nome do Tutor:</strong> {{ paciente.tutor.nome }}</li>
+                <li><strong>Telefone:</strong> {{ paciente.tutor.telefone }}</li>
+                <li><strong>E-mail:</strong> {{ paciente.tutor.email }}</li>
+                <li><strong>Endereço:</strong> {{ paciente.tutor.endereco }}</li>
+            </ul>
+        </div>
+    </div>
 
             <label for="laudoSelector">Selecione o Tipo de Laudo que Deseja Criar:</label>
             <select id="laudoSelector" class="form-select mb-3">
                 {% for laudo in laudo %}
-                    <option value="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}">Criar {{ laudo.nome_exame }}</option>
+                    <option value="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}">
+                        Criar {{ laudo.nome_exame }} - {{ laudo.tipo_exame }}
+                    </option>
                 {% endfor %}
             </select>
             <button type="button" onclick="redirectToSelected()" class="btn btn-primary">Ir para o Laudo Selecionado</button>
@@ -45,11 +61,13 @@
                     <tr>
                         <th>Tipo de Laudo</th>
                         <th>Data</th>
-                        <th>Exibir/Editar</th>
+                        <th>Editar/Deletar</th>
                         <th>Exibir PDF</th>
                         <th>Baixar PDF</th>
+                        <th>Editar Laudo já Enviado</th>
                         <th>Enviar E-mail</th>
                         <th>Enviar Whatsapp</th>
+                        <th>Enviar Ambos</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,13 +76,16 @@
                             <td>{{ laudos_paciente.tipo_laudo }}</td>
                             <td>{{ laudos_paciente.data }}</td>
                             <td>
-                                <a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Exibir/Editar</a>
+                                <a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Editar/Deletar</a>
                             </td>
                             <td>
-                                <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</a>
+                                <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}" target="_blank">Exibir PDF</a>
                             </td>
                             <td>
                                 <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger" href="{% url 'editar_pdf' laudos_paciente.id %}">Editar Laudo Já Enviado</a>
                             </td>
                             <td>
                                 <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
@@ -76,6 +97,12 @@
                                 <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">Enviar Whatsapp</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'enviar_laudo' laudos_paciente.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Enviar Laudo</button>
                                 </form>
                             </td>
                         </tr>

@@ -31,7 +31,9 @@ from django import forms
 # lista de funções de listas
 from django.utils.decorators import decorator_from_middleware
 from django.middleware.csrf import CsrfViewMiddleware
-
+import os
+import io
+import boto3
 
 
 def index(request):
@@ -755,6 +757,7 @@ def enviar_pdf(request, laudos_paciente_id):
 
 def lista_tarefas_agendadas(request):
     tarefas_agendadas = Schedule.objects.all()
+    laudo =Laudo.objects.all()
     return render(request, 'index/exibir/lista_tarefas_agendadas.html', {'tarefas_agendadas': tarefas_agendadas})
    
 def deletar_tarefa(request, tarefa_id):
@@ -846,3 +849,60 @@ def deletar_laudo_ajax(request, laudo_id):
     laudo.delete()
     return JsonResponse({'mensagem': 'Laudo excluído com sucesso'})
 
+def editar_pdf(request, laudos_paciente_id):
+    try:
+        # Obtenha o objeto do banco de dados
+        laudo = Laudo.objects.get(id=laudos_paciente_id)
+
+        # Renderize o template para HTML
+        html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+
+        # Crie uma instância do HTML usando weasyprint
+        weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
+
+        # Gere o PDF
+        pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
+
+       # Configurar as credenciais do AWS
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+        # Configurar o cliente S3
+        s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+
+        # Nome do arquivo no S3
+        s3_filename = f'laudos/{laudo.data}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+        s3_filename_format = s3_filename.replace(" ", "+")
+        # Criar um objeto de bytes em memória
+        pdf_bytes_io = io.BytesIO(pdf)
+
+        # Fazer upload do PDF para o S3
+        s3.upload_fileobj(pdf_bytes_io, aws_storage_bucket_name, s3_filename)
+
+        # Fechar o objeto de bytes em memória (opcional)
+        pdf_bytes_io.close()
+
+        # Faça as edições necessárias no PDF (implemente esta parte conforme suas necessidades)
+
+        messages.success(request, "PDF editado com sucesso")
+
+    except Laudo.DoesNotExist:
+        messages.error(request, "Laudo não encontrado")
+    except Exception as e:
+        messages.error(request, f"Erro ao editar PDF: {str(e)}")
+
+    return redirect('exibicao', paciente_id=laudo.paciente.id)
+
+def enviar_laudo(request, laudos_paciente_id):
+    laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
+
+    enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
+
+    enviar_whatsapp(request, laudos_paciente_id=laudo.id)
+
+    
+
+    # Redirecione para a página de edição de horário com o ID da tarefa
+    return redirect('lista_tarefas_agendadas')
+    

@@ -207,8 +207,7 @@ class Laudo(models.Model):
     
     laudo = HTMLField(null=True)
 
-    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),null=True, blank=True
-                                      )
+    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),null=True, blank=True)
 
 
     def save(self, *args, **kwargs):

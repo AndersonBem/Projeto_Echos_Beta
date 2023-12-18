@@ -3,9 +3,20 @@
 {% block content %}
 
 {% include 'partials/_tinyMCE.html' %}
-
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seu Título Aqui</title>
+    <!-- Adicione os links e scripts do Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
 <div class="container mt-5">
-    <form method="post" enctype="multipart/form-data" id="laudoForm">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
         <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
@@ -20,9 +31,12 @@
                     {% endif %}
                 </div>
             {% endfor %}
+            
             <div class="col-12">
                 <label for="{{ form.laudo.id_for_label }}" class="form-label">{{ form.laudo.label }}</label>
-                {{ form.laudo }}
+                <div class="ckeditor-container">
+                    {{ form.laudo }}
+                </div>
             </div>
         </div>
         <div class="row">
@@ -32,6 +46,20 @@
         </div>
     </form>
 </div>
+<!-- Adicione o script Flatpickr aqui -->
+<script>
+
+    var dataAtual = new Date();  // Obtém a data e hora atuais
+    dataAtual.setHours(23, 0, 0, 0);  // Define a hora para 21:00, e os minutos e segundos para 0
+
+
+    flatpickr('.flatpickr', {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        defaultDate: dataAtual,   // Use o valor atual do campo como data inicial
+        time_24hr: true
+    });
+</script>
 
 <!-- Seção de scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -41,7 +69,6 @@
 <script>
     $(document).ready(function () {
         $('[data-mask]').mask('(00) 00000-0000');
-        
     });
 </script>
 
