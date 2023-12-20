@@ -27,8 +27,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','charmed-wahoo-mistakenly.ngrok-free.app']
 #'192.168.0.132', '192.168.0.74', '192.168.215.60'
 
 # Application definition
@@ -210,6 +209,10 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 
+
+
+
+
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
@@ -226,7 +229,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 Q_CLUSTER = {
     
     'name': 'setup',
-    'workers': 4,
+    'workers': 8,
     'recycle': 500,
     'timeout': 300,  # Tempo máximo de execução de uma tarefa
     'retry': 350,   # Intervalo para reexecutar tarefas com falha
@@ -234,3 +237,11 @@ Q_CLUSTER = {
     'bulk': 10,
     'orm': 'default',
 }
+
+
+
+
+
+
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']
+

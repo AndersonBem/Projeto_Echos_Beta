@@ -8,12 +8,21 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <form method="post" enctype="multipart/form-data">
+            
+            <form method="post" action="{% url 'adicionar_imagem' laudo_id=laudo.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Adicionar Imagem</button>
             </form>
+            <a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-success">{{ laudo.paciente }}</a>
         </div>
     </div>
 </div>
+{% for imagem in laudo.laudo_imagem.all %}
+    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="max-width: 250px; height: auto;">
+    <form method="post" action="{% url 'deletar_imagem' imagem.id %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir esta imagem?')">X</button>
+    </form>
+{% endfor %}
 {% endblock %}

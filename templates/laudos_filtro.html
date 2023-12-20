@@ -1,0 +1,22 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Filtrar Laudos</h1>
+    <form action="{% url 'laudos_mes' %}" method="GET">
+        <label for="tipo_exame">Selecione o Tipo de Exame:</label>
+        <select name="tipo_exame" id="tipo_exame">
+            {% for laudo_tipo in tipos_laudo %}
+                <option value="{{ laudo_tipo.tipo_exame }}">{{ laudo_tipo.nome_exame }} - {{ laudo_tipo.tipo_exame }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="data_inicio">Data de Início:</label>
+        <input type="date" name="data_inicio" id="data_inicio" required>
+
+        <label for="data_fim">Data de Término:</label>
+        <input type="date" name="data_fim" id="data_fim" required>
+
+        <button type="submit">Filtrar</button>
+        <button type="reset">Limpar</button>
+    </form>
+{% endblock %}

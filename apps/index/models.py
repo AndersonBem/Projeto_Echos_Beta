@@ -196,13 +196,13 @@ class Laudo(models.Model):
         blank=True, 
         related_name='pacientes'
     )
-    data = models.DateField()
+    data = models.DateTimeField()
     tipo_laudo = models.ForeignKey(
         to='index.LaudosPAdrao',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="tipo_laudo",
+        related_name="nome_laudo",
     )
     
     laudo = HTMLField(null=True)
@@ -211,8 +211,8 @@ class Laudo(models.Model):
 
 
     def save(self, *args, **kwargs):
-        # Antes de salvar, configure o campo 'data' para ter apenas a data atual
-        self.data = datetime.now().date()
+        # Antes de salvar, configure o campo 'data' para ter a data e hora atual
+        self.data = timezone.now()
         super().save(*args, **kwargs)
 
     def __str__(self):

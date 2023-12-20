@@ -33,7 +33,7 @@
                 {% if clinicas %}
                 {% for clinica in clinicas %}  
                 <tr>
-                    <td><a href="{% url 'buscar_clinica' %}?buscar={{ clinica.nome }}">{{ clinica.nome }}</a></td>
+                    <td><a href="{% url 'buscar_clinica' %}?buscar={{ clinica.nome }}" class="btn btn-primary">{{ clinica.nome }}</a></td>
                     <td>{{ clinica.telefone }}</td>
                     <td>{{ clinica.email }}</td>
                     <td>{{ clinica.endereco }}</td>

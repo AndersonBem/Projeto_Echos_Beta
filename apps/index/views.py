@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 import weasyprint
 from django.core.mail import EmailMessage
 from django.conf import settings
-
+from datetime import date
 #agendamento -email
 from django.conf import settings
 from django_q.tasks import async_task
@@ -34,6 +34,10 @@ from django.middleware.csrf import CsrfViewMiddleware
 import os
 import io
 import boto3
+from botocore.exceptions import NoCredentialsError
+from django.db.models import Count
+from django.http import HttpResponseServerError
+
 
 
 def index(request):
@@ -439,7 +443,11 @@ def laudo(request, paciente_id, tutor_id, laudo_id):
                         image=f
                     )
             messages.success(request, 'Laudo salvo com sucesso')
-            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
+            # Agora, após salvar o laudo, obtenha o ID corretamente antes de redirecionar
+            laudo_id = laudo_imagem.id
+
+            # Redirecione para a página de transição
+            return render(request, 'index/laudo.html', {'form': None, 'paciente': paciente, 'tutor': tutor, 'frases': frases, 'transicao': True, 'laudo_id': laudo_id})
         else:
             messages.error(request, 'Erro ao salvar o laudo. Por favor, verifique os campos.')
             print(form.errors)  # Adicione esta linha para imprimir os erros no console
@@ -622,7 +630,11 @@ def editar_laudo(request, laudo_paciente_id):
                         image=f
                     )
             messages.success(request, "Laudo salvo")
-            return redirect(reverse('exibir_laudo', kwargs={'laudos_paciente_id': laudo_paciente_id}))
+            # Agora, após salvar o laudo, obtenha o ID corretamente antes de redirecionar
+            laudo_id = laudo_imagem.id
+
+            # Redirecione para a página de transição
+            return render(request, 'index/laudo.html', {'form': None, 'transicao': True, 'laudo_id': laudo_id})
     return render(request, 'index/editar/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})
 
 
@@ -643,7 +655,11 @@ def deletar_imagem(request, imagem_id):
     imagem = get_object_or_404(LaudoImagem, id=imagem_id)
     laudo_id = imagem.laudo.id  # Captura o ID do laudo antes de deletar a imagem
     imagem.delete()
-    return redirect('exibir_laudo', laudos_paciente_id=laudo_id)
+    laudo = Laudo.objects.get(id=laudo_id)
+
+    form = NovaImagemForm()
+
+    return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})
 
 
 def adicionar_imagem(request, laudo_id):
@@ -659,7 +675,7 @@ def adicionar_imagem(request, laudo_id):
                         laudo=laudo,
                         image=f
                     )
-            return redirect(reverse('exibir_laudo', kwargs={'laudos_paciente_id': laudo_id}))
+            return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})
     else:
         form = NovaImagemForm()
 
@@ -704,20 +720,7 @@ def exibir_pdf(request, laudos_paciente_id):
 
 def enviar_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
-    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
-
-    # Enviar o e-mail
-    subject = f'Laudo de {laudo.paciente}'
-    message_body = f'Prezado(a) Senhor(a) {laudo.tutor}, \n\nSegue em anexo o laudo do exame de {laudo.paciente}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário '  # Modifique conforme necessário
-    from_email = settings.DEFAULT_FROM_EMAIL
-    to_email = [laudo.email]
-
-    email = EmailMessage(subject, message_body, from_email, to_email)
-    email.content_subtype = ''
-    email.attach(f'Laudo - {laudo.paciente} - {laudo.data}.pdf', pdf, 'application/pdf')
-    # email.send()  # Remova ou mantenha dependendo se deseja enviar o email imediatamente ou não
+    
 
     # Configurar o fuso horário padrão
     utc_minus3 = timezone.get_default_timezone()
@@ -839,7 +842,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
 
 def laudos_hoje(request):
     # Filtra os laudos criados hoje
-    laudos_hoje = Laudo.objects.filter(data=datetime.now().date())
+    laudos_hoje = Laudo.objects.filter(data__gte=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0))
 
     context = {'laudos': laudos_hoje}
     return render(request, 'laudos_hoje.html', context)
@@ -870,9 +873,9 @@ def editar_pdf(request, laudos_paciente_id):
 
         # Configurar o cliente S3
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-
+        data_atual = datetime.now().strftime("%Y-%m-%d")
         # Nome do arquivo no S3
-        s3_filename = f'laudos/{laudo.data}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+        s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
         s3_filename_format = s3_filename.replace(" ", "+")
         # Criar um objeto de bytes em memória
         pdf_bytes_io = io.BytesIO(pdf)
@@ -897,12 +900,56 @@ def editar_pdf(request, laudos_paciente_id):
 def enviar_laudo(request, laudos_paciente_id):
     laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
 
-    enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
+    
 
     enviar_whatsapp(request, laudos_paciente_id=laudo.id)
-
+    enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
     
 
     # Redirecione para a página de edição de horário com o ID da tarefa
     return redirect('lista_tarefas_agendadas')
+
+def excluir_pdf_aws(request,laudo):
+    try:
+        # Configurar as credenciais do AWS
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+        # Criar um cliente S3
+        s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+        data_atual = datetime.now().strftime("%Y-%m-%d")
+        # Nome do arquivo no S3
+        s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+
+        # Excluir o objeto PDF no S3
+        s3.delete_object(Bucket=aws_storage_bucket_name, Key=s3_filename)
+
+        messages.success(request, f'PDF {s3_filename} excluído com sucesso.')
+    except NoCredentialsError:
+        messages.error(request, 'Credenciais do AWS não configuradas corretamente ou ausentes.')
+    except Exception as e:
+        messages.error(request, f'Ocorreu um erro ao excluir o PDF: {str(e)}')
+
+
+
+def sua_funcao_para_excluir_pdf(request, laudos_paciente_id):
+    try:
+        # Obtenha o objeto do banco de dados
+        laudo = Laudo.objects.get(id=laudos_paciente_id)
+
+        # Exclua o PDF na AWS
+        excluir_pdf_aws(request, laudo)
+
+        # Faça outras ações conforme necessário
+
+        messages.success(request, "PDF excluído com sucesso")
+
+    except Laudo.DoesNotExist:
+        messages.error(request, "Laudo não encontrado")
+    except Exception as e:
+        messages.error(request, f"Erro ao excluir PDF: {str(e)}")
+
+    return redirect('exibicao', paciente_id=laudo.paciente.id)
     
+

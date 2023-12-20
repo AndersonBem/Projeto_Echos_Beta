@@ -14,7 +14,7 @@
             <p><strong>Idade:</strong> {{ paciente.idade }}</p>
             <p><strong>Peso:</strong> {{ paciente.peso }}</p>
             <p><strong>Castração:</strong> {{ paciente.castracao_display }}</p>
-            <p><a href="{% url 'exibicao_tutor' tutor_id=paciente.tutor.id %}">Tutor: {{ paciente.tutor }}</a></p>
+            <p><a href="{% url 'exibicao_tutor' tutor_id=paciente.tutor.id %}" class="btn btn-primary">Tutor: {{ paciente.tutor }}</a></p>
             {% if paciente.especie|lower|striptags == 'felino' %}
                 <div class="mb-3">
                     <a href="{% url 'editar_paciente' paciente.id %}" class="btn btn-success">Editar</a>
@@ -48,62 +48,58 @@
 
             <label for="laudoSelector">Selecione o Tipo de Laudo que Deseja Criar:</label>
             <select id="laudoSelector" class="form-select mb-3">
-                {% for laudo in laudo %}
+                {% for laudo in laudo|dictsort:"nome_exame" %}
                     <option value="{% url 'laudo' paciente.id paciente.tutor.id laudo.id %}">
-                        Criar {{ laudo.nome_exame }} - {{ laudo.tipo_exame }}
+                        {{ laudo.nome_exame }} - {{ laudo.tipo_exame }}
                     </option>
                 {% endfor %}
             </select>
-            <button type="button" onclick="redirectToSelected()" class="btn btn-primary">Ir para o Laudo Selecionado</button>
+            <button type="button" onclick="redirectToSelected()" class="btn btn-primary">Criar o Laudo Selecionado</button>
             
             <table class="table">
                 <thead>
                     <tr>
                         <th>Tipo de Laudo</th>
                         <th>Data</th>
-                        <th>Editar/Deletar</th>
-                        <th>Exibir PDF</th>
-                        <th>Baixar PDF</th>
-                        <th>Editar Laudo já Enviado</th>
-                        <th>Enviar E-mail</th>
-                        <th>Enviar Whatsapp</th>
-                        <th>Enviar Ambos</th>
+                        <th>Opções</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    {% for laudos_paciente in laudos_paciente %}
+                    {% for laudos_paciente in laudos_paciente|dictsortreversed:"data" %}
                         <tr>
                             <td>{{ laudos_paciente.tipo_laudo }}</td>
-                            <td>{{ laudos_paciente.data }}</td>
+                            <td>{{ laudos_paciente.data|date:"d/m/Y H:i:s" }}</td>
                             <td>
-                                <a href="{% url 'exibir_laudo' laudos_paciente.id %}" class="btn btn-success">Editar/Deletar</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-success" href="{% url 'exibir_pdf' laudos_paciente.id %}" target="_blank">Exibir PDF</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-danger" href="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-danger" href="{% url 'editar_pdf' laudos_paciente.id %}">Editar Laudo Já Enviado</a>
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'enviar_pdf' laudos_paciente.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-warning">Enviar E-mail</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Enviar Whatsapp</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form method="post" action="{% url 'enviar_laudo' laudos_paciente.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary">Enviar Laudo</button>
-                                </form>
+                                <select id="opcoes" class="form-select">
+                                    <option selected disabled>Selecione uma opção</option>
+                                    <option value="{% url 'exibir_laudo' laudos_paciente.id %}">Detalhes</option>
+                                    <option value="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</option>
+                                    <option value="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</option>
+                                    <option value="{% url 'editar_pdf' laudos_paciente.id %}">Editar Laudo já enviado</option>
+                                    <option value="{% url 'sua_funcao_para_excluir_pdf' laudos_paciente.id %}">Deletar laudo já enviado</option>
+                                    <option value="{% url 'enviar_pdf' laudos_paciente.id %}">Enviar E-mail</option>
+                                    <option value="{% url 'enviar_whatsapp' laudos_paciente.id %}">Enviar Whatsapp</option>
+                                    <option value="{% url 'enviar_laudo' laudos_paciente.id %}">Enviar Laudo</option>
+                                </select>
+                                <button onclick="ativarEscolha()">Ativar Escolha</button>
+                            
+                                <script>
+                                    function ativarEscolha() {
+                                        var selectElement = document.getElementById("opcoes");
+                                        var selectedValue = selectElement.value;
+                            
+                                        if (selectedValue) {
+                                            if (selectedValue === "{% url 'exibir_pdf' laudos_paciente.id %}") {
+                                                window.open(selectedValue, '_blank');
+                                            } else {
+                                                window.location.href = selectedValue;
+                                            }
+                                        } else {
+                                            alert("Por favor, selecione uma opção antes de ativar.");
+                                        }
+                                    }
+                                </script>
                             </td>
                         </tr>
                     {% endfor %}
@@ -118,4 +114,5 @@
         window.location.href = selectedUrl;
     }
 </script>
+
 {% endblock %}

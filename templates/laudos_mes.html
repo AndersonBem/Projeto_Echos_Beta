@@ -1,0 +1,11 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Laudos Filtrados</h1>
+    <ul>
+        {% for laudo in laudos %}
+            <li>{{ laudo.data }} - {{ laudo.tipo_laudo.nome_exame }}</li>
+            <!-- Adicione mais informações conforme necessário -->
+        {% endfor %}
+    </ul>
+    {% endblock %}

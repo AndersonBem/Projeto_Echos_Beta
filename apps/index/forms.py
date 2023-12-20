@@ -24,7 +24,7 @@ class VeterinarioForms(forms.ModelForm):
         
         widgets={
             'nome' : forms.TextInput(attrs={'class':'form-control'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone', 'id': 'telefone'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control','data-mask': '(00) 00000-0000', 'id': 'telefone'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
 
         }
@@ -43,7 +43,7 @@ class ClinicaForms(forms.ModelForm):
         
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone', 'id': 'telefone'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control',  'data-mask': '(00) 00000-0000', 'id': 'telefone'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
             'endereco': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -129,7 +129,7 @@ class TutorForms(forms.ModelForm):
         
         widgets={
             'nome' : forms.TextInput(attrs={'class':'form-control'}),
-            'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone', 'id': 'telefone'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control', 'data-mask': '(00) 00000-0000', 'id': 'telefone'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Seu email'}),
             'endereco' : forms.TextInput(attrs={'class':'form-control'})
 
@@ -185,19 +185,12 @@ class LaudoForms(forms.ModelForm):
             'suspeita': forms.TextInput(attrs={'class': 'form-control'}),
             'clinica': forms.Select(attrs={'class': 'form-control'}),
             'veterinario': forms.Select(attrs={'class': 'form-control'}),
-            'data': forms.DateInput(
-                format='%d/%m/%Y',
-                attrs={
-                    'type': 'date',
-                    'class': 'form-control'
-                }
-            ),
             'tipo_laudo': forms.Select(attrs={'class': 'form-control'}),
             
             'laudo':TinyMCE(attrs={'cols': 80, 'rows': 30, 'class': 'form-control'}),
             
         }
-    data = forms.DateField(widget=forms.DateInput(format='%d/%m/%Y'), initial=date.today())
+    data = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}, format='%d/%m/%Y %H:%M'), initial=datetime.now())
 
     hora_envio = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'), initial=datetime.now().replace(hour=1, minute=0, second=0, microsecond=0))
 

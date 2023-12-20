@@ -33,7 +33,7 @@
                 {% if veterinarios %}
                 {% for veterinario in veterinarios %}  
                 <tr>
-                    <td><a href="{% url 'buscar_veterinario' %}?buscar={{ veterinario.nome }}">{{veterinario.nome}}</a></td>
+                    <td><a href="{% url 'buscar_veterinario' %}?buscar={{ veterinario.nome }}" class="btn btn-primary">{{veterinario.nome}}</a></td>
                     <td>{{veterinario.telefone}}</td>
                     <td>{{veterinario.email}}</td>
                 </tr>

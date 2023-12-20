@@ -3,24 +3,67 @@
 {% block content %}
 <div class="page-header">
     <h1>Detalhes do Laudo</h1>
-    <a href="{% url 'exibicao' paciente_id=laudo_paciente.paciente.id %}" class="btn btn-success">Lista de laudos</a>
-    <a href="{% url 'editar_laudo' laudo_paciente.id %}" class="btn btn-success">Editar</a>
-    <form method="post" action="{% url 'deletar_laudo' laudo_paciente.id %}" class="d-inline">
-        {% csrf_token %}
-    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este laudo?')">Deletar</button>
-    </form>
-    <form method="post" action="{% url 'enviar_pdf' laudos_paciente_id=laudo_paciente.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning">Enviar E-mail</button>
-    </form>
-    <form method="post" action="{% url 'enviar_whatsapp' laudos_paciente_id=laudo_paciente.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Enviar Whatsapp</button>
-    </form>
-    <form method="post" action="{% url 'enviar_laudo' laudos_paciente_id=laudo_paciente.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Enviar Laudo</button>
-    </form>
+    <td>
+        <select id="opcoes" class="form-select" onchange="selecionarOpcao()">
+            <option selected disabled>Selecione uma opção</option>
+            <option value="{% url 'exibicao' paciente_id=laudo_paciente.paciente.id %}">Detalhes</option>
+            <option value="{% url 'adicionar_imagem' laudo_id=laudo_paciente.id %}">Adicionar Nova Imagem</option>
+            <option value="{% url 'editar_laudo' laudo_paciente.id %}">Editar</option>
+            <option value="{% url 'deletar_laudo' laudo_paciente.id %}" data-confirm="Tem certeza de que deseja excluir este laudo?">Deletar</option>
+            <option value="enviar_email_form">Enviar E-mail</option>
+            <option value="enviar_whatsapp_form">Enviar Whatsapp</option>
+            <option value="enviar_laudo_form">Enviar Laudo</option>
+        </select>
+    
+        <!-- Formulários -->
+        <form id="enviarEmailForm" method="post" action="{% url 'enviar_pdf' laudos_paciente_id=laudo_paciente.id %}" style="display: none;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Enviar E-mail</button>
+        </form>
+    
+        <form id="enviarWhatsappForm" method="post" action="{% url 'enviar_whatsapp' laudos_paciente_id=laudo_paciente.id %}" style="display: none;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Enviar Whatsapp</button>
+        </form>
+    
+        <form id="enviarLaudoForm" method="post" action="{% url 'enviar_laudo' laudos_paciente_id=laudo_paciente.id %}" style="display: none;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Enviar Laudo</button>
+        </form>
+    
+        <button id="enviarEmailBtn" style="display: none;" class="btn btn-warning">Enviar E-mail</button>
+    
+        <script>
+            function selecionarOpcao() {
+                var selectElement = document.getElementById("opcoes");
+                var selectedValue = selectElement.value;
+    
+                // Esconder todos os formulários e botões
+                document.getElementById("enviarEmailForm").style.display = "none";
+                document.getElementById("enviarWhatsappForm").style.display = "none";
+                document.getElementById("enviarLaudoForm").style.display = "none";
+                document.getElementById("enviarEmailBtn").style.display = "none";
+    
+                if (selectedValue === "enviar_email_form") {
+                    // Exibir o formulário de envio de e-mail
+                    document.getElementById("enviarEmailForm").style.display = "block";
+                } else if (selectedValue === "enviar_whatsapp_form") {
+                    // Exibir o formulário de envio de Whatsapp
+                    document.getElementById("enviarWhatsappForm").style.display = "block";
+                } else if (selectedValue === "enviar_laudo_form") {
+                    // Exibir o formulário de envio de Laudo
+                    document.getElementById("enviarLaudoForm").style.display = "block";
+                } else if (selectedValue === "{% url 'exibir_pdf' laudos_paciente_id=laudo_paciente.id %}") {
+                    // Exibir o botão 'Enviar E-mail' se a opção for "Exibir PDF"
+                    document.getElementById("enviarEmailBtn").style.display = "block";
+                } else {
+                    // Redirecionar para a URL selecionada
+                    window.location.href = selectedValue;
+                }
+            }
+        </script>
+    </td>
+    
 </div>
 <div class="container">
     <div class="row">
@@ -38,20 +81,9 @@
             <p>Suspeita: {{ laudo_paciente.suspeita }}</p>
             <p>Clínica: {{ laudo_paciente.clinica.nome }}</p>
             <p>Veterinário: {{ laudo_paciente.veterinario.nome }}</p>
-            <p>Data: {{ laudo_paciente.data|date:'d/m/Y' }}</p>
-            <p>
-                <a href="{% url 'adicionar_imagem' laudo_id=laudo_paciente.id %}" class="btn btn-primary">Adicionar Nova Imagem</a>
-            </p>
-            <p>
-                {% for imagem in laudo_paciente.laudo_imagem.all %}
-                    <img src="{{ imagem.image.url }}" alt="Imagem {{ imagem.id }}" class="img-fluid" style="max-width: 100px; height: auto;">
-                    <form method="post" action="{% url 'deletar_imagem' imagem.id %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir esta imagem?')">Deletar Imagem</button>
-                    </form>
-                {% endfor %}
-            </p>
+            <p>Data: {{ laudo_paciente.data|date:'"d/m/Y H:i"' }}</p>
             
+                      
             <!-- Adicione aqui os detalhes específicos do Laudo que deseja exibir -->
             
             
