@@ -1,0 +1,35 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<head>
+    <title>Listar Diretórios</title>
+</head>
+<body>
+    <h2>Filtrar por Data:</h2>
+    <form method="get" action="{% url 'listar_diretorios_s3' %}">
+        <select name="filtro_data">
+            <option value="todos">Mostrar Todos</option>
+            {% for data in datas_disponiveis %}
+                <option value="{{ data }}">{{ data }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-success">Filtrar</button>
+    </form>
+
+    {% if erro %}
+        <p>Erro: {{ erro }}</p>
+    {% else %}
+        <h2>Laudos salvos no AWS:</h2>
+        <ul>
+            {% for diretorio in diretorios %}
+                <li>
+                    <a href="{% url 'baixar_diretorio_s3' diretorio_s3=diretorio|urlencode %}" class="btn btn-primary">{{ diretorio }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+{% endblock %}

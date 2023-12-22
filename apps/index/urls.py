@@ -5,7 +5,8 @@ from apps.index.views import \
     deletar_veterinario,editar_veterinario, deletar_clinica, editar_clinica, deletar_paciente,editar_paciente,editar_tutor, deletar_tutor, selecao,\
     novo_paciente_canino, editar_paciente_canino, deletar_paciente_canino, exibicao,exibicao_tutor, laudo, nova_raca_felino, nova_raca_canino,cadastrar_laudo,escolha_exame, obter_frases,nova_frase, exibir_laudo, deletar_laudo, editar_laudo, lista_frases, lista_laudos,deletar_frase, deletar_laudospadrao,\
     editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem, export_pdf,exibir_pdf, enviar_pdf, lista_tarefas_agendadas, editar_horario_tarefa, deletar_tarefa,enviar_whatsapp, laudos_hoje,\
-    deletar_laudo_ajax, editar_pdf, enviar_laudo, excluir_pdf_aws, sua_funcao_para_excluir_pdf
+    deletar_laudo_ajax, editar_pdf, enviar_laudo, excluir_pdf_aws, sua_funcao_para_excluir_pdf,\
+    listar_diretorios_s3, baixar_diretorio_s3
     
     
 
@@ -93,7 +94,8 @@ urlpatterns = [
     path('enviar_laudo/<int:laudos_paciente_id>/', enviar_laudo, name='enviar_laudo'),
     path('excluir_pdf_aws/<int:laudos_paciente_id>/',excluir_pdf_aws,name='excluir_pdf_aws'),
     path('sua_funcao_para_excluir_pdf/<int:laudos_paciente_id>/',sua_funcao_para_excluir_pdf,name='sua_funcao_para_excluir_pdf'),
-    
+    path('baixar_diretorio_s3/<path:diretorio_s3>/', baixar_diretorio_s3, name='baixar_diretorio_s3'),
+    path('listar_diretorios_s3/', listar_diretorios_s3, name='listar_diretorios_s3'),
 
 
 ]

@@ -18,16 +18,21 @@
 
     tinymce.init({
         selector: 'textarea[name=laudo]',
-        plugins: 'autolink lists link table',  // Adiciona plugins desejados
-        toolbar: 'undo redo | formatselect | ' +
-            'bold italic backcolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help | table ',// Adiciona a ferramenta ao menu de ferramentas
+        plugins: [
+        'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
+       'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
+       'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount'
+        ],  // Adiciona plugins desejados
         
+        toolbar: 'undo redo | casechange blocks | bold italic backcolor | \
+        alignleft aligncenter alignright alignjustify | \
+        bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',// Adiciona a ferramenta ao menu de ferramentas
         language: 'pt_BR',  // Defina o idioma para português brasileiro
+        
         setup: async function(editor) {
             // Buscar frases do banco de dados
             const frasesPreDefinidas = await fetchFrases();
+        
 
             // Verifica se o modal já existe antes de criá-lo novamente
 if (!$('#fraseModal').length) {

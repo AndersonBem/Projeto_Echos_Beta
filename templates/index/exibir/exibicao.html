@@ -67,41 +67,47 @@
                 </thead>
                 <tbody>
                     {% for laudos_paciente in laudos_paciente|dictsortreversed:"data" %}
-                        <tr>
-                            <td>{{ laudos_paciente.tipo_laudo }}</td>
-                            <td>{{ laudos_paciente.data|date:"d/m/Y H:i:s" }}</td>
-                            <td>
-                                <select id="opcoes" class="form-select">
-                                    <option selected disabled>Selecione uma opção</option>
-                                    <option value="{% url 'exibir_laudo' laudos_paciente.id %}">Detalhes</option>
-                                    <option value="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</option>
-                                    <option value="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</option>
-                                    <option value="{% url 'editar_pdf' laudos_paciente.id %}">Editar Laudo já enviado</option>
-                                    <option value="{% url 'sua_funcao_para_excluir_pdf' laudos_paciente.id %}">Deletar laudo já enviado</option>
-                                    <option value="{% url 'enviar_pdf' laudos_paciente.id %}">Enviar E-mail</option>
-                                    <option value="{% url 'enviar_whatsapp' laudos_paciente.id %}">Enviar Whatsapp</option>
-                                    <option value="{% url 'enviar_laudo' laudos_paciente.id %}">Enviar Laudo</option>
-                                </select>
-                                <button onclick="ativarEscolha()">Ativar Escolha</button>
-                            
-                                <script>
-                                    function ativarEscolha() {
-                                        var selectElement = document.getElementById("opcoes");
-                                        var selectedValue = selectElement.value;
-                            
-                                        if (selectedValue) {
-                                            if (selectedValue === "{% url 'exibir_pdf' laudos_paciente.id %}") {
-                                                window.open(selectedValue, '_blank');
-                                            } else {
+                    <tr>
+                        <td>{{ laudos_paciente.tipo_laudo }}</td>
+                        <td>{{ laudos_paciente.data|date:"d/m/Y H:i:s" }}</td>
+                        <td>
+                            <select id="opcoes" class="form-select" onchange="ativarEscolha()">
+                                <option selected disabled>Selecione uma opção</option>
+                                <option value="{% url 'exibir_laudo' laudos_paciente.id %}">Detalhes</option>
+                                <option value="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</option>
+                                <option value="{% url 'export-pdf' laudos_paciente.id %}">Baixar PDF</option>
+                                <option value="{% url 'editar_pdf' laudos_paciente.id %}">Editar Laudo já enviado</option>
+                                <option value="{% url 'sua_funcao_para_excluir_pdf' laudos_paciente.id %}">Deletar laudo já enviado</option>
+                                <option value="{% url 'enviar_pdf' laudos_paciente.id %}">Enviar E-mail</option>
+                                <option value="{% url 'enviar_whatsapp' laudos_paciente.id %}">Enviar Whatsapp</option>
+                                <option value="{% url 'enviar_laudo' laudos_paciente.id %}">Enviar Laudo</option>
+                            </select>
+                    
+                            <script>
+                                function ativarEscolha() {
+                                    var selectElement = document.getElementById("opcoes");
+                                    var selectedValue = selectElement.value;
+                    
+                                    if (selectedValue) {
+                                        if (selectedValue === "{% url 'sua_funcao_para_excluir_pdf' laudos_paciente.id %}") {
+                                            // Adicionar um prompt de confirmação
+                                            var confirmacao = confirm("Tem certeza de que deseja excluir este laudo?");
+                                            if (confirmacao) {
+                                                // Se o usuário confirmar, realizar a exclusão
                                                 window.location.href = selectedValue;
                                             }
+                                        } else if (selectedValue === "{% url 'exibir_pdf' laudos_paciente.id %}") {
+                                            window.open(selectedValue, '_blank');
                                         } else {
-                                            alert("Por favor, selecione uma opção antes de ativar.");
+                                            window.location.href = selectedValue;
                                         }
+                                    } else {
+                                        alert("Por favor, selecione uma opção antes de ativar.");
                                     }
-                                </script>
-                            </td>
-                        </tr>
+                                }
+                            </script>
+                        </td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

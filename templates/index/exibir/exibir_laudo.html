@@ -44,7 +44,14 @@
                 document.getElementById("enviarLaudoForm").style.display = "none";
                 document.getElementById("enviarEmailBtn").style.display = "none";
     
-                if (selectedValue === "enviar_email_form") {
+                if (selectedValue === "{% url 'deletar_laudo' laudo_paciente.id %}") {
+                    // Adicionar um prompt de confirmação
+                    var confirmacao = confirm("Tem certeza de que deseja excluir este laudo?");
+                    if (confirmacao) {
+                        // Se o usuário confirmar, realizar a exclusão
+                        window.location.href = "{% url 'deletar_laudo' laudo_paciente.id %}";
+                    }
+                } else if (selectedValue === "enviar_email_form") {
                     // Exibir o formulário de envio de e-mail
                     document.getElementById("enviarEmailForm").style.display = "block";
                 } else if (selectedValue === "enviar_whatsapp_form") {
@@ -63,6 +70,7 @@
             }
         </script>
     </td>
+    
     
 </div>
 <div class="container">

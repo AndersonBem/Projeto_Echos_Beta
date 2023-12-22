@@ -37,6 +37,11 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 from django.db.models import Count
 from django.http import HttpResponseServerError
+from zipfile import ZipFile
+from io import BytesIO
+from urllib.parse import unquote
+import re
+
 
 
 
@@ -105,6 +110,9 @@ def nova_clinica(request):
     return render(request,'index/nova_clinica.html', {'form':form})
 
 def editar_clinica(request, clinica_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     clinica = Clinica.objects.get(id=clinica_id)
     form = ClinicaForms(instance=clinica)
     clinica_nome = clinica.nome
@@ -164,6 +172,9 @@ def novo_paciente(request):
 
 
 def editar_paciente(request, paciente_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     paciente = Paciente.objects.get(id=paciente_id)
     form = PacienteForms(instance=paciente)
 
@@ -218,6 +229,9 @@ def novo_paciente_canino(request):
     return render(request, 'index/novo_paciente_canino.html', {'form': form})
 
 def editar_paciente_canino(request, paciente_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Usuário não logado")
+        return redirect('login')
     paciente = Paciente.objects.get(id=paciente_id)
     form = PacienteCaninoForms(instance=paciente)
 
@@ -952,4 +966,92 @@ def sua_funcao_para_excluir_pdf(request, laudos_paciente_id):
 
     return redirect('exibicao', paciente_id=laudo.paciente.id)
     
+
+def baixar_diretorio_s3(request, diretorio_s3):
+    try:
+        # Decodificar o diretório S3
+        diretorio_s3_decodificado = unquote(diretorio_s3)
+
+        # Configurar as credenciais do AWS
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+        # Criar um cliente S3
+        s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+
+        # Obter uma lista de objetos no diretório S3
+        response = s3.list_objects_v2(Bucket=aws_storage_bucket_name, Prefix=diretorio_s3_decodificado)
+        objetos_s3 = response.get('Contents', [])
+
+        # Criar um arquivo zip em memória
+        zip_buffer = BytesIO()
+        with ZipFile(zip_buffer, 'w') as zip_file:
+            for objeto in objetos_s3:
+                # Obter o nome do arquivo no S3
+                s3_filename = objeto['Key']
+                # Obter o conteúdo do arquivo no S3
+                file_content = s3.get_object(Bucket=aws_storage_bucket_name, Key=s3_filename)['Body'].read()
+
+                # Utilizar expressão regular para extrair a data do nome do arquivo
+                match = re.search(r'\d{4}-\d{2}-\d{2}', s3_filename)
+                if match:
+                    date_string = match.group()
+                else:
+                    # Se a expressão regular não encontrar uma data, use o nome original
+                    date_string = os.path.basename(s3_filename)
+
+                # Adicionar o arquivo ao zip com o novo nome (apenas a data)
+                zip_file.writestr(f"{date_string}.zip", file_content)
+
+        # Criar a resposta HTTP com o conteúdo do arquivo zip
+        response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+        # Definir o nome do arquivo zip para download
+        response['Content-Disposition'] = f'attachment; filename={diretorio_s3_decodificado.split("_", 1)[-1]}.zip'
+
+        return response
+
+    except Exception as e:
+        messages.error(request, f'Ocorreu um erro ao baixar o diretório {diretorio_s3_decodificado} no S3: {str(e)}')
+        return render(request, 'listar_diretorios.html', {'erro': str(e)})
+    
+def listar_diretorios_s3(request):
+    try:
+        # Configurar as credenciais do AWS
+        aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+        aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+        # Criar um cliente S3
+        s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+
+        # Especificar o diretório S3 que você deseja listar
+        diretorio_s3 = 'laudos/'
+
+        # Listar diretórios no S3
+        response = s3.list_objects_v2(Bucket=aws_storage_bucket_name, Prefix=diretorio_s3, Delimiter='/')
+        diretorios = [common_prefix['Prefix'].rstrip('/') for common_prefix in response.get('CommonPrefixes', [])]
+
+        # Obter datas únicas disponíveis no formato YYYY-MM
+        datas_disponiveis = list(set([diretorio.split('/')[1][:7] for diretorio in diretorios]))
+
+        print("Diretórios antes do filtro:", diretorios)
+
+        # Se houver um parâmetro de filtro de data na URL, aplique o filtro
+        filtro_data = request.GET.get('filtro_data', 'todos')
+        print("Filtro de data:", filtro_data)
+
+        if filtro_data != 'todos':
+            diretorios_filtrados = [diretorio for diretorio in diretorios if diretorio.startswith(f'laudos/{filtro_data}')]
+        else:
+            diretorios_filtrados = diretorios
+
+        print("Diretórios após o filtro:", diretorios_filtrados)
+
+        return render(request, 'listar_diretorios.html', {'diretorios': diretorios_filtrados, 'datas_disponiveis': datas_disponiveis, 'filtro_data': filtro_data})
+
+    except Exception as e:
+        messages.error(request, f'Ocorreu um erro ao listar os diretórios no S3: {str(e)}')
+        return render(request, 'listar_diretorios.html', {'erro': str(e)})
+
 

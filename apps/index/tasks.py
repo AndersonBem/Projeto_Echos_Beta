@@ -81,7 +81,7 @@ async def enviar_whatsapp_async(telefone, mensagem):
     if not telefone.startswith('55'):
         telefone = '+55' + telefone
     print(telefone)
-    time.sleep(20)
+    time.sleep(30)
     pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 5)
 
     
@@ -121,7 +121,7 @@ def enviar_whatsapp_task(laudo_id):
     # Montar a mensagem do WhatsApp com o link do PDF
     
    
-    mensagem = f"*Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário*\n\nAbaixo encontra-se o link para baixar o laudo do exame do(a) paciente *{laudo.paciente}* / tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve o número em sua lista de contatos, para liberar o link!*\n\nAtenciosamente, Equipe da Dra. Jéssica Yasminne"
+    mensagem = f"*LAUDO PRONTO!*\n\nAbaixo encontra-se o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* / tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve o número em sua lista de contatos, para liberar o link!*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
 
     lista_de_telefones = [
         laudo.tutor.telefone if laudo.tutor else None,                   # empresa
