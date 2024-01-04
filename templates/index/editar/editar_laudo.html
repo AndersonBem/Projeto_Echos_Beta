@@ -13,10 +13,19 @@
     <!-- Adicione os links e scripts do Flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <!-- Adicione o seu estilo personalizado aqui -->
+    <style>
+        /* Estilo condicional para ajustar a largura do conteúdo principal quando o sidebar é recolhido */
+        #main-content.collapsed .col-content {
+            width: 100%; /* Ajuste conforme necessário */
+        }
+    </style>
 </head>
 <body>
+    <div id="auto-save-status"></div>
 <div class="container mt-5">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="laudo-form">
         {% csrf_token %}
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
         <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
@@ -32,7 +41,7 @@
                 </div>
             {% endfor %}
             
-            <div class="col-12">
+            <div class="col-content col-lg-12"> <!-- Utiliza col-content para a largura total -->
                 <label for="{{ form.laudo.id_for_label }}" class="form-label">{{ form.laudo.label }}</label>
                 <div class="ckeditor-container">
                     {{ form.laudo }}
@@ -40,7 +49,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-content col-lg-12"> <!-- Utiliza col-content para a largura total -->
                 <button type="submit" class="btn btn-success col-12">Salvar</button>
             </div>
         </div>
@@ -48,10 +57,8 @@
 </div>
 <!-- Adicione o script Flatpickr aqui -->
 <script>
-
     var dataAtual = new Date();  // Obtém a data e hora atuais
     dataAtual.setHours(23, 0, 0, 0);  // Define a hora para 21:00, e os minutos e segundos para 0
-
 
     flatpickr('.flatpickr', {
         enableTime: true,
@@ -72,4 +79,71 @@
     });
 </script>
 
+<script>
+    $(document).ready(function () {
+        // Defina o intervalo de salvamento automático em milissegundos (por exemplo, a cada 10 segundos)
+        var autoSaveInterval = 10000;
+        var laudo_paciente_id = {{ laudo_paciente.id }};
+        // Função para exibir mensagens no status de salvamento automático
+        function showAutoSaveStatus(message) {
+            $('#auto-save-status').text(message);
+        }
+
+        // Função para realizar o salvamento automático usando AJAX
+        function autoSave() {
+            tinymce.triggerSave();
+
+            $.ajax({
+                url: '/auto_save_laudo/' + laudo_paciente_id + '/',  // Substitua pelo URL correto
+                method: 'POST',
+                data: $('#laudo-form').serialize(),
+                success: function (data) {
+                    // Exiba uma mensagem de sucesso (você pode personalizar isso conforme necessário)
+                    showAutoSaveStatus('Laudo salvo automaticamente em ' + new Date().toLocaleTimeString());
+                },
+                error: function (error) {
+                    // Exiba uma mensagem de erro (você pode personalizar isso conforme necessário)
+                    showAutoSaveStatus('Erro ao salvar automaticamente: ' + error.statusText);
+                }
+            });
+        }
+
+        // Configure o intervalo para chamar a função de salvamento automático
+        setInterval(autoSave, autoSaveInterval);
+
+        // Adicione um manipulador de eventos para o formulário para evitar o envio padrão
+        $('#laudo-form').submit(function (event) {
+            // Adicione aqui o código para lidar com o envio manual do formulário se necessário
+            // ...
+
+            // Envie o formulário manualmente
+            tinymce.triggerSave();
+            var formData = new FormData($('#laudo-form')[0]);
+            
+            $.ajax({
+                url: '/auto_save_laudo/' + laudo_paciente_id + '/',
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    // Exiba uma mensagem de sucesso ou redirecione para outra página, se necessário
+                    showAutoSaveStatus('Laudo salvo manualmente.');
+                },
+                error: function (error) {
+                    // Exiba uma mensagem de erro, se necessário
+                    showAutoSaveStatus('Erro ao salvar manualmente: ' + error.statusText);
+                }
+            });
+
+            // Permite o envio padrão do formulário
+            // event.preventDefault();  // Remova ou comente esta linha
+        });
+    });
+</script>
+
+
+
 {% endblock %}
+</body>
+</html>

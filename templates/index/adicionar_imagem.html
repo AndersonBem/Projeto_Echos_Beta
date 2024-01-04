@@ -15,6 +15,10 @@
                 <button type="submit" class="btn btn-primary">Adicionar Imagem</button>
             </form>
             <a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-success">{{ laudo.paciente }}</a>
+            <a href="{% url 'exibir_pdf' laudos_paciente_id=laudo.id %}" target="_blank" class="btn btn-primary"> Exibir PDF</a>
+            <a href="{% url 'editar_laudo' laudo_paciente_id=laudo.id %}" class="btn btn-info"> Editar laudo</a>
+            <a href="{% url 'enviar_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-danger"> Enviar laudo</a>
+            
         </div>
     </div>
 </div>

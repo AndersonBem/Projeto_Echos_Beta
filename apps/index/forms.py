@@ -194,6 +194,12 @@ class LaudoForms(forms.ModelForm):
 
     hora_envio = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'), initial=datetime.now().replace(hour=1, minute=0, second=0, microsecond=0))
 
+    def save(self, commit=True):
+        laudo = super(LaudoForms, self).save(commit=False)
+        # Faça qualquer processamento adicional aqui, se necessário
+        if commit:
+            laudo.save()
+        return laudo
 
 
 

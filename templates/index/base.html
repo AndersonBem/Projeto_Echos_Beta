@@ -10,36 +10,65 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
-    <script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
+        body {
+            display: flex;
+            margin: 0;
+        }
+    
+        .no-margin-left {
+            margin-left: 0;
+        }
+    
+        #main-content {
+            flex-grow: 1;
+            transition: margin-left 0.3s ease;
+            margin-left: 0;
+        }
+    
         #sidebar.collapsed {
-            width: 10px;
+            width: 0;
+            height: 0;
+            overflow: hidden;
         }
     
         #sidebarCollapseContainer {
             position: fixed;
-            bottom: 0;
+            top: 55px;
             left: 0;
-            padding: 10px; 
+            padding: 0;
         }
     
-        #sidebar.collapsed .sidebar-btn {
-        display: none;
+        #sidebarCollapseContainer button {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
         }
+    
+        #sidebarCollapseContainer button i {
+            font-size: 10px;
+            color: #fff;
+            margin-right: 0px;
+        }
+    
         #sidebar.collapsed #sidebarCollapseContainer button {
-            width: 10px; /* ou qualquer largura desejada para a seta recolhida */
-            height: 30px; /* ou qualquer altura desejada */
-            /* Adicione outros estilos conforme necessário */
+            transform: rotate(180deg);
         }
-
-        #sidebar.collapsed #sidebarCollapseContainer i {
-            font-size: 12px; /* ou qualquer tamanho de fonte desejado para a seta recolhida */
-            /* Adicione outros estilos conforme necessário */
+    
+        #sidebar.collapsed #sidebarCollapseContainer {
+            top: 55px;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid no-margin-left">
         <!-- Header -->
         <header class="row bg-dark">
             <nav class="navbar navbar-expand-lg navbar-dark mx-auto">
@@ -52,7 +81,7 @@
         </header>
 
         <!-- Conteúdo principal -->
-        <div class="row">
+        <div class="row" style="display: flex;">
             <!-- Barra lateral -->
             <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar d-grid gap-2">
                 <div class="position-sticky min-vh-100">
@@ -114,7 +143,7 @@
             </nav>
 
             <!-- Conteúdo principal -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main id="main-content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 {% include 'partials/_alertas.html' %}
                 {% block content %}
                 {% endblock %}

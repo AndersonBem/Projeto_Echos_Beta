@@ -35,7 +35,7 @@
                 {% if tutores %}
                 {% for tutor in tutores %}  
                 <tr>
-                    <td>{{tutor.nome}}</td>
+                    <td><a href="{% url 'exibicao_tutor' tutor.id %}" class="btn btn-primary">{{tutor.nome}}</a></td>
                     <td>{{tutor.telefone}}</td>
                     <td>{{tutor.email}}</td>
                     <td>{{tutor.endereco}}</td>

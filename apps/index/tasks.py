@@ -76,11 +76,11 @@ def enviar_pdf_task(laudo_id):
        
 
 
-async def enviar_whatsapp_async(telefone, mensagem):
+async def enviar_whatsapp_async(nome, telefone, mensagem):
     telefone = re.sub(r'\D', '', str(telefone))
     if not telefone.startswith('55'):
         telefone = '+55' + telefone
-    print(telefone)
+    print(f"Enviando para {nome} ({telefone})")
     time.sleep(30)
     pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 5)
 
@@ -146,10 +146,19 @@ def enviar_whatsapp_task(laudo_id):
     # Criar uma lista para armazenar as tarefas assíncronas
     tasks = []
 
+    # Mapear os nomes associados aos números de telefone
+    nomes_telefones = {
+        laudo.tutor.telefone if laudo.tutor else None: laudo.tutor.nome if laudo.tutor else None,
+        laudo.veterinario.telefone if laudo.veterinario else None: laudo.veterinario.nome if laudo.veterinario else None,
+        laudo.clinica.telefone if laudo.clinica else None: laudo.clinica.nome if laudo.clinica else None,
+        laudo.telefone_extra if laudo.telefone_extra else None: None  # Insira o nome correspondente, se houver
+    }
+
     # Iterar sobre os números de telefone válidos
-    for telefone_original in telefones_validos:
-        task = enviar_whatsapp_async(telefone_original, mensagem)
-        tasks.append(task)
+    for telefone_original, nome_associado in nomes_telefones.items():
+        if telefone_original is not None and telefone_original != '':
+            task = enviar_whatsapp_async(nome_associado, telefone_original, mensagem)
+            tasks.append(task)
 
      # Criar e executar um evento de loop asyncio manualmente
     loop = asyncio.get_event_loop()

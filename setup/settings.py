@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     
     
     
+    
 ]
 
 
@@ -244,4 +245,5 @@ Q_CLUSTER = {
 
 
 CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']
+
 

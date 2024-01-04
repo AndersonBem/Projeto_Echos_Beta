@@ -40,7 +40,6 @@ from django.http import HttpResponseServerError
 from zipfile import ZipFile
 from io import BytesIO
 from urllib.parse import unquote
-import re
 
 
 
@@ -222,9 +221,10 @@ def novo_paciente_canino(request):
 
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            paciente = form.save()
+            paciente_id = paciente.id
             messages.success(request, 'Novo Paciente Canino Cadastrado')
-            return redirect('lista_pacientes')
+            return redirect(reverse('exibicao', kwargs={'paciente_id': paciente_id}))
 
     return render(request, 'index/novo_paciente_canino.html', {'form': form})
 
@@ -651,6 +651,30 @@ def editar_laudo(request, laudo_paciente_id):
             return render(request, 'index/laudo.html', {'form': None, 'transicao': True, 'laudo_id': laudo_id})
     return render(request, 'index/editar/editar_laudo.html', {'form': form, 'laudo_paciente': laudo_paciente})
 
+def auto_save_laudo(request, laudo_paciente_id):
+    laudo_paciente = Laudo.objects.get(id=laudo_paciente_id)
+    form = LaudoForms(instance=laudo_paciente)
+    print(f"Laudo Paciente ID: {laudo_paciente_id}")
+    if request.method == 'POST':
+        
+        form=LaudoForms(request.POST, request.FILES, instance=laudo_paciente)
+        if form.is_valid():
+            print("Dados do formulário antes do salvamento:", form.cleaned_data)
+            laudo = Laudo.objects.get(id=laudo_paciente_id)  # Obtenha a instância do banco de dados
+            form = LaudoForms(request.POST, request.FILES, instance=laudo)
+            laudo = form.save(commit=False)  # Evitar commit automático
+            # Faça qualquer processamento adicional, se necessário
+            laudo.save()  # Commit manual
+            print("Valores após o salvamento automático:", laudo.__dict__)
+            print("Laudo salvo com sucesso!")
+            return JsonResponse({'status': 'success'})
+        else:
+            print("Formulário inválido:", form.errors)
+        return JsonResponse({'status': 'success'})
+
+    # Retorna uma resposta JSON indicando erro se a requisição não for do tipo POST
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'})
+
 
 def editar_laudopadrao(request, laudo_id):
     
@@ -856,7 +880,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
 
 def laudos_hoje(request):
     # Filtra os laudos criados hoje
-    laudos_hoje = Laudo.objects.filter(data__gte=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0))
+    laudos_hoje = Laudo.objects.filter(data__gte=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)).order_by('-data')
 
     context = {'laudos': laudos_hoje}
     return render(request, 'laudos_hoje.html', context)
@@ -993,16 +1017,8 @@ def baixar_diretorio_s3(request, diretorio_s3):
                 # Obter o conteúdo do arquivo no S3
                 file_content = s3.get_object(Bucket=aws_storage_bucket_name, Key=s3_filename)['Body'].read()
 
-                # Utilizar expressão regular para extrair a data do nome do arquivo
-                match = re.search(r'\d{4}-\d{2}-\d{2}', s3_filename)
-                if match:
-                    date_string = match.group()
-                else:
-                    # Se a expressão regular não encontrar uma data, use o nome original
-                    date_string = os.path.basename(s3_filename)
-
-                # Adicionar o arquivo ao zip com o novo nome (apenas a data)
-                zip_file.writestr(f"{date_string}.zip", file_content)
+                # Adicionar o arquivo ao zip com o mesmo nome
+                zip_file.writestr(s3_filename, file_content)
 
         # Criar a resposta HTTP com o conteúdo do arquivo zip
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
