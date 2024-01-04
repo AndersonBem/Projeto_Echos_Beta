@@ -49,7 +49,7 @@ def enviar_pdf_task(laudo_id):
 
 
     pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
-    mensagem = f"LAUDO PRONTO!\n\nAbaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nCaso o link não apareça clicável, salve o número em sua lista de contatos, para liberar o link!\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
+    mensagem = f"Abaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
 
     # Enviar o e-mail apenas se houver e-mails válidos
     if emails_validos:

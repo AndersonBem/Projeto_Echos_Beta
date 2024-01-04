@@ -654,18 +654,15 @@ def editar_laudo(request, laudo_paciente_id):
 def auto_save_laudo(request, laudo_paciente_id):
     laudo_paciente = Laudo.objects.get(id=laudo_paciente_id)
     form = LaudoForms(instance=laudo_paciente)
-    print(f"Laudo Paciente ID: {laudo_paciente_id}")
     if request.method == 'POST':
         
         form=LaudoForms(request.POST, request.FILES, instance=laudo_paciente)
         if form.is_valid():
-            print("Dados do formulário antes do salvamento:", form.cleaned_data)
             laudo = Laudo.objects.get(id=laudo_paciente_id)  # Obtenha a instância do banco de dados
             form = LaudoForms(request.POST, request.FILES, instance=laudo)
             laudo = form.save(commit=False)  # Evitar commit automático
             # Faça qualquer processamento adicional, se necessário
             laudo.save()  # Commit manual
-            print("Valores após o salvamento automático:", laudo.__dict__)
             print("Laudo salvo com sucesso!")
             return JsonResponse({'status': 'success'})
         else:
