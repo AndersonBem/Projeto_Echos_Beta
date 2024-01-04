@@ -1,7 +1,7 @@
 # tasks.py
 
 from django_q.models import Schedule
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django_q.tasks import async_task
 from apps.index.models import Laudo
@@ -33,25 +33,23 @@ logger = logging.getLogger(__name__)
 
 def enviar_pdf_task(laudo_id):
     laudo = Laudo.objects.get(id=laudo_id)
-
-    # Seção crítica
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})
-    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
-
     lista_de_email = [
         laudo.tutor.email if laudo.tutor and laudo.tutor.email else None,                   # junior
         laudo.veterinario.email if laudo.veterinario and laudo.veterinario.email else None, # alexia
         laudo.clinica.email if laudo.clinica and laudo.clinica.email else None,             # katia
-        laudo.email if laudo.email else None,                                              # Jessica
         laudo.email_extra if laudo.email_extra else None
     ]
     
-
-    # Criar uma lista para armazenar os e-mails válidos
     emails_validos = [email for email in lista_de_email if email]
-    
-    mensagem = f'Prezado(a)\n\nSegue em anexo o laudo do exame de {laudo.paciente} , do tutor {laudo.tutor}, \n\nAtenciosamente, Dra. Jéssica Yasminne Diagnóstico por Imagem Veterinário'
+
+    data_atual = datetime.now().strftime("%Y-%m-%d")
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    s3_filename_format = s3_filename.replace(" ", "+")
+
+
+    pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+    mensagem = f"LAUDO PRONTO!\n\nAbaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nCaso o link não apareça clicável, salve o número em sua lista de contatos, para liberar o link!\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
 
     # Enviar o e-mail apenas se houver e-mails válidos
     if emails_validos:
@@ -59,20 +57,10 @@ def enviar_pdf_task(laudo_id):
         message_body = mensagem
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = emails_validos
-        data_laudo = laudo.data.strftime("%d/%m/%Y") 
-        email = EmailMessage(subject,message_body,from_email,to_email)
-        # Adição para verificar o corpo da mensagem
-        
+        send_mail(subject, message_body,from_email, to_email )
         print(message_body)
         print(emails_validos)
-        email.content_subtype = ''
-        email.attach(f'Laudo - {laudo.paciente} - {data_laudo}.pdf', pdf, 'application/pdf')
-         # Adição para verificar o conteúdo do anexo
         
-
-        # Adição para verificar a construção da mensagem completa
-        
-        email.send()
        
 
 

@@ -71,7 +71,7 @@
                         <td>{{ laudos_paciente.tipo_laudo }}</td>
                         <td>{{ laudos_paciente.data|date:"d/m/Y H:i:s" }}</td>
                         <td>
-                            <select id="opcoes" class="form-select" onchange="ativarEscolha()">
+                            <select id="opcoes_{{ forloop.counter }}" class="form-select" onchange="ativarEscolha('opcoes_{{ forloop.counter }}')">
                                 <option selected disabled>Selecione uma opção</option>
                                 <option value="{% url 'exibir_laudo' laudos_paciente.id %}">Detalhes</option>
                                 <option value="{% url 'exibir_pdf' laudos_paciente.id %}">Exibir PDF</option>
@@ -84,8 +84,12 @@
                             </select>
                     
                             <script>
-                                function ativarEscolha() {
-                                    var selectElement = document.getElementById("opcoes");
+                                function redirectToSelected() {
+                                    var selectedUrl = document.getElementById("laudoSelector").value;
+                                    window.location.href = selectedUrl;
+                                }
+                                function ativarEscolha(seletorId) {
+                                    var selectElement = document.getElementById(seletorId);
                                     var selectedValue = selectElement.value;
                     
                                     if (selectedValue) {
