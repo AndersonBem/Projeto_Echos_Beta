@@ -148,6 +148,11 @@ class LaudoForms(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
+    # Adicione este campo para controle de exibição condicional
+    mostrar_preco = forms.BooleanField(required=False, widget=forms.HiddenInput)
+
+
+
     class Meta:
         model = Laudo
         fields = '__all__'
@@ -169,6 +174,7 @@ class LaudoForms(forms.ModelForm):
             'data': 'Data',
             'tipo_laudo': 'Tipo de laudo',
             'laudo': 'Laudo',
+            'preco': 'Preço',
             
             
         }
@@ -188,11 +194,19 @@ class LaudoForms(forms.ModelForm):
             'tipo_laudo': forms.Select(attrs={'class': 'form-control'}),
             
             'laudo':TinyMCE(attrs={'cols': 80, 'rows': 30, 'class': 'form-control'}),
+            'preco': forms.TextInput(attrs={'class': 'form-control'}),
+        
             
         }
     data = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}, format='%d/%m/%Y %H:%M'), initial=datetime.now())
 
     hora_envio = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'), initial=datetime.now().replace(hour=1, minute=0, second=0, microsecond=0))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.data.get('mostrar_preco', False):
+            # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
+            del self.fields['preco']
 
     def save(self, commit=True):
         laudo = super(LaudoForms, self).save(commit=False)

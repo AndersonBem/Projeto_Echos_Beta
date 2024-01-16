@@ -27,7 +27,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['*','charmed-wahoo-mistakenly.ngrok-free.app']
+ALLOWED_HOSTS = ['charmed-wahoo-mistakenly.ngrok-free.app']
 #'192.168.0.132', '192.168.0.74', '192.168.215.60'
 
 # Application definition
@@ -244,5 +244,6 @@ Q_CLUSTER = {
 
 
 CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']
+
 
 

@@ -64,13 +64,16 @@ def enviar_pdf_task(laudo_id):
        
 
 
-async def enviar_whatsapp_async(nome, telefone, mensagem):
+async def enviar_whatsapp_async(nome, telefone, mensagem, telefones_validos):
     telefone = re.sub(r'\D', '', str(telefone))
     if not telefone.startswith('55'):
         telefone = '+55' + telefone
+    print(f"Enviando para{telefones_validos}")
     print(f"Enviando para {nome} ({telefone})")
-    time.sleep(30)
-    pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 5)
+    
+    time.sleep(10)
+    pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 10)
+    time.sleep(15)
 
     
 def enviar_whatsapp_task(laudo_id):
@@ -109,7 +112,7 @@ def enviar_whatsapp_task(laudo_id):
     # Montar a mensagem do WhatsApp com o link do PDF
     
    
-    mensagem = f"*LAUDO PRONTO!*\n\nAbaixo encontra-se o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* / tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve o número em sua lista de contatos, para liberar o link!*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
+    mensagem = f"*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
 
     lista_de_telefones = [
         laudo.tutor.telefone if laudo.tutor else None,                   # empresa
@@ -145,7 +148,7 @@ def enviar_whatsapp_task(laudo_id):
     # Iterar sobre os números de telefone válidos
     for telefone_original, nome_associado in nomes_telefones.items():
         if telefone_original is not None and telefone_original != '':
-            task = enviar_whatsapp_async(nome_associado, telefone_original, mensagem)
+            task = enviar_whatsapp_async(nome_associado, telefone_original, mensagem, telefones_validos)
             tasks.append(task)
 
      # Criar e executar um evento de loop asyncio manualmente

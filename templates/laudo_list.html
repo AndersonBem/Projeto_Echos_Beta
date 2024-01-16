@@ -1,0 +1,72 @@
+{% extends 'index/base.html' %}
+{% load static %}
+
+{% block content %}
+<form method="get" action="{% url 'laudo_list' %}">
+    <!-- Filtro por data -->
+    <div class="form-group">
+        <label for="data_inicio">Data Início:</label>
+        <input type="date" class="form-control" name="data_inicio" value="{{ request.GET.data_inicio }}">
+    </div>
+
+    <div class="form-group">
+        <label for="data_fim">Data Fim:</label>
+        <input type="date" class="form-control" name="data_fim" value="{{ request.GET.data_fim }}">
+    </div>
+
+   
+    <!-- Filtro por clínica -->
+    <div class="form-group">
+        <label for="clinica">Clínica:</label>
+        <select class="form-control" name="clinica">
+            <option value="" {% if not request.GET.clinica %}selected{% endif %}>Todas</option>
+            {% for clinic in clinicas %}
+                <option value="{{ clinic.id }}" {% if request.GET.clinica == clinic.id %}selected{% endif %}>{{ clinic.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Filtro por tipo de laudo -->
+    <div class="form-group">
+        <label for="tipo_laudo">Tipo de Laudo:</label>
+        <select class="form-control" name="tipo_laudo">
+            <option value="" {% if not tipo_laudo_selecionado %}selected{% endif %}>Todos</option>
+            {% for laudo_tipo in laudos_tipos %}
+                <option value="{{ laudo_tipo.id }}" {% if tipo_laudo_selecionado == laudo_tipo.id %}selected{% endif %}>{{ laudo_tipo }}</option>
+            {% endfor %}
+        </select>
+            </div>
+
+
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<!-- Resultados -->
+<p class="mt-4">Total de Laudos: {{ laudos.count }}</p>
+
+<!-- Lista de Laudos em uma tabela responsiva -->
+<div class="table-responsive mt-3">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Paciente</th>
+                <th>Tutor</th>
+                <th>Tipo de Laudo</th>
+                <th>Clínica</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for laudo in laudos %}
+                <tr>
+                    <td>{{ laudo.data }}</td>
+                    <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-success">{{ laudo.paciente }}</a></td>
+                    <td><a href="{% url 'exibicao_tutor' tutor_id=laudo.tutor.id %}" class="btn btn-primary">{{ laudo.tutor }}</a></td>
+                    <td><a href="{% url 'exibir_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-success" > {{ laudo.tipo_laudo }}</a></td>
+                    <td>{{ laudo.clinica}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

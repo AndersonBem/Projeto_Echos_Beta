@@ -13,6 +13,7 @@
         <th>Espécie</th>
         <th>Raça</th>
         <th>Exame</th>
+        <th>Preço do Exame</th>
         <th>Enviar laudos</th>
         <th>Editar</th>
         <th>Excluir</th>
@@ -26,6 +27,11 @@
           <td>{{ laudo.especie }}</td>
           <td>{{ laudo.raca }}</td>
           <td>{{ laudo.tipo_laudo }}</td>
+          <td>
+            <a href="{% url 'editar_precos_laudo_hoje' %}?data={{ laudo.data|date:'Ymd' }}">
+                {{ laudo.preco }}
+            </a>
+        </td>
           <td><a href="{% url 'enviar_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-success">Enviar laudos</a></td>
           <td>
             <button class="btn btn-warning btn-sm" onclick="openEditarLaudo({{ laudo.id }})">

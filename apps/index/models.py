@@ -5,6 +5,8 @@ import os
 from tinymce.models import HTMLField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from decimal import Decimal
+
 
 from multiupload.fields import MultiFileField
 
@@ -209,6 +211,7 @@ class Laudo(models.Model):
 
     hora_envio = models.DateTimeField(default=timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),null=True, blank=True)
 
+    preco = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
 
     def save(self, *args, **kwargs):
         # Antes de salvar, configure o campo 'data' para ter a data e hora atual

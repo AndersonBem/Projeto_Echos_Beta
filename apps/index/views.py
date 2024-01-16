@@ -766,8 +766,8 @@ def enviar_pdf(request, laudos_paciente_id):
     # Criar a hora_agendada respeitando o fuso horário padrão
     #hora_agendada = now_utc_minus3.replace(hour=20, minute=00, second=0, microsecond=0)
     hora_agendada = laudo.hora_envio
-    # Verificar se já passou da hora agendada
-    if now_utc_minus3 > hora_agendada:
+    
+    if now_utc_minus3.replace(tzinfo=None) > hora_agendada.replace(tzinfo=None):
         # Se sim, agendar para amanhã às 20h
         hora_agendada += timedelta(days=1)
     novo_horario = hora_agendada
@@ -779,7 +779,7 @@ def enviar_pdf(request, laudos_paciente_id):
         task = schedule(
             'apps.index.tasks.enviar_pdf_task',
             laudo.id,
-            name=f'Email para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
+            name=f'Email para {laudo.tutor} - Exame : {laudo.tipo_laudo}',
             schedule_type='O',
             next_run=novo_horario
         )
@@ -797,6 +797,7 @@ def lista_tarefas_agendadas(request):
     tarefas_agendadas = Schedule.objects.all()
     laudo =Laudo.objects.all()
     return render(request, 'index/exibir/lista_tarefas_agendadas.html', {'tarefas_agendadas': tarefas_agendadas})
+
    
 def deletar_tarefa(request, tarefa_id):
     tarefa = Schedule.objects.get(id=tarefa_id)
@@ -846,7 +847,8 @@ def enviar_whatsapp(request, laudos_paciente_id):
     #hora_agendada = now_utc_minus3.replace(hour=20, minute=0, second=0, microsecond=0)
     hora_agendada = laudo.hora_envio
     # Verificar se já passou da hora agendada
-    if now_utc_minus3 > hora_agendada:
+    # Verificar se já passou da hora agendada
+    if now_utc_minus3.replace(tzinfo=None) > hora_agendada.replace(tzinfo=None):
         # Se sim, agendar para amanhã às 20h
         hora_agendada += timedelta(days=1)
 
@@ -859,7 +861,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
         task = schedule(
             'apps.index.tasks.enviar_whatsapp_task',
             laudo.id,
-            name=f'Whatsapp para {laudo.tutor}, tutor de : {laudo.paciente} - Exame : {laudo.tipo_laudo}',
+            name=f'Whatsapp para {laudo.tutor} - {laudo.tipo_laudo}',
             schedule_type='O',
             next_run=novo_horario,
             
@@ -875,12 +877,61 @@ def enviar_whatsapp(request, laudos_paciente_id):
         return redirect('exibicao', paciente_id=laudo.paciente.id)
     
 
+from decimal import Decimal
+from django.db.models import Sum
+
 def laudos_hoje(request):
     # Filtra os laudos criados hoje
     laudos_hoje = Laudo.objects.filter(data__gte=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)).order_by('-data')
+    total_preco = laudos_hoje.aggregate(Sum('preco'))['preco__sum'] or Decimal('0.00')
+
+    context = {'laudos': laudos_hoje, 'total_preco': total_preco}
+    return render(request, 'laudos_hoje.html', context)
+
+def editar_precos_laudo_hoje(request):
+    # Obtenha a data de hoje
+    hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Filtra os laudos criados hoje
+    laudos_hoje = Laudo.objects.filter(data__gte=hoje).order_by('-data')
 
     context = {'laudos': laudos_hoje}
-    return render(request, 'laudos_hoje.html', context)
+    return render(request, 'editar_precos_laudo_hoje.html', context)
+
+def atualizar_preco_laudo(request, laudo_id):
+    laudo = get_object_or_404(Laudo, id=laudo_id)
+
+    if request.method == 'POST':
+        novo_preco = request.POST.get('novo_preco')
+        # Faça o processamento necessário para salvar o novo preço no objeto Laudo
+        laudo.preco = novo_preco
+        laudo.save()
+
+        return JsonResponse({'mensagem': 'Preço atualizado com sucesso!'})
+
+    return render(request, 'atualizar_preco_laudo.html', {'laudo': laudo})
+
+import locale
+
+def salvar_todos_precos_laudo(request):
+    if request.method == 'POST':
+        # Configura a localização para o Brasil
+        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+
+        for laudo_id, novo_preco in request.POST.items():
+            if laudo_id.startswith('laudo_'):
+                laudo_id = laudo_id.replace('laudo_', '')
+                laudo = Laudo.objects.get(id=laudo_id)
+
+                # Converte o preço para o formato esperado pelo Django
+                novo_preco = locale.atof(novo_preco)
+                
+                laudo.preco = novo_preco
+                laudo.save()
+
+        return redirect('laudos_hoje')
+
+    return render(request, 'editar_precos_laudo_hoje.html')
 
 def deletar_laudo_ajax(request, laudo_id):
     laudo = Laudo.objects.get(pk=laudo_id)
@@ -1067,4 +1118,74 @@ def listar_diretorios_s3(request):
         messages.error(request, f'Ocorreu um erro ao listar os diretórios no S3: {str(e)}')
         return render(request, 'listar_diretorios.html', {'erro': str(e)})
 
+
+def laudo_list(request):
+    # Lógica para filtrar os laudos com base nos parâmetros da URL
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+    tipo_laudo = request.GET.get('tipo_laudo')
+    clinica = request.GET.get('clinica')
+
+    laudos = Laudo.objects.all()
+
+    if data_inicio and data_fim:
+        laudos = laudos.filter(data__range=[data_inicio, data_fim])
+
+    if tipo_laudo:
+        laudos = laudos.filter(tipo_laudo=tipo_laudo)
+
+    if clinica:
+        laudos = laudos.filter(clinica=clinica)
+
+    # Obtendo a lista de tipos de laudo e clínicas para o formulário de filtro
+    laudos_tipos = LaudosPadrao.objects.all()
+    clinicas = Clinica.objects.all()
+
+    context = {
+        'laudos': laudos,
+        'laudos_tipos': laudos_tipos,
+        'clinicas': clinicas,
+        'tipo_laudo_selecionado': tipo_laudo,  # Adicione isso ao contexto para marcar a opção selecionada no formulário
+    }
+
+    return render(request, 'laudo_list.html', context)
+
+
+def relatorio_exames(request):
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+    clinica = request.GET.get('clinica')
+    
+    laudos_filtrados = Laudo.objects.all()
+
+    if data_inicio and data_fim:
+        laudos_filtrados = laudos_filtrados.filter(data__range=[data_inicio, data_fim])
+
+    if clinica:
+        laudos_filtrados = laudos_filtrados.filter(clinica__exact=clinica)
+
+    # Calcula a contagem de exames por tipo
+    contagem_exames = laudos_filtrados.values('tipo_laudo__nome_exame').annotate(contagem=Count('tipo_laudo__nome_exame'))
+
+    # Converte o resultado em um dicionário para facilitar o acesso no template
+    contagem_exames = {item['tipo_laudo__nome_exame']: item['contagem'] for item in contagem_exames}
+
+    
+    # Calcula o total de exames
+    total_exames = sum(contagem_exames.values())
+
+    laudos_padrão = LaudosPadrao.objects.all()
+
+    # Obtendo a lista de clínicas para o formulário de filtro
+    clinicas = Clinica.objects.all()
+
+    context = {
+        'clinicas': clinicas,
+        'contagem_exames': contagem_exames,
+        'total_exames': total_exames,
+        'laudos_padrao': laudos_padrão,
+        
+    }
+
+    return render(request, 'relatorio_exames.html', context)
 
