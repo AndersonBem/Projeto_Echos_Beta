@@ -1,5 +1,5 @@
 # tasks.py
-
+from django.shortcuts import render,redirect, get_object_or_404
 from django_q.models import Schedule
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -71,40 +71,24 @@ async def enviar_whatsapp_async(nome, telefone, mensagem, telefones_validos):
     print(f"Enviando para{telefones_validos}")
     print(f"Enviando para {nome} ({telefone})")
     
-    time.sleep(10)
+    
     pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 10)
-    time.sleep(15)
+    time.sleep(25)
 
     
 def enviar_whatsapp_task(laudo_id):
     laudo = Laudo.objects.get(id=laudo_id)
 
-    
-    # Seção crítica
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})
-    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
-    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
-
-    # Configurar as credenciais do AWS
-    aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
-    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
 
-    # Configurar o cliente S3
-    s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    
+    
     data_atual = datetime.now().strftime("%Y-%m-%d")
     
     # Nome do arquivo no S3
     s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
     s3_filename_format = s3_filename.replace(" ", "+")
-    # Criar um objeto de bytes em memória
-    pdf_bytes_io = io.BytesIO(pdf)
-
-    # Fazer upload do PDF para o S3
-    s3.upload_fileobj(pdf_bytes_io, aws_storage_bucket_name, s3_filename)
-
-    # Fechar o objeto de bytes em memória (opcional)
-    pdf_bytes_io.close()
+    
 
     # Gerar o link para o PDF no S3
     pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
@@ -124,8 +108,7 @@ def enviar_whatsapp_task(laudo_id):
     # Criar uma lista para armazenar os números de telefone válidos
     telefones_validos = []
     agora = datetime.now()
-    hora_atual = agora.hour
-    minuto = datetime.now().minute+1
+    
 
     # Adicionar números de telefone à lista apenas se não forem nulos ou vazios
     for telefone_original in lista_de_telefones:
@@ -155,3 +138,30 @@ def enviar_whatsapp_task(laudo_id):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.gather(*tasks))
         
+def salvar_laudo_aws_task(laudo_id):
+    laudo = get_object_or_404(Laudo, id=laudo_id)
+    # Seção crítica
+    html_index = render_to_string('export-pdf.html', {'laudo': laudo})
+    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
+
+    # Configurar as credenciais do AWS
+    aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+    aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+    # Configurar o cliente S3
+    s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    data_atual = datetime.now().strftime("%Y-%m-%d")
+    
+    # Nome do arquivo no S3
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    
+    # Criar um objeto de bytes em memória
+    pdf_bytes_io = io.BytesIO(pdf)
+
+    # Fazer upload do PDF para o S3
+    s3.upload_fileobj(pdf_bytes_io, aws_storage_bucket_name, s3_filename)
+
+    # Fechar o objeto de bytes em memória (opcional)
+    pdf_bytes_io.close()

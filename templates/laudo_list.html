@@ -54,6 +54,8 @@
                 <th>Tutor</th>
                 <th>Tipo de Laudo</th>
                 <th>Clínica</th>
+                <th>Valor</th>
+                <th>Editar Valor</th>  <!-- Adicione esta coluna -->
             </tr>
         </thead>
         <tbody>
@@ -64,6 +66,13 @@
                     <td><a href="{% url 'exibicao_tutor' tutor_id=laudo.tutor.id %}" class="btn btn-primary">{{ laudo.tutor }}</a></td>
                     <td><a href="{% url 'exibir_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-success" > {{ laudo.tipo_laudo }}</a></td>
                     <td>{{ laudo.clinica}}</td>
+                    <td> R$ {{ laudo.preco }}</td>
+                    <td>
+                        <!-- Adicione um link para a página de edição de preço -->
+                        <a href="{% url 'editar_preco_laudo' laudo_id=laudo.id %}?{{ request.GET.urlencode }}" class="btn btn-primary">Editar Preço</a>
+                    </td>
+                    
+                    
                 </tr>
             {% endfor %}
         </tbody>

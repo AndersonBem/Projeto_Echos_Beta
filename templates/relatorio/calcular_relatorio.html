@@ -1,0 +1,34 @@
+{% extends 'index/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card" style="width: 75%;">
+    <div class="card-body card-text text-dark">
+      <form method="post" action="{% url 'calcular_relatorio' %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="{{ form.mes.id_for_label }}">Escolha o Período :</label>
+          {{ form.mes }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.dias_trabalhados.id_for_label }}">Determine quantos dias vão ser trabalhados neste período :</label>
+          {{ form.dias_trabalhados }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Calcular</button>
+      </form>
+
+      <p> Dias úteis e feriados do Mês atual : </p>
+
+      {% if dias_uteis %}
+        <p>Dias úteis: {{ dias_uteis }}</p>
+        <p>Feriados: {{ feriados }}</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

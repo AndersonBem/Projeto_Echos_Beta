@@ -44,12 +44,15 @@ class ListandoRacaCanino(admin.ModelAdmin):
 
 class ListandoLaudo(admin.ModelAdmin):
     list_display = (
-        "id", "tipo_laudo", "paciente", "especie", "raca", "sexo", "tutor", "email", "idade", "peso",
-        "email_extra", "telefone_extra", "suspeita", "clinica", "veterinario", "data"
+        "id", "tipo_laudo", "paciente","preco","especie", "raca", "sexo", "tutor",
+         "clinica", "veterinario", "data"
     )
     list_display_links = ("id", "paciente")
     search_fields = ("raca",)
     list_per_page = 100
+    # Adicione este método para criar um filtro de data
+    def get_list_filter(self, request):
+        return ['data']
     
 
 

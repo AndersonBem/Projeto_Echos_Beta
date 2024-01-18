@@ -9,6 +9,8 @@ LaudoImagem
 
 from tinymce.widgets import TinyMCE
 
+from django.utils import timezone
+
 
 
 class VeterinarioForms(forms.ModelForm):
@@ -139,7 +141,7 @@ class TutorForms(forms.ModelForm):
 class LaudoForms(forms.ModelForm):
     laudo_imagem = MultiFileField(min_num=1, max_num=100, required=False)
     tutor = forms.ModelChoiceField(
-        queryset=Tutor.objects.all(),
+        queryset=Tutor.objects.all().order_by('nome'),
         widget=forms.Select(attrs={'class': 'form-control'}),
     )
 
@@ -198,12 +200,22 @@ class LaudoForms(forms.ModelForm):
         
             
         }
-    data = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control'}, format='%d/%m/%Y %H:%M'), initial=datetime.now())
+    data = forms.DateTimeField(
+        widget=forms.DateInput(attrs={'class': 'form-control'}, format='%d/%m/%Y %H:%M'),
+    )
 
-    hora_envio = forms.DateTimeField(widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'), initial=datetime.now().replace(hour=1, minute=0, second=0, microsecond=0))
+    hora_envio = forms.DateTimeField(
+        widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'),
+        initial=lambda: timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Defina o valor inicial do campo 'data' com base na lógica desejada
+        if not self.instance.pk:  # Verifica se é um novo objeto, não uma edição
+            self.fields['data'].initial = timezone.now()
+
         if not self.data.get('mostrar_preco', False):
             # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
             del self.fields['preco']
@@ -216,8 +228,15 @@ class LaudoForms(forms.ModelForm):
         return laudo
 
 
+class RelatorioForm(forms.Form):
+    # Obtenha os meses únicos dos laudos existentes formatados
+    meses_choices = [(f"{m.strftime('%m/%Y')}", f"{m.strftime('%m/%Y')}") for m in Laudo.objects.dates('data', 'month')]
+
+    mes = forms.ChoiceField(choices=meses_choices)
+    dias_trabalhados = forms.IntegerField(min_value=1)
 
         
+
 
 
 

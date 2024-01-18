@@ -33,6 +33,9 @@ class Veterinario(models.Model):
     
     def __str__(self):
         return self.nome 
+    
+    class Meta:
+        ordering = ['nome']
 
 class Clinica(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
@@ -43,6 +46,9 @@ class Clinica(models.Model):
     
     def __str__(self):
         return self.nome
+    
+    class Meta:
+        ordering = ['nome']
 
 class Tutor(models.Model):
     nome = models.CharField(max_length=100, null=False, blank=False)
@@ -150,12 +156,18 @@ class RacaFelino(models.Model):
 
     def __str__(self):
         return self.raca
+    
+    class Meta:
+        ordering = ['raca']
 
 class RacaCanino(models.Model):
     raca = models.CharField(max_length=100, null=False, blank=False)
 
     def __str__(self):
         return self.raca
+    
+    class Meta:
+        ordering = ['raca']
     
 
 
@@ -214,8 +226,9 @@ class Laudo(models.Model):
     preco = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
 
     def save(self, *args, **kwargs):
-        # Antes de salvar, configure o campo 'data' para ter a data e hora atual
-        self.data = timezone.now()
+        # Se a data ainda não foi definida, configure-a para a data e hora atuais
+        if not self.data:
+            self.data = timezone.now()
         super().save(*args, **kwargs)
 
     def __str__(self):

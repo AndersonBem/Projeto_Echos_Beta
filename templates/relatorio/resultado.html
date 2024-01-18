@@ -1,0 +1,17 @@
+{% extends 'index/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Resultados do Relatório</h2>
+    <div class="card">
+      <div class="card-body">
+        <p class="card-text text-dark">Dias trabalhados realizados: {{ dias_trabalhados_realizados }}</p>
+        <p class="card-text text-dark">Faturamento atual: R$ {{ somatorio_precos }}</p>
+        <p class="card-text text-dark">Média de faturamento por dia: R$ {{ media_preco_por_dia }}</p>
+        <p class="card-text text-dark">Projeção de faturamento: R$ {{ resultado_final }}</p>
+        <p class="card-text text-dark">Faturamento do dia atual: R$ {{ faturamento_dia_atual }}</p>
+    </div>
+    </div>
+  </div>
+{% endblock %}

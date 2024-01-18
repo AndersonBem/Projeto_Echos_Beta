@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
-NovaImagemForm
+NovaImagemForm, RelatorioForm
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
@@ -779,7 +779,7 @@ def enviar_pdf(request, laudos_paciente_id):
         task = schedule(
             'apps.index.tasks.enviar_pdf_task',
             laudo.id,
-            name=f'Email para {laudo.tutor} - Exame : {laudo.tipo_laudo}',
+            name=f'Email- {laudo.tutor} - {laudo.paciente} -  {laudo.tipo_laudo}',
             schedule_type='O',
             next_run=novo_horario
         )
@@ -836,6 +836,7 @@ def editar_horario_tarefa(request, tarefa_id):
 
 def enviar_whatsapp(request, laudos_paciente_id):
     laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
+    # Seção crítica
     
     # Configurar o fuso horário padrão
     utc_minus3 = timezone.get_default_timezone()
@@ -858,14 +859,16 @@ def enviar_whatsapp(request, laudos_paciente_id):
         novo_horario += timezone.timedelta(minutes=5)
 
     try:
+        # Agendar a primeira tarefa
         task = schedule(
             'apps.index.tasks.enviar_whatsapp_task',
             laudo.id,
-            name=f'Whatsapp para {laudo.tutor} - {laudo.tipo_laudo}',
+            name=f'Whatsapp - {laudo.tutor} - {laudo.paciente} - {laudo.tipo_laudo}',
             schedule_type='O',
             next_run=novo_horario,
-            
         )
+        
+        
 
         
         messages.success(request, "Tarefa agendada com sucesso")
@@ -933,6 +936,23 @@ def salvar_todos_precos_laudo(request):
 
     return render(request, 'editar_precos_laudo_hoje.html')
 
+from django.urls import reverse
+
+
+def editar_preco_laudo(request, laudo_id):
+    laudo = get_object_or_404(Laudo, id=laudo_id)
+
+    if request.method == 'POST':
+        novo_preco = request.POST.get('novo_preco')
+        # Salve o novo preço no laudo
+        laudo.preco = novo_preco
+        laudo.save()
+        # Redirecione para a página de listagem de laudos com os filtros preservados
+        return redirect(reverse('laudo_list') + f'?{request.GET.urlencode()}')
+
+    context = {'laudo': laudo}
+    return render(request, 'editar_preco_laudo.html', context)
+
 def deletar_laudo_ajax(request, laudo_id):
     laudo = Laudo.objects.get(pk=laudo_id)
     laudo.delete()
@@ -983,6 +1003,21 @@ def editar_pdf(request, laudos_paciente_id):
 
     return redirect('exibicao', paciente_id=laudo.paciente.id)
 
+def salvar_laudo_aws(request, laudos_paciente_id):
+    laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
+    try:
+        # Agendar a segunda tarefa
+        task = schedule(
+            'apps.index.tasks.salvar_laudo_aws_task',
+            laudo.id,
+            name=f'Salvando no aws - {laudo.paciente}',
+            schedule_type='O',
+            next_run=datetime.now() + timedelta(seconds=5),  # Agendar para 5 segundos a partir de agora
+        )
+    except Exception as e:
+        messages.error(request, f"Erro ao agendar tarefa: {str(e)}")
+        return redirect('exibicao', paciente_id=laudo.paciente.id)
+
 def enviar_laudo(request, laudos_paciente_id):
     laudo = get_object_or_404(Laudo, id=laudos_paciente_id)
 
@@ -990,7 +1025,7 @@ def enviar_laudo(request, laudos_paciente_id):
 
     enviar_whatsapp(request, laudos_paciente_id=laudo.id)
     enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
-    
+    salvar_laudo_aws(request, laudos_paciente_id=laudo.id) 
 
     # Redirecione para a página de edição de horário com o ID da tarefa
     return redirect('lista_tarefas_agendadas')
@@ -1155,7 +1190,7 @@ def relatorio_exames(request):
     data_inicio = request.GET.get('data_inicio')
     data_fim = request.GET.get('data_fim')
     clinica = request.GET.get('clinica')
-    
+
     laudos_filtrados = Laudo.objects.all()
 
     if data_inicio and data_fim:
@@ -1165,14 +1200,17 @@ def relatorio_exames(request):
         laudos_filtrados = laudos_filtrados.filter(clinica__exact=clinica)
 
     # Calcula a contagem de exames por tipo
-    contagem_exames = laudos_filtrados.values('tipo_laudo__nome_exame').annotate(contagem=Count('tipo_laudo__nome_exame'))
+    contagem_exames = laudos_filtrados.values('tipo_laudo__nome_exame').annotate(
+        contagem=Count('tipo_laudo__nome_exame'),
+        valor_total=Sum('preco')  # Adiciona a soma dos preços como 'valor_total'
+    )
 
     # Converte o resultado em um dicionário para facilitar o acesso no template
-    contagem_exames = {item['tipo_laudo__nome_exame']: item['contagem'] for item in contagem_exames}
+    contagem_exames = {item['tipo_laudo__nome_exame']: item for item in contagem_exames}
 
-    
-    # Calcula o total de exames
-    total_exames = sum(contagem_exames.values())
+    # Calcula o total de exames e o valor total
+    total_exames = sum(item['contagem'] for item in contagem_exames.values())
+    total_valor = sum(item['valor_total'] for item in contagem_exames.values() if item['valor_total'])
 
     laudos_padrão = LaudosPadrao.objects.all()
 
@@ -1183,9 +1221,78 @@ def relatorio_exames(request):
         'clinicas': clinicas,
         'contagem_exames': contagem_exames,
         'total_exames': total_exames,
+        'total_valor': total_valor,
         'laudos_padrao': laudos_padrão,
-        
     }
 
     return render(request, 'relatorio_exames.html', context)
 
+from django.db import models
+from django.utils import timezone
+import pandas as pd
+from workalendar.america import Brazil
+import calendar
+
+def calcular_relatorio(request):
+    if request.method == 'POST':
+        form = RelatorioForm(request.POST)
+        if form.is_valid():
+            mes_ano = form.cleaned_data['mes']
+            # Separar o mês e o ano
+            mes, ano = mes_ano.split('/')
+            dias_trabalhados = form.cleaned_data['dias_trabalhados']
+
+            # Obter a lista de laudos para o mês e ano escolhidos
+            laudos_do_mes = Laudo.objects.filter(data__month=mes, data__year=ano)
+
+            # Contando o número de dias únicos
+            dias_trabalhados_realizados = laudos_do_mes.values('data__day').distinct().count()
+
+            # Somatório dos preços de todos os laudos
+            somatorio_precos = laudos_do_mes.aggregate(soma_precos=models.Sum('preco'))['soma_precos'] or 0
+
+            # Média de preço por dia
+            media_preco_por_dia = somatorio_precos / dias_trabalhados_realizados if dias_trabalhados_realizados > 0 else 0
+
+            # Média multiplicada pelo total de dias escolhidos
+            resultado_final = media_preco_por_dia * dias_trabalhados
+            
+            # Consulta para obter os laudos do dia atual
+            hoje = timezone.now()
+            laudos_do_dia = Laudo.objects.filter(data__date=hoje.date())
+            faturamento_do_dia = laudos_do_dia.aggregate(soma_precos=models.Sum('preco'))['soma_precos'] or 0
+            
+            return render(request, 'relatorio/resultado.html', {
+                'dias_trabalhados_realizados': dias_trabalhados_realizados,
+                'somatorio_precos': somatorio_precos,
+                'media_preco_por_dia': media_preco_por_dia,
+                'resultado_final': resultado_final,
+                'faturamento_dia_atual': faturamento_do_dia,
+                
+            })
+    else:
+    # Obtendo informações sobre dias úteis e feriados
+        form = RelatorioForm()
+# Obtendo informações sobre dias úteis e feriados
+        hoje = datetime.now()
+        primeiro_dia_mes = hoje.replace(day=1)
+        ultimo_dia_mes = hoje.replace(day=calendar.monthrange(hoje.year, hoje.month)[1])
+
+        dias_uteis = []
+        feriados = []
+
+            # Iterar sobre cada dia no mês
+        current_day = primeiro_dia_mes
+        while current_day <= ultimo_dia_mes:
+                # Verificar se o dia é útil (não é sábado ou domingo)
+            if current_day.weekday() < 5:
+                dias_uteis.append(current_day.date())
+            else:
+                    # Se for sábado ou domingo, adicionar à lista de feriados
+                feriados.append(current_day.date())
+
+            current_day += timedelta(days=1)
+        total_dias_uteis = len(dias_uteis)
+        total_feriados = len(feriados)
+
+        return render(request, 'relatorio/calcular_relatorio.html', {'form': form, 'dias_uteis': total_dias_uteis, 'feriados': total_feriados})

@@ -10,7 +10,7 @@
             <tr>
                 <th>Data</th>
                 <th>Paciente</th>
-                <th>Espécie</th>
+                <th>Valor</th>
                 <th>Raça</th>
                 <th>Exame</th>
                 <th>Editar Preço</th>
@@ -21,7 +21,7 @@
             <tr>
                 <td>{{ laudo.data }}</td>
                 <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-primary">{{ laudo.paciente.nome }}</a></td>
-                <td>{{ laudo.especie }}</td>
+                <td>R$ {{ laudo.preco }}</td>
                 <td>{{ laudo.raca }}</td>
                 <td>{{ laudo.tipo_laudo }}</td>
                 <td>
@@ -37,3 +37,4 @@
     <button type="submit" class="btn btn-success">Salvar Todos</button>
 </form>
 {% endblock %}
+
