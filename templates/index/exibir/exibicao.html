@@ -13,6 +13,7 @@
             <p><strong>Raça:</strong> {{ paciente.raca }}</p>
             <p><strong>Idade:</strong> {{ paciente.idade }}</p>
             <p><strong>Peso:</strong> {{ paciente.peso }}</p>
+            <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
             <p><strong>Castração:</strong> {{ paciente.castracao_display }}</p>
             <p><a href="{% url 'exibicao_tutor' tutor_id=paciente.tutor.id %}" class="btn btn-primary">Tutor: {{ paciente.tutor }}</a></p>
             {% if paciente.especie|lower|striptags == 'felino' %}

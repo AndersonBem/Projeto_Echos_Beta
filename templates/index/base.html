@@ -13,6 +13,7 @@
     <script src="https://cdn.tiny.cloud/1/tyia5qttmfqqaucjr6ab2a48st67s0zunt38axf3lxospeyk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             display: flex;
@@ -29,7 +30,7 @@
             margin-left: 0;
         }
     
-        #sidebar.collapsed {
+        .custom-sidebar.collapsed {
             width: 0;
             height: 0;
             overflow: hidden;
@@ -37,14 +38,14 @@
     
         #sidebarCollapseContainer {
             position: fixed;
-            top: 55px;
+            top: 3.44rem;
             left: 0;
             padding: 0;
         }
     
         #sidebarCollapseContainer button {
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,19 +54,39 @@
         }
     
         #sidebarCollapseContainer button i {
-            font-size: 10px;
+            font-size: 0.62rem;
             color: #fff;
             margin-right: 0px;
         }
     
-        #sidebar.collapsed #sidebarCollapseContainer button {
+        .custom-sidebar.collapsed #sidebarCollapseContainer button {
             transform: rotate(180deg);
         }
     
-        #sidebar.collapsed #sidebarCollapseContainer {
-            top: 55px;
+        .custom-sidebar.collapsed #sidebarCollapseContainer {
+            top: 3.44rem;
+        }
+    
+        @media (max-width: 800px) {
+            body {
+                flex-direction: column; /* Altera a direção para exibir itens verticalmente */
+            }
+            .custom-sidebar {
+                width: 10%;
+            }
+    
+            .custom-sidebar.collapsed {
+                width: 0;
+                overflow: hidden;
+            }
+    
+            .custom-sidebar #sidebarCollapseContainer {
+                top: 3.44rem;
+            }
         }
     </style>
+    
+    
 </head>
 <body>
     <div class="container-fluid no-margin-left">
@@ -83,19 +104,9 @@
         <!-- Conteúdo principal -->
         <div class="row" style="display: flex;">
             <!-- Barra lateral -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar d-grid gap-2">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar d-grid gap-2 custom-sidebar">
                 <div class="position-sticky min-vh-100">
                     <ul class="nav flex-column w-100">
-                        <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_veterinarios' %}">
-                                Veterinários
-                            </a>
-                        </li>
-                        <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_clinicas' %}">
-                                Clínicas
-                            </a>
-                        </li>
                         <li class="nav-item mb-3">
                             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_tutores' %}">
                                 Tutores
@@ -106,6 +117,19 @@
                                 Pacientes
                             </a>
                         </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_clinicas' %}">
+                                Clínicas
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_veterinarios' %}">
+                                Veterinários
+                            </a>
+                        </li>
+                        
+                        
+                        
                         <li class="nav-item mb-3">
                             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'laudos_hoje' %}">
                                 Laudos Hoje
@@ -129,11 +153,7 @@
                                 Modelos de Laudos
                             </a>
                         </li>
-                        <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_diretorios_s3' %}">
-                                Backup
-                            </a>
-                        </li>
+                        
                         <li class="nav-item mb-3">
                             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'laudo_list' %}">
                                 Lista de Exames
@@ -141,7 +161,12 @@
                         </li>
                         <li class="nav-item mb-3">
                             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'relatorio_exames' %}">
-                                Relatorio de Exames
+                                Relatório de Exames
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'editar_precos_laudo_hoje' %}?data={{ laudo.data|date:'Ymd' }}">
+                                Atualização de valores
                             </a>
                         </li>
                         <li class="nav-item mb-3">
@@ -149,9 +174,10 @@
                                 Projeções
                             </a>
                         </li>
+                        
                         <li class="nav-item mb-3">
-                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'editar_precos_laudo_hoje' %}?data={{ laudo.data|date:'Ymd' }}">
-                                Atualização de valores
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_diretorios_s3' %}">
+                                Backup
                             </a>
                         </li>
                     </ul>

@@ -71,9 +71,9 @@ async def enviar_whatsapp_async(nome, telefone, mensagem, telefones_validos):
     print(f"Enviando para{telefones_validos}")
     print(f"Enviando para {nome} ({telefone})")
     
-    
+    time.sleep(15)
     pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 10)
-    time.sleep(25)
+    time.sleep(15)
 
     
 def enviar_whatsapp_task(laudo_id):

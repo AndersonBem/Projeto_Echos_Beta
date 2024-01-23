@@ -45,7 +45,7 @@ class ListandoRacaCanino(admin.ModelAdmin):
 class ListandoLaudo(admin.ModelAdmin):
     list_display = (
         "id", "tipo_laudo", "paciente","preco","especie", "raca", "sexo", "tutor",
-         "clinica", "veterinario", "data"
+         "clinica", "veterinario", "data", "entregue_whats", "entregue_email"
     )
     list_display_links = ("id", "paciente")
     search_fields = ("raca",)

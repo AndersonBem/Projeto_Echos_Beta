@@ -220,6 +220,15 @@ class LaudoForms(forms.ModelForm):
             # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
             del self.fields['preco']
 
+        # Verifica se o campo 'entregue_whats' ou 'entregue_email' é chamado diretamente
+        if 'entregue_whats' in self.fields:
+            # Remove o campo 'entregue_whats' do formulário
+            del self.fields['entregue_whats']
+
+        if 'entregue_email' in self.fields:
+            # Remove o campo 'entregue_email' do formulário
+            del self.fields['entregue_email']
+
     def save(self, commit=True):
         laudo = super(LaudoForms, self).save(commit=False)
         # Faça qualquer processamento adicional aqui, se necessário
@@ -234,7 +243,7 @@ class RelatorioForm(forms.Form):
 
     mes = forms.ChoiceField(choices=meses_choices)
     dias_trabalhados = forms.IntegerField(min_value=1)
-
+    dias_sem_exame = forms.IntegerField(min_value=0, initial=0)
         
 
 

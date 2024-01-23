@@ -225,6 +225,10 @@ class Laudo(models.Model):
 
     preco = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
 
+    entregue_whats = models.BooleanField(default=False)
+    
+    entregue_email = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         # Se a data ainda não foi definida, configure-a para a data e hora atuais
         if not self.data:

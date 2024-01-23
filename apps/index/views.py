@@ -891,6 +891,18 @@ def laudos_hoje(request):
     context = {'laudos': laudos_hoje, 'total_preco': total_preco}
     return render(request, 'laudos_hoje.html', context)
 
+def atualizar_entrega_whats_laudo(request, laudo_paciente_id):
+    laudo = Laudo.objects.get(pk=laudo_paciente_id)
+    laudo.entregue_whats = not laudo.entregue_whats
+    laudo.save()
+    return redirect('laudos_hoje')
+
+def atualizar_entrega_email_laudo(request, laudo_paciente_id):
+    laudo = Laudo.objects.get(pk=laudo_paciente_id)
+    laudo.entregue_email = not laudo.entregue_email
+    laudo.save()
+    return redirect('laudos_hoje')
+
 def editar_precos_laudo_hoje(request):
     # Obtenha a data de hoje
     hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -932,7 +944,7 @@ def salvar_todos_precos_laudo(request):
                 laudo.preco = novo_preco
                 laudo.save()
 
-        return redirect('laudos_hoje')
+        return redirect('editar_precos_laudo_hoje')
 
     return render(request, 'editar_precos_laudo_hoje.html')
 
@@ -1197,7 +1209,7 @@ def relatorio_exames(request):
         laudos_filtrados = laudos_filtrados.filter(data__range=[data_inicio, data_fim])
 
     if clinica:
-        laudos_filtrados = laudos_filtrados.filter(clinica__exact=clinica)
+        laudos_filtrados = laudos_filtrados.filter(clinica__id=clinica)
 
     # Calcula a contagem de exames por tipo
     contagem_exames = laudos_filtrados.values('tipo_laudo__nome_exame').annotate(
@@ -1205,24 +1217,46 @@ def relatorio_exames(request):
         valor_total=Sum('preco')  # Adiciona a soma dos preços como 'valor_total'
     )
 
+    # Calcula a contagem de exames por clínica
+    contagem_clinicas = laudos_filtrados.values('clinica__nome').annotate(
+        contagem=Count('id'),
+        valor_total=Sum('preco')
+    )
+
     # Converte o resultado em um dicionário para facilitar o acesso no template
     contagem_exames = {item['tipo_laudo__nome_exame']: item for item in contagem_exames}
+    
+   # Converte o resultado em um dicionário para facilitar o acesso no template
+    contagem_clinicas = {item['clinica__nome']: {'contagem': item['contagem'], 'valor_total': item['valor_total']} for item in contagem_clinicas}
 
     # Calcula o total de exames e o valor total
     total_exames = sum(item['contagem'] for item in contagem_exames.values())
     total_valor = sum(item['valor_total'] for item in contagem_exames.values() if item['valor_total'])
 
-    laudos_padrão = LaudosPadrao.objects.all()
+    laudos_padrao = LaudosPadrao.objects.all()
 
     # Obtendo a lista de clínicas para o formulário de filtro
     clinicas = Clinica.objects.all()
+
+    total_exames_data = {
+        'labels': [clinic.nome for clinic in clinicas],
+        'values': [contagem_clinicas.get(clinic.nome, {'contagem': 0}).get('contagem', 0) for clinic in clinicas],
+    }
+
+    valor_total_data = {
+        'labels': [clinic.nome for clinic in clinicas],
+        'values': [float(contagem_clinicas.get(clinic.nome, {'valor_total': 0}).get('valor_total', 0)) for clinic in clinicas],
+    }
 
     context = {
         'clinicas': clinicas,
         'contagem_exames': contagem_exames,
         'total_exames': total_exames,
         'total_valor': total_valor,
-        'laudos_padrao': laudos_padrão,
+        'laudos_padrao': laudos_padrao,
+        'contagem_clinicas': contagem_clinicas,
+        'total_exames_data': total_exames_data,
+        'valor_total_data': valor_total_data,
     }
 
     return render(request, 'relatorio_exames.html', context)
@@ -1241,13 +1275,14 @@ def calcular_relatorio(request):
             # Separar o mês e o ano
             mes, ano = mes_ano.split('/')
             dias_trabalhados = form.cleaned_data['dias_trabalhados']
+            dias_sem_exame = form.cleaned_data['dias_sem_exame']
 
             # Obter a lista de laudos para o mês e ano escolhidos
             laudos_do_mes = Laudo.objects.filter(data__month=mes, data__year=ano)
 
             # Contando o número de dias únicos
-            dias_trabalhados_realizados = laudos_do_mes.values('data__day').distinct().count()
-
+            dias_trabalhados_basico = laudos_do_mes.values('data__day').distinct().count()
+            dias_trabalhados_realizados = dias_trabalhados_basico + dias_sem_exame
             # Somatório dos preços de todos os laudos
             somatorio_precos = laudos_do_mes.aggregate(soma_precos=models.Sum('preco'))['soma_precos'] or 0
 

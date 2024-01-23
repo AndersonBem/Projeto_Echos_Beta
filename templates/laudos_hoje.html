@@ -16,6 +16,8 @@
         <th>Enviar laudos</th>
         <th>Editar</th>
         <th>Excluir</th>
+        <th>Entregue Whats</th>
+        <th>Entregue E-mail</th>
       </tr>
     </thead>
     <tbody id="laudos-table-body">
@@ -40,6 +42,19 @@
               <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este laudo?')">
                 Excluir
               </button>
+            </form>
+          </td>
+          <td>
+            <form method="post" action="{% url 'atualizar_entrega_whats_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+              {% csrf_token %}
+              <input type="checkbox" name="entregue_whats" {% if laudo.entregue_whats %}checked{% endif %} onchange="this.form.submit()">
+            </form>
+          </td>
+          
+          <td>
+            <form method="post" action="{% url 'atualizar_entrega_email_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+              {% csrf_token %}
+              <input type="checkbox" name="entregue_email" {% if laudo.entregue_email %}checked{% endif %} onchange="this.form.submit()">
             </form>
           </td>
         </tr>

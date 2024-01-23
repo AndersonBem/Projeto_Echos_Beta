@@ -17,6 +17,11 @@
           <label for="{{ form.dias_trabalhados.id_for_label }}">Determine quantos dias vão ser trabalhados neste período :</label>
           {{ form.dias_trabalhados }}
         </div>
+
+        <div class="form-group">
+          <label for="{{ form.dias_sem_exame.id_for_label }}">dias_sem_exame:</label>
+          {{ form.dias_sem_exame }}
+        </div>
         
         <button type="submit" class="btn btn-primary">Calcular</button>
       </form>
