@@ -44,6 +44,12 @@
                 <li><strong>E-mail:</strong> {{ paciente.tutor.email }}</li>
                 <li><strong>Endereço:</strong> {{ paciente.tutor.endereco }}</li>
             </ul>
+            <div class="card" style="width: 75%;">
+                <div class="card-body card-text text-dark">
+                    <li><strong>Observação:</strong> {{ paciente.observacao }}</li>
+                    <a href="{% url 'editar_observacao_paciente' paciente.id %}" class="btn btn-warning">Editar Observação</a>
+                </div>
+            </div>
         </div>
     </div>
 

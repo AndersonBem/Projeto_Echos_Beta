@@ -1022,7 +1022,7 @@ def salvar_laudo_aws(request, laudos_paciente_id):
         task = schedule(
             'apps.index.tasks.salvar_laudo_aws_task',
             laudo.id,
-            name=f'Salvando no aws - {laudo.paciente}',
+            name=f'Salvando no aws - {laudo.paciente} - {laudo.tipo_laudo}',
             schedule_type='O',
             next_run=datetime.now() + timedelta(seconds=5),  # Agendar para 5 segundos a partir de agora
         )
@@ -1331,3 +1331,16 @@ def calcular_relatorio(request):
         total_feriados = len(feriados)
 
         return render(request, 'relatorio/calcular_relatorio.html', {'form': form, 'dias_uteis': total_dias_uteis, 'feriados': total_feriados})
+    
+
+def editar_observacao_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+
+    if request.method == 'POST':
+        nova_observacao = request.POST.get('nova_observacao')
+        paciente.observacao = nova_observacao
+        paciente.save()
+        # Redirecionar para a página de detalhes do paciente após a edição
+        return redirect('exibicao', paciente.id)
+
+    return render(request, 'editar_observacao_paciente.html', {'paciente': paciente})

@@ -1,0 +1,19 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-header">
+    <h1>Editar Observação - {{ paciente.nome }}</h1>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                <label for="novaObservacao">Nova Observação:</label>
+                <textarea id="novaObservacao" name="nova_observacao" class="form-control">{{ paciente.observacao }}</textarea>
+                <button type="submit" class="btn btn-primary mt-3">Salvar Observação</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
