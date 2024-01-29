@@ -231,6 +231,14 @@ class Laudo(models.Model):
     
     entregue_email = models.BooleanField(default=False)
 
+    preco_real= models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
+
+    data_pagamento = models.CharField(max_length=100, null=True, blank=True)
+
+    nota_fiscal = models.BooleanField(default=False)
+
+    forma_pagamento = models.CharField(max_length=100, null=True, blank=True)
+
     def save(self, *args, **kwargs):
         # Se a data ainda não foi definida, configure-a para a data e hora atuais
         if not self.data:

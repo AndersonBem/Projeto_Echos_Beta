@@ -153,7 +153,13 @@ class LaudoForms(forms.ModelForm):
     # Adicione este campo para controle de exibição condicional
     mostrar_preco = forms.BooleanField(required=False, widget=forms.HiddenInput)
 
+    mostrar_preco_real = forms.BooleanField(required=False, widget=forms.HiddenInput)
 
+    mostrar_data_pagamento = forms.BooleanField(required=False, widget=forms.HiddenInput)
+
+    mostrar_nota_fiscal = forms.BooleanField(required=False, widget=forms.HiddenInput)
+
+    mostrar_forma_pagamento = forms.BooleanField(required=False, widget=forms.HiddenInput)
 
     class Meta:
         model = Laudo
@@ -177,6 +183,10 @@ class LaudoForms(forms.ModelForm):
             'tipo_laudo': 'Tipo de laudo',
             'laudo': 'Laudo',
             'preco': 'Preço',
+            'preco_real': 'Preço Real',
+            'data_pagamento': 'Data PGTO',
+            'nota_fiscal': 'NF',
+            'forma_pagamento': 'Forma PGTO'
             
             
         }
@@ -219,6 +229,22 @@ class LaudoForms(forms.ModelForm):
         if not self.data.get('mostrar_preco', False):
             # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
             del self.fields['preco']
+
+        if not self.data.get('mostrar_preco_real', False):
+            # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
+            del self.fields['preco_real']
+
+        if not self.data.get('mostrar_data_pagamento', False):
+            # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
+            del self.fields['data_pagamento']
+
+        if not self.data.get('mostrar_nota_fiscal', False):
+            # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
+            del self.fields['nota_fiscal']
+
+        if not self.data.get('mostrar_forma_pagamento', False):
+            # Se o campo 'mostrar_preco' não estiver configurado para True, remova o campo 'preco'
+            del self.fields['forma_pagamento']
 
         # Verifica se o campo 'entregue_whats' ou 'entregue_email' é chamado diretamente
         if 'entregue_whats' in self.fields:
