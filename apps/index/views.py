@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
 NovaImagemForm, RelatorioForm
@@ -1344,3 +1344,36 @@ def editar_observacao_paciente(request, paciente_id):
         return redirect('exibicao', paciente.id)
 
     return render(request, 'editar_observacao_paciente.html', {'paciente': paciente})
+
+from django.forms.models import model_to_dict
+
+def editar_inventario(request):
+    # Obtém a instância única do modelo inventario
+    inv_instance = Inventario.objects.first()
+
+    # Verifica se o formulário foi submetido
+    if request.method == 'POST':
+        # Atualiza os valores do inventário com base nos dados do formulário
+        inv_instance.alcool = request.POST.get('alcool', 0.0).replace(',', '.')
+        inv_instance.gel_usg = request.POST.get('gel_usg', 0.0).replace(',', '.')
+        inv_instance.seringa_10ml = request.POST.get('seringa_10ml', 0.0).replace(',', '.')
+        inv_instance.seringa_5ml = request.POST.get('seringa_5ml', 0.0).replace(',', '.')
+        inv_instance.seringa_3ml = request.POST.get('seringa_3ml', 0.0).replace(',', '.')
+        inv_instance.agulha_azul = request.POST.get('agulha_azul', 0.0).replace(',', '.')
+        inv_instance.cateter_azul = request.POST.get('cateter_azul', 0.0).replace(',', '.')
+        inv_instance.cateter_rosa = request.POST.get('cateter_rosa', 0.0).replace(',', '.')
+        inv_instance.gaze_n_esteril = request.POST.get('gaze_n_esteril', 0.0).replace(',', '.')
+        inv_instance.pano_de_campo = request.POST.get('pano_de_campo', 0.0).replace(',', '.')
+        inv_instance.essencia_spray = request.POST.get('essencia_spray', 0.0).replace(',', '.')
+        inv_instance.papel_quadrado = request.POST.get('papel_quadrado', 0.0).replace(',', '.')
+        inv_instance.desinfetante_herbal = request.POST.get('desinfetante_herbal', 0.0).replace(',', '.')
+        inv_instance.prope = request.POST.get('prope', 0.0).replace(',', '.')
+        inv_instance.seringa_60ml = request.POST.get('seringa_60ml', 0.0).replace(',', '.')
+        inv_instance.scal_azul = request.POST.get('scal_azul', 0.0).replace(',', '.')
+        # Repita para os outros campos do inventário
+
+        # Salva as alterações
+        inv_instance.save()
+
+    # Renderiza o template com os valores atuais do inventário
+    return render(request, 'index/editar_inventario.html', {'inventario': inv_instance})

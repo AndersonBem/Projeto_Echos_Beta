@@ -5,7 +5,7 @@ from multiupload.fields import MultiFileField
 from datetime import date, datetime, timedelta
 
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases,\
-LaudoImagem
+LaudoImagem, Inventario
 
 from tinymce.widgets import TinyMCE
 
@@ -318,5 +318,27 @@ class NovaImagemForm(forms.ModelForm):
         model = LaudoImagem
         fields = ['laudo_imagem']
 
-
+class InventarioForm(forms.ModelForm):
+    class Meta:
+        model = Inventario
+        exclude = ['id']  # Exclua o campo 'id'
+        labels = {
+            'alcool': 'Álcool',
+            'gel_usg': 'Gel USG',
+            'seringa_10ml': 'Seringa 10ml',
+            'seringa_5ml': 'Seringa 5ml',
+            'seringa_3ml': 'Seringa 3ml',
+            'agulha_azul': 'Seringa 5ml',
+            'cateter_azul': 'Cateter Azul',
+            'cateter_rosa': 'Cateter Rosa',
+            'gaze_n_esteril': 'Gaze não estéril',
+            'pano_de_campo': 'Pano de Campo',
+            'essencia_spray': 'Essência em Spray',
+            'papel_quadrado': 'Papel toalha quadrado',
+            'desinfetante_herbal': 'Sedinfetante herbal',
+            'prope': 'Propé',
+            'seringa_60ml': 'Seringa 60ml',
+            'scal_azul': 'Scal Azul',
+            # Adicione rótulos para os outros campos conforme necessário
+        }
 

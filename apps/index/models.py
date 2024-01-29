@@ -271,4 +271,28 @@ class Frases(models.Model):
         return self.tipo
 
 
-
+class Inventario(models.Model):
+    
+    alcool = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    gel_usg = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    seringa_10ml = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    seringa_5ml = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    seringa_3ml = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    agulha_azul = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    cateter_azul = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    cateter_rosa = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    gaze_n_esteril = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    pano_de_campo = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    essencia_spray = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    papel_quadrado = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    desinfetante_herbal = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    prope = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    seringa_60ml = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    scal_azul = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    
+    def save(self, *args, **kwargs):
+        if Inventario.objects.exists():
+            # Se já existe uma instância, atualiza seus valores
+            existing_inventario = Inventario.objects.first()
+            self.id = existing_inventario.id  # Garante que há apenas uma instância
+        super().save(*args, **kwargs)
