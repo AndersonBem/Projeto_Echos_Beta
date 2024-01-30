@@ -231,7 +231,9 @@ class Laudo(models.Model):
     
     entregue_email = models.BooleanField(default=False)
 
-    preco_real= models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
+    laudo_pronto = models.BooleanField(default=False)
+
+    preco_real= models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'), null=True, blank=True)
 
     data_pagamento = models.CharField(max_length=100, null=True, blank=True)
 

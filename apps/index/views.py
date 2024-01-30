@@ -903,6 +903,14 @@ def atualizar_entrega_email_laudo(request, laudo_paciente_id):
     laudo.save()
     return redirect('laudos_hoje')
 
+def atualizar_laudo_pronto(request, laudo_paciente_id):
+    laudo = Laudo.objects.get(pk=laudo_paciente_id)
+    laudo.laudo_pronto = not laudo.laudo_pronto
+    laudo.save()
+    return redirect('laudos_hoje')
+
+
+
 def editar_precos_laudo_hoje(request):
     # Obtenha a data de hoje
     hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -1377,3 +1385,41 @@ def editar_inventario(request):
 
     # Renderiza o template com os valores atuais do inventário
     return render(request, 'index/editar_inventario.html', {'inventario': inv_instance})
+
+
+def filtrar_laudos(request):
+    if request.method == 'GET':
+        mes = request.GET.get('mes')
+        ano = request.GET.get('ano')
+        laudos = Laudo.objects.filter(data__month=mes, data__year=ano).order_by('-data')
+        return render(request, 'controle_financeiro.html', {'laudos': laudos})
+    # Aqui, você precisa definir o contexto, dependendo do que deseja renderizar na página
+    laudos = Laudo.objects.all()  # Você pode querer enviar alguns dados adicionais aqui
+    context = {'laudos': laudos}
+    return render(request, 'filtrar_laudos.html', context)
+
+
+def salvar_alteracao_controle(request):
+    if request.method == 'POST':
+        laudos_ids = request.POST.getlist('laudo_ids')
+        
+        for laudo_id in laudos_ids:
+            preco_real = request.POST.get(f'preco_real_{laudo_id}', '')  # Adiciona '' como valor padrão
+            data_pagamento = request.POST.get(f'data_pagamento_{laudo_id}', '')  # Adiciona '' como valor padrão
+            nota_fiscal = request.POST.get(f'nota_fiscal_{laudo_id}')
+            forma_pagamento = request.POST.get(f'forma_pagamento_{laudo_id}', '')  # Adiciona '' como valor padrão
+            preco_real = preco_real.replace(',', '.') if preco_real else None  # Verifica se preco_real existe antes de chamar replace
+            data_pagamento = data_pagamento.replace(',', '.') if data_pagamento else None  # Verifica se data_pagamento existe antes de chamar replace
+            laudo = Laudo.objects.get(id=laudo_id)
+            laudo.preco_real = preco_real
+            laudo.data_pagamento = data_pagamento
+            laudo.nota_fiscal = True if nota_fiscal else False
+            laudo.forma_pagamento = forma_pagamento
+            laudo.save()
+        messages.success(request, 'Alterações salvas com sucesso!')
+        
+        return redirect('filtrar_laudos')
+    # Aqui, você precisa definir o contexto, dependendo do que deseja renderizar na página
+    laudos = Laudo.objects.all()  # Você pode querer enviar alguns dados adicionais aqui
+    context = {'laudos': laudos}
+    return render(request, 'filtrar_laudos.html', context)

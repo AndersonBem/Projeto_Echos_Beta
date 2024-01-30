@@ -189,6 +189,7 @@ class LaudoForms(forms.ModelForm):
             'forma_pagamento': 'Forma PGTO'
             
             
+            
         }
 
         widgets = {
@@ -250,6 +251,10 @@ class LaudoForms(forms.ModelForm):
         if 'entregue_whats' in self.fields:
             # Remove o campo 'entregue_whats' do formulário
             del self.fields['entregue_whats']
+
+        if 'laudo_pronto' in self.fields:
+            # Remove o campo 'entregue_whats' do formulário
+            del self.fields['laudo_pronto']
 
         if 'entregue_email' in self.fields:
             # Remove o campo 'entregue_email' do formulário

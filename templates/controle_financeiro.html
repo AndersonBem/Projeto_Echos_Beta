@@ -1,7 +1,7 @@
 {% extends 'index/base.html' %}
 
 {% block content %}
-<h2>Filtrar Laudos por Mês e Ano</h2>
+<h2>Filtrar Laudos</h2>
 <form method="GET" action="{% url 'filtrar_laudos' %}">
     <label for="mes">Mês:</label>
     <select name="mes" id="mes">
@@ -25,43 +25,71 @@
 </form>
 
 {% if laudos %}
-<form method="POST" action="{% url 'salvar_financeiro' %}">
+<form method="POST" id="alteracaoForm"  action="{% url 'salvar_alteracao_controle' %}">
     {% csrf_token %}
-    <table>
+    <button class="btn btn-primary" type="button" onclick="salvarAlteracoes()">Salvar Alterações</button>
+    <table class="table table-sm">
         <thead>
             <tr>
                 <th>Data de Criação</th>
-                <th>Clínica</th>
-                <th>Paciente</th>
-                <th>Tutor</th>
+                <th style="width: 15px;">Clínica</th>
+                <th style="width: 15px;">Paciente</th>
+                <th style="width: 150px;">Tutor</th>
                 <th>Tipo de Laudo</th>
-                <th>Preço Real</th>
-                <th>Preço</th>
-                <th>Data de Pagamento</th>
+                <th style="width: 150px;">Preço Real</th>
+                <th style="width: 150px;">Preço</th>
+                <th style="width: 50px;">Data de Pagamento</th>
                 <th>Nota Fiscal</th>
                 <th>Forma de Pagamento</th>
             </tr>
         </thead>
         <tbody>
             {% for laudo in laudos %}
-            <tr>
-                <td>{{ laudo.data }}</td>
+            <tr {% if not laudo.data_pagamento %} style="background-color: yellow;" {% endif %}>
+                <td>
+                    {% if not laudo.data_pagamento %}
+                        <span class="alert-icon" title="Data de Pagamento em Branco">&#9888;</span>
+                    {% endif %}
+                    {{ laudo.data|date:"d/m/Y" }}
+                </td>
                 <td>{{ laudo.clinica }}</td>
                 <td>{{ laudo.paciente }}</td>
                 <td>{{ laudo.tutor }}</td>
                 <td>{{ laudo.tipo_laudo }}</td>
-                <td><input type="text" name="preco_real" value="{{ laudo.preco_real }}"></td>
-                <td>{{ laudo.preco }}</td>
-                <td><input type="text" name="data_pagamento" value="{{ laudo.data_pagamento }}"></td>
-                <td><input type="checkbox" name="nota_fiscal" {% if laudo.nota_fiscal %} checked {% endif %}></td>
-                <td><input type="text" name="forma_pagamento" value="{{ laudo.forma_pagamento }}"></td>
-                <input type="hidden" name="laudo_id" value="{{ laudo.id }}">
+                
+                <td>R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
+                <td>R$ {{ laudo.preco }}</td>
+                <td>
+                    {% if not laudo.data_pagamento %}
+                    <span class="alert-icon" title="Data de Pagamento em Branco">&#9888;</span>
+                    {% endif %}
+                    <input type="text" name="data_pagamento_{{ laudo.id }}" value="{{ laudo.data_pagamento|default_if_none:'' }}">
+                </td>
+                <td>
+                    {% if not laudo.nota_fiscal %}
+                        <span class="alert-icon" title="nota_fiscal em Branco">&#9888;</span>
+                    {% endif %}
+                    <input type="checkbox" name="nota_fiscal_{{ laudo.id }}" {% if laudo.nota_fiscal %} checked {% endif %}>
+                </td>
+                <td><input type="text" name="forma_pagamento_{{ laudo.id }}" value="{{ laudo.forma_pagamento|default_if_none:'' }}"></td>
+                <td><input type="hidden" name="laudo_ids" value="{{ laudo.id }}"></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <button type="submit">Salvar Alterações</button>
+    <button type="button" class="btn btn-primary" onclick="salvarAlteracoes()">Salvar Alterações</button>
 </form>
+<script>
+    function salvarAlteracoes() {
+        // Submeta o formulário usando JavaScript
+        document.getElementById("alteracaoForm").submit();
+        
+        // Recarregue a página após 1 segundo
+        setTimeout(function(){
+            location.reload();
+        }, 1000);
+    }
+    </script>
 {% else %}
 <p>Nenhum laudo encontrado para o mês e ano selecionados.</p>
 {% endif %}

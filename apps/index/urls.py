@@ -7,7 +7,8 @@ from apps.index.views import \
     editar_frases, editar_laudopadrao, deletar_imagem, adicionar_imagem, export_pdf,exibir_pdf, enviar_pdf, lista_tarefas_agendadas, editar_horario_tarefa, deletar_tarefa,enviar_whatsapp, laudos_hoje,\
     deletar_laudo_ajax, editar_pdf, enviar_laudo, excluir_pdf_aws, sua_funcao_para_excluir_pdf,\
     listar_diretorios_s3, baixar_diretorio_s3, auto_save_laudo, laudo_list, relatorio_exames, editar_precos_laudo_hoje, atualizar_preco_laudo, salvar_todos_precos_laudo,editar_preco_laudo,\
-    calcular_relatorio, atualizar_entrega_whats_laudo, atualizar_entrega_email_laudo, editar_observacao_paciente, editar_inventario
+    calcular_relatorio, atualizar_entrega_whats_laudo, atualizar_entrega_email_laudo, editar_observacao_paciente, editar_inventario, filtrar_laudos, salvar_alteracao_controle,\
+    atualizar_laudo_pronto
     
 
 urlpatterns = [
@@ -108,7 +109,11 @@ urlpatterns = [
     path('atualizar_entrega_whats_laudo/<int:laudo_paciente_id>/', atualizar_entrega_whats_laudo, name='atualizar_entrega_whats_laudo'),
     path('atualizar_entrega_email_laudo/<int:laudo_paciente_id>/', atualizar_entrega_email_laudo, name='atualizar_entrega_email_laudo'),
     
+    path('atualizar_laudo_pronto/<int:laudo_paciente_id>/', atualizar_laudo_pronto, name='atualizar_laudo_pronto'),
     path('paciente/<int:paciente_id>/editar-observacao/', editar_observacao_paciente, name='editar_observacao_paciente'),
     
     path('editar_inventario/', editar_inventario, name='editar_inventario'),
+
+    path('filtrar-laudos/', filtrar_laudos, name='filtrar_laudos'),
+    path('salvar-alteracao-controle/', salvar_alteracao_controle, name='salvar_alteracao_controle'),
 ]
