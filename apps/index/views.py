@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario, FormaDePagamento
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
 NovaImagemForm, RelatorioForm
@@ -1386,17 +1386,45 @@ def editar_inventario(request):
     # Renderiza o template com os valores atuais do inventário
     return render(request, 'index/editar_inventario.html', {'inventario': inv_instance})
 
-
 def filtrar_laudos(request):
     if request.method == 'GET':
         mes = request.GET.get('mes')
         ano = request.GET.get('ano')
+        forma_pagamento_filtro = request.GET.get('forma_pagamento')
+        data_pagamento_filtro = request.GET.get('data_pagamento')
+        
+        
+
         laudos = Laudo.objects.filter(data__month=mes, data__year=ano).order_by('-data')
-        return render(request, 'controle_financeiro.html', {'laudos': laudos})
-    # Aqui, você precisa definir o contexto, dependendo do que deseja renderizar na página
-    laudos = Laudo.objects.all()  # Você pode querer enviar alguns dados adicionais aqui
+
+        # Verifica se a opção de filtro para forma_pagamento foi selecionada
+        if forma_pagamento_filtro:
+            try:
+                forma_pagamento_filtro = int(forma_pagamento_filtro)
+                laudos = laudos.filter(forma_pagamento_id=forma_pagamento_filtro)
+            except ValueError:
+                # Se a conversão para int falhar, simplesmente não aplique o filtro
+                pass
+
+        # Verifica se a opção de filtro para data_pagamento é diferente de "ambos"
+        if data_pagamento_filtro != 'ambos':
+            if data_pagamento_filtro == 'null':
+                laudos = laudos.filter(data_pagamento__isnull=True)
+            elif data_pagamento_filtro == 'not_null':
+                laudos = laudos.exclude(data_pagamento__isnull=True)
+
+        
+
+        formas_pagamento = FormaDePagamento.objects.all()
+        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento})
+
+    laudos = Laudo.objects.all()
     context = {'laudos': laudos}
     return render(request, 'filtrar_laudos.html', context)
+
+
+
+
 
 
 def salvar_alteracao_controle(request):
@@ -1404,22 +1432,35 @@ def salvar_alteracao_controle(request):
         laudos_ids = request.POST.getlist('laudo_ids')
         
         for laudo_id in laudos_ids:
-            preco_real = request.POST.get(f'preco_real_{laudo_id}', '')  # Adiciona '' como valor padrão
-            data_pagamento = request.POST.get(f'data_pagamento_{laudo_id}', '')  # Adiciona '' como valor padrão
+            preco = request.POST.get(f'preco_{laudo_id}', '') 
+            preco_real = request.POST.get(f'preco_real_{laudo_id}', '')  
+            data_pagamento = request.POST.get(f'data_pagamento_{laudo_id}', '')  
             nota_fiscal = request.POST.get(f'nota_fiscal_{laudo_id}')
-            forma_pagamento = request.POST.get(f'forma_pagamento_{laudo_id}', '')  # Adiciona '' como valor padrão
-            preco_real = preco_real.replace(',', '.') if preco_real else None  # Verifica se preco_real existe antes de chamar replace
-            data_pagamento = data_pagamento.replace(',', '.') if data_pagamento else None  # Verifica se data_pagamento existe antes de chamar replace
+            forma_pagamento_id = request.POST.get(f'forma_pagamento_{laudo_id}', '') 
+            observacao_pagamento = request.POST.get(f'observacao_pagamento_{laudo_id}', '') 
+
+            preco = preco.replace(',', '.') if preco else None
+            preco_real = preco_real.replace(',', '.') if preco_real else None  
+            data_pagamento = data_pagamento.replace(',', '.') if data_pagamento else None  
+            observacao_pagamento = observacao_pagamento.replace(',', '.') if observacao_pagamento else None
+
             laudo = Laudo.objects.get(id=laudo_id)
+            laudo.preco = preco
             laudo.preco_real = preco_real
             laudo.data_pagamento = data_pagamento
+            laudo.observacao_pagamento = observacao_pagamento
             laudo.nota_fiscal = True if nota_fiscal else False
-            laudo.forma_pagamento = forma_pagamento
+            
+            if forma_pagamento_id:  # Verifica se a forma de pagamento foi selecionada
+                forma_pagamento = FormaDePagamento.objects.get(pk=forma_pagamento_id)
+                laudo.forma_pagamento = forma_pagamento  # Associa a forma de pagamento ao laudo
+            
             laudo.save()
+        
         messages.success(request, 'Alterações salvas com sucesso!')
         
         return redirect('filtrar_laudos')
-    # Aqui, você precisa definir o contexto, dependendo do que deseja renderizar na página
-    laudos = Laudo.objects.all()  # Você pode querer enviar alguns dados adicionais aqui
+    
+    laudos = Laudo.objects.all()
     context = {'laudos': laudos}
     return render(request, 'filtrar_laudos.html', context)

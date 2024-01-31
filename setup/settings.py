@@ -247,4 +247,5 @@ Q_CLUSTER = {
 CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']
 
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000  # ou outro valor adequado para o seu caso
 

@@ -172,6 +172,11 @@ class RacaCanino(models.Model):
         ordering = ['raca']
     
 
+class FormaDePagamento(models.Model):
+    forma_de_pagamento = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.forma_de_pagamento
 
 class Laudo(models.Model):
     paciente = models.ForeignKey(
@@ -239,7 +244,15 @@ class Laudo(models.Model):
 
     nota_fiscal = models.BooleanField(default=False)
 
-    forma_pagamento = models.CharField(max_length=100, null=True, blank=True)
+    observacao_pagamento = models.CharField(max_length=200, null=True, blank=True)
+
+    forma_pagamento = models.ForeignKey(
+        FormaDePagamento,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='laudos_forma_pagamento'
+    )
 
     def save(self, *args, **kwargs):
         # Se a data ainda não foi definida, configure-a para a data e hora atuais
@@ -250,6 +263,10 @@ class Laudo(models.Model):
     def __str__(self):
         # Retorna a representação em string da instância do modelo
         return self.data.strftime('%d%m%Y')
+
+
+
+
 
 class LaudoImagem(models.Model):
     image = models.FileField('Arquivos', upload_to=get_upload_path, null=True, blank=True)

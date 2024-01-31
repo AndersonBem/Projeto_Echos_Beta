@@ -208,7 +208,7 @@ class LaudoForms(forms.ModelForm):
             
             'laudo':TinyMCE(attrs={'cols': 80, 'rows': 30, 'class': 'form-control'}),
             'preco': forms.TextInput(attrs={'class': 'form-control'}),
-        
+            'forma_pagamento': forms.Select(attrs={'class': 'form-control'}),
             
         }
     data = forms.DateTimeField(

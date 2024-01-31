@@ -1,6 +1,23 @@
 {% extends 'index/base.html' %}
 
 {% block content %}
+
+<style>
+    .smaller-table {
+        
+        margin: 0 auto; /* Centralize a tabela na tela */
+    }
+    
+    .smaller-table td, .smaller-table th {
+        font-size: 12px; /* Defina o tamanho da fonte desejado para as células da tabela */
+        border-right: 1px solid #ccc; /* Adicione uma borda direita de 1px sólida entre as colunas */
+    }
+    
+    .smaller-table th:last-child, .smaller-table td:last-child {
+        border-right: none; /* Remova a borda direita da última coluna para evitar duplicação */
+    }
+    </style>
+
 <h2>Filtrar Laudos</h2>
 <form method="GET" action="{% url 'filtrar_laudos' %}">
     <label for="mes">Mês:</label>
@@ -21,6 +38,21 @@
     </select>
     <label for="ano">Ano:</label>
     <input type="number" name="ano" id="ano" min="2000" max="2100" value="2024">
+    <label for="forma_pagamento">Forma de Pagamento:</label>
+    <select name="forma_pagamento" id="forma_pagamento">
+        <option value="">Todas</option>
+        {% for forma_pagamento in formas_pagamento %}
+            <option value="{{ forma_pagamento.id }}">{{ forma_pagamento.forma_de_pagamento }}</option>
+        {% endfor %}
+    </select>
+    <!-- Adicione os campos de filtro para data_pagamento -->
+    <label for="data_pagamento">Data de Pagamento:</label>
+    <select name="data_pagamento" id="data_pagamento">
+        <option value="ambos">Ambos</option>
+        <option value="null">Não Pago</option>
+        <option value="not_null">Pago</option>
+    </select>
+
     <button type="submit">Filtrar</button>
 </form>
 
@@ -28,7 +60,8 @@
 <form method="POST" id="alteracaoForm"  action="{% url 'salvar_alteracao_controle' %}">
     {% csrf_token %}
     <button class="btn btn-primary" type="button" onclick="salvarAlteracoes()">Salvar Alterações</button>
-    <table class="table table-sm">
+    <div class="table-responsive">
+    <table class="table table-sm smaller-table">
         <thead>
             <tr>
                 <th>Data de Criação</th>
@@ -41,6 +74,7 @@
                 <th style="width: 50px;">Data de Pagamento</th>
                 <th>Nota Fiscal</th>
                 <th>Forma de Pagamento</th>
+                <th>Obs:</th>
             </tr>
         </thead>
         <tbody>
@@ -58,7 +92,8 @@
                 <td>{{ laudo.tipo_laudo }}</td>
                 
                 <td>R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
-                <td>R$ {{ laudo.preco }}</td>
+                <td>R$ <input type="text" name="preco_{{ laudo.id }}" value="{{ laudo.preco|default_if_none:'' }}" size="5"></td>
+
                 <td>
                     {% if not laudo.data_pagamento %}
                     <span class="alert-icon" title="Data de Pagamento em Branco">&#9888;</span>
@@ -71,12 +106,27 @@
                     {% endif %}
                     <input type="checkbox" name="nota_fiscal_{{ laudo.id }}" {% if laudo.nota_fiscal %} checked {% endif %}>
                 </td>
-                <td><input type="text" name="forma_pagamento_{{ laudo.id }}" value="{{ laudo.forma_pagamento|default_if_none:'' }}"></td>
+                <td>
+                    <select name="forma_pagamento_{{ laudo.id }}">
+                        <option value="" {% if not laudo.forma_pagamento %} selected {% endif %}>Selecione...</option>
+                        {% for forma_pagamento in formas_pagamento %}
+                            <option value="{{ forma_pagamento.id }}" {% if laudo.forma_pagamento_id == forma_pagamento.id %} selected {% endif %}>{{ forma_pagamento.forma_de_pagamento }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    
+                </td>
+                <td>
+                    
+                    <input type="text" name="observacao_pagamento_{{ laudo.id }}" value="{{ laudo.observacao_pagamento|default_if_none:'' }}">
+                    
+                </td>
                 <td><input type="hidden" name="laudo_ids" value="{{ laudo.id }}"></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
     <button type="button" class="btn btn-primary" onclick="salvarAlteracoes()">Salvar Alterações</button>
 </form>
 <script>

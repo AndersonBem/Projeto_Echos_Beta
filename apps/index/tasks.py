@@ -99,11 +99,12 @@ def enviar_whatsapp_task(laudo_id):
     mensagem = f"*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
 
     lista_de_telefones = [
-        laudo.tutor.telefone if laudo.tutor else None,                   # empresa
-        laudo.veterinario.telefone if laudo.veterinario else None,       # alexia
-        laudo.clinica.telefone if laudo.clinica else None,               # katia
-        laudo.telefone_extra if laudo.telefone_extra else None           # anderson
-    ]
+    laudo.tutor.telefone if laudo.tutor and laudo.tutor.telefone else None,                   # empresa
+    laudo.veterinario.telefone if laudo.veterinario and laudo.veterinario.telefone else None, # alexia
+    laudo.clinica.telefone if laudo.clinica and laudo.clinica.telefone else None,             # katia
+    laudo.telefone_extra if laudo.telefone_extra else None                                       # anderson
+]
+
 
     # Criar uma lista para armazenar os números de telefone válidos
     telefones_validos = []
