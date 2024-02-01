@@ -1392,7 +1392,7 @@ def filtrar_laudos(request):
         ano = request.GET.get('ano')
         forma_pagamento_filtro = request.GET.get('forma_pagamento')
         data_pagamento_filtro = request.GET.get('data_pagamento')
-        
+        clinica_filtro = request.GET.get('clinica')  # Novo campo para filtrar por clínica
         
 
         laudos = Laudo.objects.filter(data__month=mes, data__year=ano).order_by('-data')
@@ -1413,11 +1413,27 @@ def filtrar_laudos(request):
             elif data_pagamento_filtro == 'not_null':
                 laudos = laudos.exclude(data_pagamento__isnull=True)
 
+        # Verifica se foi enviado um filtro para laudo.clinica e aplica-o à consulta
+        if clinica_filtro:
+            laudos = laudos.filter(clinica_id=clinica_filtro)
+
         
+        # Calcula o somatório de todos os valores de laudo.preco
+        total_precos = laudos.aggregate(Sum('preco'))['preco__sum']
+
+        # Calcula o somatório de preços para cada clínica presente nos laudos
+        somatorio_por_clinica = {}
+        for laudo in laudos:
+            clinica_nome = laudo.clinica
+            if clinica_nome not in somatorio_por_clinica:
+                somatorio_por_clinica[clinica_nome] = 0
+            somatorio_por_clinica[clinica_nome] += laudo.preco
 
         formas_pagamento = FormaDePagamento.objects.all()
-        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento})
+        clinicas = Clinica.objects.all()  # Carrega todas as clínicas para o campo de seleção
+        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos, 'somatorio_por_clinica': somatorio_por_clinica, 'clinicas': clinicas})
 
+    
     laudos = Laudo.objects.all()
     context = {'laudos': laudos}
     return render(request, 'filtrar_laudos.html', context)

@@ -52,11 +52,45 @@
         <option value="null">Não Pago</option>
         <option value="not_null">Pago</option>
     </select>
+    <label for="clinica">Clínica:</label>
+    <select name="clinica" id="clinica">
+        <option value="">Todas</option>
+        {% for clinica in clinicas %}
+            <option value="{{ clinica.id }}">{{ clinica.nome }}</option>
+        {% endfor %}
+    </select>
 
     <button type="submit">Filtrar</button>
 </form>
 
 {% if laudos %}
+<p style="font-size: 16px; text-align: center; font-weight: bold;">Somatório dos preços: R$ {{ total_precos|default:0 }}</p>
+
+
+{% if somatorio_por_clinica %}
+    <h3>Somatório de preços por clínica:</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Clínica</th>
+                    <th>Somatório de Preços</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for clinica_nome, somatorio_preco in somatorio_por_clinica.items %}
+                    <tr>
+                        <td>{{ clinica_nome }}</td>
+                        <td>R$ {{ somatorio_preco }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+
+
 <form method="POST" id="alteracaoForm"  action="{% url 'salvar_alteracao_controle' %}">
     {% csrf_token %}
     <button class="btn btn-primary" type="button" onclick="salvarAlteracoes()">Salvar Alterações</button>
