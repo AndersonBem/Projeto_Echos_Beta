@@ -1431,7 +1431,10 @@ def filtrar_laudos(request):
 
         formas_pagamento = FormaDePagamento.objects.all()
         clinicas = Clinica.objects.all()  # Carrega todas as clínicas para o campo de seleção
-        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos,'total_precos_real':total_precos_real ,'somatorio_por_clinica': somatorio_por_clinica, 'clinicas': clinicas})
+
+        # Ordena o dicionário somatorio_por_clinica com base nos valores (somatório de preços)
+        somatorio_por_clinica_ordenado = dict(sorted(somatorio_por_clinica.items(), key=lambda item: item[1], reverse=True))
+        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos,'total_precos_real':total_precos_real ,'somatorio_por_clinica': somatorio_por_clinica_ordenado, 'clinicas': clinicas})
 
     
     laudos = Laudo.objects.all()
@@ -1439,14 +1442,20 @@ def filtrar_laudos(request):
     return render(request, 'filtrar_laudos.html', context)
 
 
-
+from django.http import HttpResponseRedirect
 
 
 
 def salvar_alteracao_controle(request):
     if request.method == 'POST':
         laudos_ids = request.POST.getlist('laudo_ids')
-        
+        # Recupere os parâmetros dos filtros do objeto request
+        mes = request.POST.get('mes')
+        ano = request.POST.get('ano')
+        forma_pagamento_filtro = request.POST.get('forma_pagamento')
+        data_pagamento_filtro = request.POST.get('data_pagamento')
+        clinica_filtro = request.POST.get('clinica')
+                
         for laudo_id in laudos_ids:
             preco = request.POST.get(f'preco_{laudo_id}', '') 
             preco_real = request.POST.get(f'preco_real_{laudo_id}', '')  
@@ -1475,8 +1484,11 @@ def salvar_alteracao_controle(request):
         
         messages.success(request, 'Alterações salvas com sucesso!')
         
-        return redirect('filtrar_laudos')
+        # Redirecionamento de volta para a página de filtragem com os parâmetros de filtro
+        url = reverse('filtrar_laudos')
+        url += f'?mes={mes}&ano={ano}&forma_pagamento={forma_pagamento_filtro}&data_pagamento={data_pagamento_filtro}&clinica={clinica_filtro}'
+        
+        return HttpResponseRedirect(url)
     
-    laudos = Laudo.objects.all()
-    context = {'laudos': laudos}
-    return render(request, 'filtrar_laudos.html', context)
+    # Se não for um POST, retorne à página de filtragem sem fazer alterações
+    return HttpResponseRedirect(reverse('filtrar_laudos'))
