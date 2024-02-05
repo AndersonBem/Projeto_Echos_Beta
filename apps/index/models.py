@@ -94,7 +94,7 @@ class Paciente(models.Model):
         delta = today - self.nascimento
         years = delta.days // 365
         months = (delta.days % 365) // 30
-        return f"{years} anos e {months} meses" if years > 0 else f"{months} meses"
+        return f"{years} anos e {months} mês(es)" if years > 0 else f"{months} mês(es)"
     
     @property
     def nascimento_formatado(self):

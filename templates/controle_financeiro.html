@@ -65,7 +65,7 @@
 
 {% if laudos %}
 <p style="font-size: 16px; text-align: center; font-weight: bold;">Somatório dos preços: R$ {{ total_precos|default:0 }}</p>
-
+<p style="font-size: 16px; text-align: center; font-weight: bold;">Somatório dos preços real: R$ {{ total_precos_real|default:0 }}</p>
 
 {% if somatorio_por_clinica %}
     <h3>Somatório de preços por clínica:</h3>
@@ -120,7 +120,7 @@
                     {% endif %}
                     {{ laudo.data|date:"d/m/Y" }}
                 </td>
-                <td>{{ laudo.clinica }}</td>
+                <td >{{ laudo.clinica }}</td>
                 <td>{{ laudo.paciente }}</td>
                 <td>{{ laudo.tutor }}</td>
                 <td>{{ laudo.tipo_laudo }}</td>
@@ -128,26 +128,38 @@
                 <td>R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
                 <td>R$ <input type="text" name="preco_{{ laudo.id }}" value="{{ laudo.preco|default_if_none:'' }}" size="5"></td>
 
-                <td>
-                    {% if not laudo.data_pagamento %}
+                
+                {% if not laudo.data_pagamento %}
+                <td style="background-color: #e9eb75;">
                     <span class="alert-icon" title="Data de Pagamento em Branco">&#9888;</span>
-                    {% endif %}
                     <input type="text" name="data_pagamento_{{ laudo.id }}" value="{{ laudo.data_pagamento|default_if_none:'' }}">
                 </td>
-                <td>
-                    {% if not laudo.nota_fiscal %}
+                {% else %}
+                    <td>
+                        <input type="text" name="data_pagamento_{{ laudo.id }}" value="{{ laudo.data_pagamento|default_if_none:'' }}">
+                    </td>    
+                {% endif %}
+                    
+                
+                
+                {% if not laudo.nota_fiscal %}
+                    <td style="background-color: #e9eb75;">
                         <span class="alert-icon" title="nota_fiscal em Branco">&#9888;</span>
-                    {% endif %}
-                    <input type="checkbox" name="nota_fiscal_{{ laudo.id }}" {% if laudo.nota_fiscal %} checked {% endif %}>
-                </td>
-                <td>
+                        <input type="checkbox" name="nota_fiscal_{{ laudo.id }}" {% if laudo.nota_fiscal %} checked {% endif %}>
+                    </td>
+                {% else %}
+                    <td>
+                        <input type="checkbox" name="nota_fiscal_{{ laudo.id }}" {% if laudo.nota_fiscal %} checked {% endif %}>                    </td>    
+                    </td>
+                {% endif %}
+                
+                <td {% if not laudo.forma_pagamento %} style="background-color: #e9eb75;" {% endif %}>
                     <select name="forma_pagamento_{{ laudo.id }}">
                         <option value="" {% if not laudo.forma_pagamento %} selected {% endif %}>Selecione...</option>
                         {% for forma_pagamento in formas_pagamento %}
                             <option value="{{ forma_pagamento.id }}" {% if laudo.forma_pagamento_id == forma_pagamento.id %} selected {% endif %}>{{ forma_pagamento.forma_de_pagamento }}</option>
                         {% endfor %}
                     </select>
-                    
                     
                 </td>
                 <td>

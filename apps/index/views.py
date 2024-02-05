@@ -1420,7 +1420,7 @@ def filtrar_laudos(request):
         
         # Calcula o somatório de todos os valores de laudo.preco
         total_precos = laudos.aggregate(Sum('preco'))['preco__sum']
-
+        total_precos_real = laudos.aggregate(Sum('preco_real'))['preco_real__sum']
         # Calcula o somatório de preços para cada clínica presente nos laudos
         somatorio_por_clinica = {}
         for laudo in laudos:
@@ -1431,7 +1431,7 @@ def filtrar_laudos(request):
 
         formas_pagamento = FormaDePagamento.objects.all()
         clinicas = Clinica.objects.all()  # Carrega todas as clínicas para o campo de seleção
-        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos, 'somatorio_por_clinica': somatorio_por_clinica, 'clinicas': clinicas})
+        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos,'total_precos_real':total_precos_real ,'somatorio_por_clinica': somatorio_por_clinica, 'clinicas': clinicas})
 
     
     laudos = Laudo.objects.all()
