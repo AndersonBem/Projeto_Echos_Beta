@@ -217,7 +217,7 @@ class LaudoForms(forms.ModelForm):
 
     hora_envio = forms.DateTimeField(
         widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'),
-        initial=lambda: timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),
+        initial=lambda: timezone.now().replace(hour=20, minute=0, second=0, microsecond=0),
     )
 
     def __init__(self, *args, **kwargs):
@@ -273,10 +273,8 @@ class RelatorioForm(forms.Form):
     meses_choices = [(f"{m.strftime('%m/%Y')}", f"{m.strftime('%m/%Y')}") for m in Laudo.objects.dates('data', 'month')]
 
     mes = forms.ChoiceField(choices=meses_choices)
-    dias_trabalhados = forms.IntegerField(min_value=1)
-    dias_sem_exame = forms.IntegerField(min_value=0, initial=0)
-        
-
+    dias_trabalhados_total = forms.IntegerField(min_value=1, label='Informe quantos dias pretende trabalhar neste período')
+    dias_sem_exame = forms.IntegerField(min_value=0, initial=0, label='Dias em que não houve exame')
 
 
 

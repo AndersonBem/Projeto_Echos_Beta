@@ -2,108 +2,151 @@
 {% load static %}
 
 {% block content %}
-  <div class="page-header">
-    <h1>Lista de Laudos Criados Hoje</h1>
+<form id="filtro-form" action="{% url 'laudos_hoje' %}">
+
+  <!-- Filtro por data -->
+  <div class="form-group">
+      <label for="data">Data:</label>
+      <input type="date" class="form-control" id="data" name="data" value="{{ request.GET.data }}">
   </div>
-  <table class="table table-hover custom-rounded-table">
+
+  <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<div class="page-header">
+    <h1>Lista de Laudos Criados</h1>
+</div>
+<table class="table table-hover custom-rounded-table">
     <thead class="thead-default">
-      <tr>
-        <th>Data</th>
-        <th>Paciente</th>
-        <th>Espécie</th>
-        <th>Raça</th>
-        <th>Exame</th>
-        <th>Enviar laudos</th>
-        <th>Editar</th>
-        <th>Excluir</th>
-        <th>Laudo Pronto</th>
-        <th>Entregue Whats</th>
-        <th>Entregue E-mail</th>
-        
-      </tr>
+        <tr>
+            <th>Data</th>
+            <th>Paciente</th>
+            <th>Espécie</th>
+            <th>Raça</th>
+            <th>Exame</th>
+            <th>Enviar laudos</th>
+            <th>Editar</th>
+            <th>Excluir</th>
+            <th>Laudo Pronto</th>
+            <th>Entregue Whats</th>
+            <th>Entregue E-mail</th>
+        </tr>
     </thead>
     <tbody id="laudos-table-body">
-      {% for laudo in laudos %}
+        {% for laudo in laudos %}
         <tr>
-          <td>{{ laudo.data }}</td>
-          <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-primary">{{ laudo.paciente.nome }}</a></td>
-          <td>{{ laudo.especie }}</td>
-          <td>{{ laudo.raca }}</td>
-          <td>{{ laudo.tipo_laudo }}</td>
-          
-          <td><a href="{% url 'enviar_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-success">Enviar laudos</a></td>
-          <td>
-            <button class="btn btn-warning btn-sm" onclick="openEditarLaudo({{ laudo.id }})">
-              Editar
-            </button>
-          </td>
-         
-          <td>
-            <form method="post" action="{% url 'deletar_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este laudo?')">
-                Excluir
-              </button>
-            </form>
-          </td>
-          
-          <td>
-            <form method="post" action="{% url 'atualizar_laudo_pronto' laudo_paciente_id=laudo.id %}" class="d-inline">
-              {% csrf_token %}
-              <input type="checkbox" name="laudo_pronto" {% if laudo.laudo_pronto %}checked{% endif %} onchange="this.form.submit()">
-            </form>
-          </td>
-          <td>
-            <form method="post" action="{% url 'atualizar_entrega_whats_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
-              {% csrf_token %}
-              <input type="checkbox" name="entregue_whats" {% if laudo.entregue_whats %}checked{% endif %} onchange="this.form.submit()">
-            </form>
-          </td>
-          
-          <td>
-            <form method="post" action="{% url 'atualizar_entrega_email_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
-              {% csrf_token %}
-              <input type="checkbox" name="entregue_email" {% if laudo.entregue_email %}checked{% endif %} onchange="this.form.submit()">
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      // Captura o envio do formulário de exclusão
-      $('form').submit(function(e) {
-        e.preventDefault();
-        var form = $(this);
+            <td>{{ laudo.data }}</td>
+            <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-primary">{{ laudo.paciente.nome }}</a></td>
+            <td>{{ laudo.especie }}</td>
+            <td>{{ laudo.raca }}</td>
+            <td>{{ laudo.tipo_laudo }}</td>
 
-        $.ajax({
-          type: form.attr('method'),
-          url: form.attr('action'),
-          data: form.serialize(),
-          success: function(response) {
-            // Remove a linha da tabela após a exclusão bem-sucedida
-            form.closest('tr').remove();
-            alert(response.mensagem);  // Adapte conforme necessárioz
-          },
-          error: function(error) {
-            alert('Erro ao excluir o laudo.');
-          }
+            <td><a href="{% url 'enviar_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-success">Enviar laudos</a></td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="openEditarLaudo({{ laudo.id }})">
+                    Editar
+                </button>
+            </td>
+
+            <td>
+                <form method="post" action="{% url 'deletar_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este laudo?')">
+                        Excluir
+                    </button>
+                </form>
+            </td>
+
+            <td>
+                <form method="post" action="{% url 'atualizar_laudo_pronto' laudo_paciente_id=laudo.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="checkbox" name="laudo_pronto" {% if laudo.laudo_pronto %}checked{% endif %} onchange="this.form.submit()">
+                </form>
+            </td>
+            <td>
+                <form method="post" action="{% url 'atualizar_entrega_whats_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="checkbox" name="entregue_whats" {% if laudo.entregue_whats %}checked{% endif %} onchange="this.form.submit()">
+                </form>
+            </td>
+
+            <td>
+                <form method="post" action="{% url 'atualizar_entrega_email_laudo' laudo_paciente_id=laudo.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="checkbox" name="entregue_email" {% if laudo.entregue_email %}checked{% endif %} onchange="this.form.submit()">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Captura o envio do formulário de exclusão
+        $('form').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    // Remove a linha da tabela após a exclusão bem-sucedida
+                    form.closest('tr').remove();
+                    alert(response.mensagem); // Adapte conforme necessário
+                },
+                error: function(error) {
+                    alert('Erro ao excluir o laudo.');
+                }
+            });
         });
-      });
+
+        // Captura o clique nos botões de exclusão
+        $('.btn-excluir').click(function(e) {
+            e.preventDefault();
+            var form = $(this).closest('form');
+
+            if (confirm('Tem certeza que deseja excluir este laudo?')) {
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        // Remove a linha da tabela após a exclusão bem-sucedida
+                        form.closest('tr').remove();
+                        alert(response.mensagem); // Adapte conforme necessário
+                    },
+                    error: function(error) {
+                        alert('Erro ao excluir o laudo.');
+                    }
+                });
+            }
+        });
     });
-  </script>
-  <script>
+</script>
+<script>
     function openEditarLaudo(laudoId) {
-      var url = '/editar_laudo/' + laudoId + '/';
-      var novaJanela = window.open(url, '_blank', 'height=600,width=800');
-      if (novaJanela) {
-        novaJanela.focus();
-      } else {
-        window.location.href = url;
-      }
+        var url = '/editar_laudo/' + laudoId + '/';
+        var novaJanela = window.open(url, '_blank', 'height=600,width=800');
+        if (novaJanela) {
+            novaJanela.focus();
+        } else {
+            window.location.href = url;
+        }
     }
-  </script>
+</script>
+<script>
+  $(document).ready(function() {
+      // Captura o envio do formulário
+      $('#filtro-form').submit(function(e) {
+          e.preventDefault();
+          var formData = $(this).serialize();
+          var url = $(this).attr('action') + '?' + formData;
+          window.location.href = url;
+      });
+  });
+</script>
 {% endblock %}

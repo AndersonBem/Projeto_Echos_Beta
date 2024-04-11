@@ -17,7 +17,11 @@
         <tbody>
             <tr>
                 <td>Álcool</td>
-                <td{% if inventario.alcool|floatformat:0 < 2 %} style="background-color:#FFCCCC"{% endif %}>{{ inventario.alcool }} Litro(s)</td>
+                {% if inventario.alcool < 2 %}
+                    <td>{{ inventario.alcool }} Litro(s) <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.alcool }} Litro(s)</td>
+                {% endif %}
                 <td>2 Litros</td>
                 <td>
                     <div class="input-group mb-3">
@@ -25,9 +29,15 @@
                     </div>
                 </td>
             </tr>
+            
+            
             <tr>
                 <td>Gel USG</td>
-                <td>{{ inventario.gel_usg }} Kg</td>
+                {% if inventario.gel_usg <= 2.5 %}
+                    <td>{{ inventario.gel_usg }} Kg <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.gel_usg }} Kg</td>
+                {% endif %}
                 <td> 2,5Kg </td>
                 <td>
                     <div class="input-group mb-3">
@@ -37,7 +47,11 @@
             </tr>
             <tr>
                 <td>Seringa de 10ml</td>
-                <td>{{ inventario.seringa_10ml }} Und</td>
+                {% if inventario.seringa_10ml <= 20 %}
+                    <td>{{ inventario.seringa_10ml }} Kg <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.seringa_10ml }} Und</td>
+                {% endif %}
                 <td> 20 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -47,7 +61,12 @@
             </tr>
             <tr>
                 <td>Seringa de 5ml</td>
-                <td>{{ inventario.seringa_5ml }} Und</td>
+                {% if inventario.seringa_5ml <= 5 %}
+                    <td>{{ inventario.seringa_5ml }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.seringa_5ml }} Und</td>
+                {% endif %}
+                
                 <td> 5 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -57,7 +76,12 @@
             </tr>
             <tr>
                 <td>Seringa de 3ml</td>
-                <td>{{ inventario.seringa_3ml }} Und</td>
+                {% if inventario.seringa_3ml <= 5 %}
+                    <td>{{ inventario.seringa_3ml }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.seringa_3ml }} Und</td>
+                {% endif %}
+                
                 <td> 5 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -67,7 +91,12 @@
             </tr>
             <tr>
                 <td>Agulha Azul</td>
-                <td>{{ inventario.agulha_azul }} Und</td>
+                {% if inventario.agulha_azul <= 20 %}
+                    <td>{{ inventario.agulha_azul }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.agulha_azul }} Und</td>
+                {% endif %}
+                
                 <td> 20 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -77,7 +106,12 @@
             </tr>
             <tr>
                 <td>Cateter Azul</td>
-                <td>{{ inventario.cateter_azul }} Und</td>
+                {% if inventario.cateter_azul <= 20 %}
+                    <td>{{ inventario.cateter_azul }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.cateter_azul }} Und</td>
+                {% endif %}
+                
                 <td> 20 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -87,7 +121,12 @@
             </tr>
             <tr>
                 <td>Cateter Rosa</td>
-                <td>{{ inventario.cateter_rosa }} Und</td>
+                {% if inventario.cateter_rosa <= 10 %}
+                    <td>{{ inventario.cateter_rosa }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.cateter_rosa }} Und</td>
+                {% endif %}
+                
                 <td> 10 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -97,7 +136,12 @@
             </tr>
             <tr>
                 <td>Gaze Não Estéril</td>
-                <td>{{ inventario.gaze_n_esteril }} Pct</td>
+                {% if inventario.gaze_n_esteril <= 0.25 %}
+                    <td>{{ inventario.gaze_n_esteril }} Pct <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.gaze_n_esteril }} Pct</td>
+                {% endif %}
+                
                 <td> 0,25 Pct</td>
                 <td>
                     <div class="input-group mb-3">
@@ -107,7 +151,12 @@
             </tr>
             <tr>
                 <td>Pano de Campo</td>
-                <td>{{ inventario.pano_de_campo }} Pct</td>
+                {% if inventario.pano_de_campo <= 0.5 %}
+                    <td>{{ inventario.pano_de_campo }} Pct <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.pano_de_campo }} Pct</td>
+                {% endif %}
+                
                 <td> 0,5 Pct</td>
                 <td>
                     <div class="input-group mb-3">
@@ -117,7 +166,12 @@
             </tr>
             <tr>
                 <td>Essência em spray</td>
-                <td>{{ inventario.essencia_spray }} Und</td>
+                {% if inventario.essencia_spray <= 1 %}
+                    <td>{{ inventario.essencia_spray }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.essencia_spray }} Und</td>
+                {% endif %}
+                
                 <td> 1 Und</td>
                 <td>
                     <div class="input-group mb-3">
@@ -127,7 +181,12 @@
             </tr>
             <tr>
                 <td>Papel Toalha Quadrado</td>
-                <td>{{ inventario.papel_quadrado }} Pct</td>
+                {% if inventario.papel_quadrado <= 1 %}
+                    <td>{{ inventario.papel_quadrado }} Pct <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.papel_quadrado }} Pct</td>
+                {% endif %}
+                
                 <td> 1 Pct</td>
                 <td>
                     <div class="input-group mb-3">
@@ -137,7 +196,12 @@
             </tr>
             <tr>
                 <td>Desinfetante Herbal</td>
-                <td>{{ inventario.desinfetante_herbal }} Glo</td>
+                {% if inventario.desinfetante_herbal <= 0.5 %}
+                    <td>{{ inventario.desinfetante_herbal }} Glo <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.desinfetante_herbal }} Glo</td>
+                {% endif %}
+                
                 <td> 0,5 Glo</td>
                 <td>
                     <div class="input-group mb-3">
@@ -147,7 +211,12 @@
             </tr>
             <tr>
                 <td>Propé</td>
-                <td>{{ inventario.prope }} Pct</td>
+                {% if inventario.prope <= 1 %}
+                    <td>{{ inventario.prope }} Pct <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.prope }} Pct</td>
+                {% endif %}
+                
                 <td>  1 Pct   </td>
                 <td>
                     <div class="input-group mb-3">
@@ -157,7 +226,12 @@
             </tr>
             <tr>
                 <td>Seringa de 60ml</td>
-                <td>{{ inventario.seringa_60ml }} Und</td>
+                {% if inventario.seringa_60ml <= 1 %}
+                    <td>{{ inventario.seringa_60ml }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.seringa_60ml }} Und</td>
+                {% endif %}
+                
                 <td> 1 Und </td>
                 <td>
                     <div class="input-group mb-3">
@@ -167,8 +241,13 @@
             </tr>
             <tr>
                 <td>Scalp Azul</td>
-                <td>{{ inventario.scal_azul }} Und</td>
-                <td> Scalp 2 </td>
+                {% if inventario.scal_azul <= 2 %}
+                    <td>{{ inventario.scal_azul }} Und <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.scal_azul }} Und</td>
+                {% endif %}
+                
+                <td> 2 Und </td>
                 <td>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="scal_azul" value="{{ inventario.scal_azul }}">

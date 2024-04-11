@@ -228,7 +228,7 @@ class Laudo(models.Model):
     
     laudo = HTMLField(null=True)
 
-    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=1, minute=0, second=0, microsecond=0),null=True, blank=True)
+    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=20, minute=0, second=0, microsecond=0),null=True, blank=True)
 
     preco = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
 
@@ -264,6 +264,11 @@ class Laudo(models.Model):
         # Retorna a representação em string da instância do modelo
         return self.data.strftime('%d%m%Y')
 
+    def save(self, *args, **kwargs):
+        # Se a hora_envio ainda não foi definida, configure-a para as 20h
+        if not self.hora_envio:
+            self.hora_envio = timezone.now().replace(hour=20, minute=0, second=0, microsecond=0)
+        super().save(*args, **kwargs)
 
 
 

@@ -5,6 +5,17 @@
 <div class="container mt-5">
   <div class="card" style="width: 75%;">
     <div class="card-body card-text text-dark">
+      <h3>Projeção:</h3>
+      <p>Total de dias úteis: {{ total_dias_uteis }}</p>
+      <p>Total de feriados: {{ total_feriados }}</p>
+      <p>Feriados: 
+        {% for feriado in feriados %}
+          {{ feriado|date:"d/m" }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+      
+      <hr>
+
       <form method="post" action="{% url 'calcular_relatorio' %}">
         {% csrf_token %}
         
@@ -14,25 +25,17 @@
         </div>
 
         <div class="form-group">
-          <label for="{{ form.dias_trabalhados.id_for_label }}">Determine quantos dias vão ser trabalhados neste período :</label>
-          {{ form.dias_trabalhados }}
+          <label for="{{ form.dias_trabalhados_total.id_for_label }}">Informe quantos dias pretende trabalhar neste período :</label>
+          {{ form.dias_trabalhados_total }}
         </div>
 
         <div class="form-group">
-          <label for="{{ form.dias_sem_exame.id_for_label }}">dias_sem_exame:</label>
+          <label for="{{ form.dias_sem_exame.id_for_label }}">Dias em que não houve exame</label>
           {{ form.dias_sem_exame }}
         </div>
         
         <button type="submit" class="btn btn-primary">Calcular</button>
       </form>
-
-      <p> Dias úteis e feriados do Mês atual : </p>
-
-      {% if dias_uteis %}
-        <p>Dias úteis: {{ dias_uteis }}</p>
-        <p>Feriados: {{ feriados }}</p>
-      {% endif %}
-
     </div>
   </div>
 </div>

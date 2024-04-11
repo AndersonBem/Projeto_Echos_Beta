@@ -125,8 +125,19 @@
                 <td>{{ laudo.tutor }}</td>
                 <td>{{ laudo.tipo_laudo }}</td>
                 
-                <td>R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
-                <td>R$ <input type="text" name="preco_{{ laudo.id }}" value="{{ laudo.preco|default_if_none:'' }}" size="5"></td>
+                {% if not laudo.preco_real %}
+                    <td style="background-color: #e9eb75;">R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
+                {% else %}
+                    <td>R$ <input type="text" name="preco_real_{{ laudo.id }}" value="{{ laudo.preco_real|default_if_none:'' }}" size="5"></td>
+                {% endif %}
+
+                {% if not laudo.preco %}
+                    <td style="background-color: #e9eb75;">R$ <input type="text" name="preco_{{ laudo.id }}" value="{{ laudo.preco|default_if_none:'' }}" size="5"></td>
+                {% else %}
+                    <td>R$ <input type="text" name="preco_{{ laudo.id }}" value="{{ laudo.preco|default_if_none:'' }}" size="5"></td>
+                {% endif %}
+
+                
 
                 
                 {% if not laudo.data_pagamento %}

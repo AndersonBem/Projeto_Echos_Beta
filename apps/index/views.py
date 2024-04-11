@@ -884,9 +884,26 @@ from decimal import Decimal
 from django.db.models import Sum
 
 def laudos_hoje(request):
-    # Filtra os laudos criados hoje
-    laudos_hoje = Laudo.objects.filter(data__gte=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)).order_by('-data')
+    data_selecionada = request.GET.get('data')
+
+    print("Data recebida do formulário:", data_selecionada)
+
+    if data_selecionada:
+        # Converter a string da data em um objeto datetime
+        data = datetime.strptime(data_selecionada, '%Y-%m-%d').date()
+
+        print("Data convertida para datetime:", data)
+
+        # Filtra os laudos criados na data selecionada
+        laudos_hoje = Laudo.objects.filter(data__date=data).order_by('-data')
+    else:
+        # Se nenhuma data foi selecionada, filtra os laudos criados hoje
+        laudos_hoje = Laudo.objects.filter(data__date=datetime.now().date()).order_by('-data')
+        
+
     total_preco = laudos_hoje.aggregate(Sum('preco'))['preco__sum'] or Decimal('0.00')
+
+    print("Número de laudos encontrados:", laudos_hoje.count())
 
     context = {'laudos': laudos_hoje, 'total_preco': total_preco}
     return render(request, 'laudos_hoje.html', context)
@@ -999,7 +1016,7 @@ def editar_pdf(request, laudos_paciente_id):
 
         # Configurar o cliente S3
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-        data_atual = datetime.now().strftime("%Y-%m-%d")
+        data_atual = laudo.data.strftime("%Y-%m-%d")
         # Nome do arquivo no S3
         s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
         s3_filename_format = s3_filename.replace(" ", "+")
@@ -1274,23 +1291,59 @@ from django.utils import timezone
 import pandas as pd
 from workalendar.america import Brazil
 import calendar
+from workalendar.america import Brazil
+import holidays
 
 def calcular_relatorio(request):
+    # Obtendo informações sobre dias úteis e feriados
+    hoje = datetime.now()
+    primeiro_dia_mes = hoje.replace(day=1)
+    ultimo_dia_mes = hoje.replace(day=calendar.monthrange(hoje.year, hoje.month)[1])
+
+    dias_uteis = []
+    feriados = []
+
+    # Iterar sobre cada dia no mês
+    current_day = primeiro_dia_mes
+    while current_day <= ultimo_dia_mes:
+        # Verificar se o dia é útil (não é sábado ou domingo)
+        if current_day.weekday() < 5:
+            dias_uteis.append(current_day.date())
+        else:
+            # Se for sábado ou domingo, apenas ignore, não adicionando a nenhum lista
+            pass
+
+        current_day += timedelta(days=1)
+
+    # Obter feriados nacionais do Brasil
+    cal_br = Brazil()
+    feriados_nacionais = [data for data, nome in cal_br.holidays(hoje.year)]
+
+    # Obter feriados municipais de Recife
+    feriados_recife = holidays.BR(state='PE', years=[hoje.year])
+
+    # Atualizar a lista de feriados com os feriados nacionais e municipais
+    feriados += feriados_nacionais + list(feriados_recife)
+
+    total_dias_uteis = len(dias_uteis)
+    total_feriados = len(feriados)
+
     if request.method == 'POST':
         form = RelatorioForm(request.POST)
         if form.is_valid():
             mes_ano = form.cleaned_data['mes']
             # Separar o mês e o ano
             mes, ano = mes_ano.split('/')
-            dias_trabalhados = form.cleaned_data['dias_trabalhados']
-            dias_sem_exame = form.cleaned_data['dias_sem_exame']
+            dias_trabalhados_total = form.cleaned_data['dias_trabalhados_total']
 
             # Obter a lista de laudos para o mês e ano escolhidos
             laudos_do_mes = Laudo.objects.filter(data__month=mes, data__year=ano)
 
             # Contando o número de dias únicos
             dias_trabalhados_basico = laudos_do_mes.values('data__day').distinct().count()
+            dias_sem_exame = form.cleaned_data['dias_sem_exame']
             dias_trabalhados_realizados = dias_trabalhados_basico + dias_sem_exame
+
             # Somatório dos preços de todos os laudos
             somatorio_precos = laudos_do_mes.aggregate(soma_precos=models.Sum('preco'))['soma_precos'] or 0
 
@@ -1298,7 +1351,7 @@ def calcular_relatorio(request):
             media_preco_por_dia = somatorio_precos / dias_trabalhados_realizados if dias_trabalhados_realizados > 0 else 0
 
             # Média multiplicada pelo total de dias escolhidos
-            resultado_final = media_preco_por_dia * dias_trabalhados
+            resultado_final = media_preco_por_dia * dias_trabalhados_total
             
             # Consulta para obter os laudos do dia atual
             hoje = timezone.now()
@@ -1314,31 +1367,15 @@ def calcular_relatorio(request):
                 
             })
     else:
-    # Obtendo informações sobre dias úteis e feriados
         form = RelatorioForm()
-# Obtendo informações sobre dias úteis e feriados
-        hoje = datetime.now()
-        primeiro_dia_mes = hoje.replace(day=1)
-        ultimo_dia_mes = hoje.replace(day=calendar.monthrange(hoje.year, hoje.month)[1])
-
-        dias_uteis = []
-        feriados = []
-
-            # Iterar sobre cada dia no mês
-        current_day = primeiro_dia_mes
-        while current_day <= ultimo_dia_mes:
-                # Verificar se o dia é útil (não é sábado ou domingo)
-            if current_day.weekday() < 5:
-                dias_uteis.append(current_day.date())
-            else:
-                    # Se for sábado ou domingo, adicionar à lista de feriados
-                feriados.append(current_day.date())
-
-            current_day += timedelta(days=1)
-        total_dias_uteis = len(dias_uteis)
-        total_feriados = len(feriados)
-
-        return render(request, 'relatorio/calcular_relatorio.html', {'form': form, 'dias_uteis': total_dias_uteis, 'feriados': total_feriados})
+        
+        return render(request, 'relatorio/calcular_relatorio.html', {
+            'form': form,
+            'dias_uteis': dias_uteis,
+            'feriados': feriados,
+            'total_dias_uteis': total_dias_uteis,
+            'total_feriados': total_feriados,
+        })
     
 
 def editar_observacao_paciente(request, paciente_id):
@@ -1356,32 +1393,37 @@ def editar_observacao_paciente(request, paciente_id):
 from django.forms.models import model_to_dict
 
 def editar_inventario(request):
-    # Obtém a instância única do modelo inventario
-    inv_instance = Inventario.objects.first()
+    # Obtém a instância única do modelo Inventario, ou cria uma nova se não existir
+    inv_instance, _ = Inventario.objects.get_or_create()
 
     # Verifica se o formulário foi submetido
     if request.method == 'POST':
-        # Atualiza os valores do inventário com base nos dados do formulário
-        inv_instance.alcool = request.POST.get('alcool', 0.0).replace(',', '.')
-        inv_instance.gel_usg = request.POST.get('gel_usg', 0.0).replace(',', '.')
-        inv_instance.seringa_10ml = request.POST.get('seringa_10ml', 0.0).replace(',', '.')
-        inv_instance.seringa_5ml = request.POST.get('seringa_5ml', 0.0).replace(',', '.')
-        inv_instance.seringa_3ml = request.POST.get('seringa_3ml', 0.0).replace(',', '.')
-        inv_instance.agulha_azul = request.POST.get('agulha_azul', 0.0).replace(',', '.')
-        inv_instance.cateter_azul = request.POST.get('cateter_azul', 0.0).replace(',', '.')
-        inv_instance.cateter_rosa = request.POST.get('cateter_rosa', 0.0).replace(',', '.')
-        inv_instance.gaze_n_esteril = request.POST.get('gaze_n_esteril', 0.0).replace(',', '.')
-        inv_instance.pano_de_campo = request.POST.get('pano_de_campo', 0.0).replace(',', '.')
-        inv_instance.essencia_spray = request.POST.get('essencia_spray', 0.0).replace(',', '.')
-        inv_instance.papel_quadrado = request.POST.get('papel_quadrado', 0.0).replace(',', '.')
-        inv_instance.desinfetante_herbal = request.POST.get('desinfetante_herbal', 0.0).replace(',', '.')
-        inv_instance.prope = request.POST.get('prope', 0.0).replace(',', '.')
-        inv_instance.seringa_60ml = request.POST.get('seringa_60ml', 0.0).replace(',', '.')
-        inv_instance.scal_azul = request.POST.get('scal_azul', 0.0).replace(',', '.')
-        # Repita para os outros campos do inventário
+        try:
+            # Atualiza os valores do inventário com base nos dados do formulário
+            inv_instance.alcool = float(request.POST.get('alcool', '0.0').replace(',', '.'))
+            inv_instance.gel_usg = float(request.POST.get('gel_usg', '0.0').replace(',', '.'))
+            inv_instance.seringa_10ml = float(request.POST.get('seringa_10ml', '0.0').replace(',', '.'))
+            inv_instance.seringa_5ml = float(request.POST.get('seringa_5ml', '0.0').replace(',', '.'))
+            inv_instance.seringa_3ml = float(request.POST.get('seringa_3ml', '0.0').replace(',', '.'))
+            inv_instance.agulha_azul = float(request.POST.get('agulha_azul', '0.0').replace(',', '.'))
+            inv_instance.cateter_azul = float(request.POST.get('cateter_azul', '0.0').replace(',', '.'))
+            inv_instance.cateter_rosa = float(request.POST.get('cateter_rosa', '0.0').replace(',', '.'))
+            inv_instance.gaze_n_esteril = float(request.POST.get('gaze_n_esteril', '0.0').replace(',', '.'))
+            inv_instance.pano_de_campo = float(request.POST.get('pano_de_campo', '0.0').replace(',', '.'))
+            inv_instance.essencia_spray = float(request.POST.get('essencia_spray', '0.0').replace(',', '.'))
+            inv_instance.papel_quadrado = float(request.POST.get('papel_quadrado', '0.0').replace(',', '.'))
+            inv_instance.desinfetante_herbal = float(request.POST.get('desinfetante_herbal', '0.0').replace(',', '.'))
+            inv_instance.prope = float(request.POST.get('prope', '0.0').replace(',', '.'))
+            inv_instance.seringa_60ml = float(request.POST.get('seringa_60ml', '0.0').replace(',', '.'))
+            inv_instance.scal_azul = float(request.POST.get('scal_azul', '0.0').replace(',', '.'))
+            # Repita para os outros campos do inventário
 
-        # Salva as alterações
-        inv_instance.save()
+            # Salva as alterações
+            inv_instance.save()
+        except ValueError:
+            # Se ocorrer um erro de conversão para float, exibe uma mensagem de erro
+            error_message = "Todos os valores devem ser números decimais."
+            return render(request, 'index/editar_inventario.html', {'inventario': inv_instance, 'error_message': error_message})
 
     # Renderiza o template com os valores atuais do inventário
     return render(request, 'index/editar_inventario.html', {'inventario': inv_instance})
@@ -1389,7 +1431,17 @@ def editar_inventario(request):
 def filtrar_laudos(request):
     if request.method == 'GET':
         mes = request.GET.get('mes')
+        if mes:
+            mes = int(mes)
+        else:
+            mes = datetime.now().month
+
         ano = request.GET.get('ano')
+        if ano:
+            ano = int(ano)
+        else:
+            ano = datetime.now().year
+            
         forma_pagamento_filtro = request.GET.get('forma_pagamento')
         data_pagamento_filtro = request.GET.get('data_pagamento')
         clinica_filtro = request.GET.get('clinica')  # Novo campo para filtrar por clínica

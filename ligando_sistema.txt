@@ -1,0 +1,11 @@
+Primeiro clica no Terminal e vai em New Terminal
+Clica no "livrinho" embaixo para poder criar as 3 colunas de terminais
+Primeiro passo dos dois primeiros é o venv/Scripts/activate para ativar a máquina virtual
+No primeiro da máquina virtual vc escolhe o python manage.py runserver 
+No segundo da máquina virtual é o  python manage.py qcluster   
+O terceiro é o cd C:\Anderson\Alura\Projeto_Echos_Em_Uso\ngrok-v3-stable-windows-amd64
+Depois é o .\ngrok http --domain=charmed-wahoo-mistakenly.ngrok-free.app 8000
+
+Comandos úteis:
+ctrl + L = limpa o Terminal
+ctrl + C = para o terminal (não funciona no qcluster e nem no ngrok)

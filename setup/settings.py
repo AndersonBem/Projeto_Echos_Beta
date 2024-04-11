@@ -28,7 +28,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['*','charmed-wahoo-mistakenly.ngrok-free.app']
+ALLOWED_HOSTS = ['charmed-wahoo-mistakenly.ngrok-free.app']
 #'192.168.0.132', '192.168.0.74', '192.168.215.60'
 
 # Application definition
@@ -248,4 +248,17 @@ CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app']
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000  # ou outro valor adequado para o seu caso
+
+import warnings
+
+# Função de filtro para ignorar avisos GLib-GIO-WARNING
+def ignore_glib_gio_warning(message, category, filename, lineno, file=None, line=None):
+    if "GLib-GIO-WARNING" in str(message):
+        return None
+    else:
+        return (message, category, filename, lineno, None)
+
+# Registrar o filtro para ignorar avisos GLib-GIO-WARNING
+warnings.showwarning = ignore_glib_gio_warning
+
 
