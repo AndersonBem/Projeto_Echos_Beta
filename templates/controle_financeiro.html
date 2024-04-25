@@ -121,8 +121,8 @@
                     {{ laudo.data|date:"d/m/Y" }}
                 </td>
                 <td >{{ laudo.clinica }}</td>
-                <td>{{ laudo.paciente }}</td>
-                <td>{{ laudo.tutor }}</td>
+                <td><a href="{% url 'exibicao' laudo.paciente.id %}" class="btn btn-info">{{ laudo.paciente }}</a></td>
+                <td><a href="{% url 'exibicao_tutor' laudo.tutor.id %}" class="btn btn-info">{{ laudo.tutor }}</a></td>
                 <td>{{ laudo.tipo_laudo }}</td>
                 
                 {% if not laudo.preco_real %}
