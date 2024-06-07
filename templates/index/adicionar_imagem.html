@@ -18,6 +18,11 @@
             <a href="{% url 'exibir_pdf' laudos_paciente_id=laudo.id %}" target="_blank" class="btn btn-primary"> Exibir PDF</a>
             <a href="{% url 'editar_laudo' laudo_paciente_id=laudo.id %}" class="btn btn-info"> Editar laudo</a>
             <a href="{% url 'enviar_laudo' laudos_paciente_id=laudo.id %}" class="btn btn-danger"> Enviar laudo</a>
+            <!-- Formulário para excluir todas as imagens -->
+            <form method="post" action="{% url 'excluir_todas_imagens' laudo_id=laudo.id %}" class="mt-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir todas as imagens?')">Excluir Todas as Imagens</button>
+            </form>
             
         </div>
     </div>

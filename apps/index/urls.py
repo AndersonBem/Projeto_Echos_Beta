@@ -8,7 +8,7 @@ from apps.index.views import \
     deletar_laudo_ajax, editar_pdf, enviar_laudo, excluir_pdf_aws, sua_funcao_para_excluir_pdf,\
     listar_diretorios_s3, baixar_diretorio_s3, auto_save_laudo, laudo_list, relatorio_exames, editar_precos_laudo_hoje, atualizar_preco_laudo, salvar_todos_precos_laudo,editar_preco_laudo,\
     calcular_relatorio, atualizar_entrega_whats_laudo, atualizar_entrega_email_laudo, editar_observacao_paciente, editar_inventario, filtrar_laudos, salvar_alteracao_controle,\
-    atualizar_laudo_pronto
+    atualizar_laudo_pronto,excluir_todas_imagens
     
 
 urlpatterns = [
@@ -78,6 +78,7 @@ urlpatterns = [
     path('editar_laudopadrao/<int:laudo_id>', editar_laudopadrao, name='editar_laudopadrao'),
 
     path('deletar_imagem/<int:imagem_id>/', deletar_imagem, name='deletar_imagem'),
+    path('excluir-todas-imagens/<int:laudo_id>/', excluir_todas_imagens, name='excluir_todas_imagens'),
     path('adicionar_imagem/<int:laudo_id>/', adicionar_imagem, name='adicionar_imagem'),
 
     path('export-pdf/<int:laudos_paciente_id>/', export_pdf, name='export-pdf'),

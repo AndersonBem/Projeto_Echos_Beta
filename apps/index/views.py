@@ -696,6 +696,18 @@ def deletar_imagem(request, imagem_id):
 
     return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})
 
+def excluir_todas_imagens(request, laudo_id):
+    if request.method == 'POST':
+        laudo_imagens = LaudoImagem.objects.filter(laudo_id=laudo_id)
+        for imagem in laudo_imagens:
+            imagem.delete()
+
+    laudo = Laudo.objects.get(id=laudo_id)
+
+    form = NovaImagemForm()
+
+    return render(request, 'index/adicionar_imagem.html', {'form': form, 'laudo': laudo})
+
 
 def adicionar_imagem(request, laudo_id):
     laudo = Laudo.objects.get(id=laudo_id)
@@ -722,7 +734,33 @@ def adicionar_imagem(request, laudo_id):
 
 def export_pdf(request, laudos_paciente_id): 
     laudo = Laudo.objects.get(id=laudos_paciente_id)
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+
+    # Configurando o link para AWS
+    data_atual = laudo.data.strftime("%Y-%m-%d")
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    s3_filename_format = s3_filename.replace(" ", "+")
+    pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+    # Crie o QR code com o link para AWS
+    qr_img = qrcode.make(pdf_link)
+    
+    # Converta o QR code em BytesIO
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+    
+    # Converta o BytesIO em imagem PIL
+    qr_pil_img = Image.open(qr_bytes)
+    
+    # Converta a imagem do QR code em base64
+    qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode()
+    
+    # Adicione a imagem codificada ao contexto
+    context = {'laudo': laudo, 'qr_base64': qr_base64}
+    
+    # Renderize o template com o contexto
+    html_index = render_to_string('export-pdf.html', context)  
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
@@ -735,11 +773,40 @@ def export_pdf(request, laudos_paciente_id):
         response.write(output.read()) 
     return response
 
-
+import qrcode
+from PIL import Image
+from io import BytesIO
+import base64
 
 def exibir_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+
+    # Configurando o link para AWS
+    data_atual = laudo.data.strftime("%Y-%m-%d")
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    s3_filename_format = s3_filename.replace(" ", "+")
+    pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+    # Crie o QR code com o link para AWS
+    qr_img = qrcode.make(pdf_link)
+    
+    # Converta o QR code em BytesIO
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+    
+    # Converta o BytesIO em imagem PIL
+    qr_pil_img = Image.open(qr_bytes)
+    
+    # Converta a imagem do QR code em base64
+    qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode()
+    
+    # Adicione a imagem codificada ao contexto
+    context = {'laudo': laudo, 'qr_base64': qr_base64}
+    
+    # Renderize o template com o contexto
+    html_index = render_to_string('export-pdf.html', context) 
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')
@@ -1000,8 +1067,32 @@ def editar_pdf(request, laudos_paciente_id):
         # Obtenha o objeto do banco de dados
         laudo = Laudo.objects.get(id=laudos_paciente_id)
 
-        # Renderize o template para HTML
-        html_index = render_to_string('export-pdf.html', {'laudo': laudo})  
+            # Configurando o link para AWS
+        data_atual = laudo.data.strftime("%Y-%m-%d")
+        aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+        s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+        s3_filename_format = s3_filename.replace(" ", "+")
+        pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+        # Crie o QR code com o link para AWS
+        qr_img = qrcode.make(pdf_link)
+        
+        # Converta o QR code em BytesIO
+        qr_bytes = BytesIO()
+        qr_img.save(qr_bytes, format='PNG')
+        qr_bytes.seek(0)
+        
+        # Converta o BytesIO em imagem PIL
+        qr_pil_img = Image.open(qr_bytes)
+        
+        # Converta a imagem do QR code em base64
+        qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode()
+        
+        # Adicione a imagem codificada ao contexto
+        context = {'laudo': laudo, 'qr_base64': qr_base64}
+        
+        # Renderize o template com o contexto
+        html_index = render_to_string('export-pdf.html', context)
 
         # Crie uma instância do HTML usando weasyprint
         weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
@@ -1076,7 +1167,7 @@ def excluir_pdf_aws(request,laudo):
 
         # Criar um cliente S3
         s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-        data_atual = datetime.now().strftime("%Y-%m-%d")
+        data_atual = laudo.data.strftime("%Y-%m-%d")
         # Nome do arquivo no S3
         s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
 
@@ -1257,7 +1348,7 @@ def relatorio_exames(request):
     # Calcula o total de exames e o valor total
     total_exames = sum(item['contagem'] for item in contagem_exames.values())
     total_valor = sum(item['valor_total'] for item in contagem_exames.values() if item['valor_total'])
-
+    ticket_medio = total_valor / total_exames
     laudos_padrao = LaudosPadrao.objects.all()
 
     # Obtendo a lista de clínicas para o formulário de filtro
@@ -1282,6 +1373,7 @@ def relatorio_exames(request):
         'contagem_clinicas': contagem_clinicas,
         'total_exames_data': total_exames_data,
         'valor_total_data': valor_total_data,
+        'ticket_medio' : ticket_medio,
     }
 
     return render(request, 'relatorio_exames.html', context)
@@ -1544,3 +1636,5 @@ def salvar_alteracao_controle(request):
     
     # Se não for um POST, retorne à página de filtragem sem fazer alterações
     return HttpResponseRedirect(reverse('filtrar_laudos'))
+
+

@@ -6,6 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laudo Médico</title>
+    <body>
+        <div>
+            <div class="qr-code" style=" text-align: right;">
+                {% if qr_base64 %}
+                    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code" style="width: 100px; height: 100px;">
+                {% endif %}
+            </div>
+        </div>
+    </body>
     {% if laudo.tipo_laudo|slugify == 'usg-abdominal' %}
     <style>
         body, html {
@@ -111,13 +120,18 @@
             
         }
         
+        
     </style>
 </head>
 <body>
 <div class="unindo-laudo-info-vet">  
-    <div class="header1">
-        <img class="logo" src="{% static 'assets/logo-degrade.png' %}" alt="Logo">
+    <div class="container">
+        
+        <div class="header1">
+            <img class="logo" src="{% static 'assets/logo-degrade.png' %}" alt="Logo">
+        </div>
     </div>
+    
 
     <div class="patient-info">
         <div class="column">
@@ -143,7 +157,7 @@
                 <p><strong>Suspeita:</strong> {{ laudo.suspeita }}</p> 
             {% endif %}
         </div>
-    
+        
         <div class="column">
             {% if laudo.email %}
                 <p><strong>E-mail do Tutor:</strong> {{ laudo.email }}</p>
@@ -166,7 +180,9 @@
             {% if laudo.veterinario %}
                 <p><strong>Veterinário:</strong> Dr(a) {{ laudo.veterinario }}</p>
             {% endif %}
-            
+            {% if laudo.paciente.castracao %}
+                <p><strong>Paciente Castrado(a)</strong></p> 
+            {% endif %}
         </div>
     </div>
     
@@ -189,6 +205,8 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
+        
 </div>  
     <div class="full-width" >
         <table style="width: 100%;">
@@ -432,6 +450,7 @@
                 <p><strong>Veterinário:</strong> Dr(a) {{ laudo.veterinario }}</p>
             {% endif %}
             
+            
         </div>
     </div>
     
@@ -455,6 +474,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
     </div>
        
             
@@ -931,6 +951,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
     </div>  
     
     
@@ -1104,7 +1125,7 @@
     
     <div class="header2">
         
-        <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">RELATÓRIO DE ULTRASSONOGRAFIA ABDOMINAL</h1>
+        <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">RELATÓRIO DE CISTOCENTESE</h1>
         
             
     </div>
@@ -1121,6 +1142,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
 </div>  
     <div class="full-width" >
         <table style="width: 100%;">
@@ -1343,6 +1365,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
 </div>  
     <div class="full-width" >
         <table style="width: 100%;">
@@ -1566,6 +1589,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
 </div>  
     <div class="full-width" >
         <table style="width: 100%;">
@@ -1790,6 +1814,7 @@
         <div class="frase">
             <p>Tais achados dependem da análise conjunta do seu laudo e da avaliação clínica-epidemiológica.</p>
         </div>
+        
 </div>  
     <div class="full-width" >
         <table style="width: 100%;">

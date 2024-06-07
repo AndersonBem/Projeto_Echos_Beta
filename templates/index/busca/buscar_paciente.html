@@ -27,6 +27,7 @@
     <thead class="thead-default">
         <tr>
             <th>Nome</th>
+            <th>Tutor</th>
             <th>Espécie</th>
             <th>Raça</th>
             <th>Idade</th>
@@ -39,7 +40,8 @@
         {% if pacientes %}
         {% for paciente in pacientes %}
         <tr>
-            <td><a href="{% url 'exibicao' paciente.id %}"   >{{ paciente.nome }}</a></td>
+            <td><a href="{% url 'exibicao' paciente.id %}" class="btn btn-success">{{ paciente.nome }}</a></td>
+            <td><a href="{% url 'exibicao_tutor' paciente.tutor.id %}" class="btn btn-success">{{ paciente.tutor }}</a></td>
             <td>{{ paciente.especie }}</td>
             <td>{{ paciente.raca }}</td>
             <td>{{ paciente.idade }}</td>

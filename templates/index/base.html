@@ -23,65 +23,44 @@
         .no-margin-left {
             margin-left: 0;
         }
+        .custom-sidebar.collapsed {
+            width: 50px; /* Ou qualquer largura que você deseja para o sidebar recolhido */
+        }
+
     
         #main-content {
             flex-grow: 1;
             transition: margin-left 0.3s ease;
             margin-left: 0;
         }
-    
-        .custom-sidebar.collapsed {
-            width: 0;
-            height: 0;
-            overflow: hidden;
+
+        #top-options {
+            display: none;
         }
-    
-        #sidebarCollapseContainer {
-            position: fixed;
-            top: 3.44rem;
-            left: 0;
-            padding: 0;
+
+        .custom-sidebar {
+            display: none; /* Oculta o sidebar em dispositivos móveis por padrão */
         }
-    
-        #sidebarCollapseContainer button {
-            width: 1.25rem;
-            height: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            margin: 0;
-        }
-    
-        #sidebarCollapseContainer button i {
-            font-size: 0.62rem;
-            color: #fff;
-            margin-right: 0px;
-        }
-    
-        .custom-sidebar.collapsed #sidebarCollapseContainer button {
-            transform: rotate(180deg);
-        }
-    
-        .custom-sidebar.collapsed #sidebarCollapseContainer {
-            top: 3.44rem;
-        }
-    
+
         @media (max-width: 800px) {
-            body {
-                flex-direction: column; /* Altera a direção para exibir itens verticalmente */
-            }
             .custom-sidebar {
-                width: 10%;
+                display: none !important; /* Força a ocultação do sidebar em dispositivos móveis */
             }
-    
-            .custom-sidebar.collapsed {
-                width: 0;
-                overflow: hidden;
+
+            #top-options {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                background-color: #343a40;
+                color: #fff;
+                padding: 10px;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
             }
-    
-            .custom-sidebar #sidebarCollapseContainer {
-                top: 3.44rem;
+
+            #top-options .nav-link {
+                margin: 5px;
             }
         }
     </style>
@@ -100,6 +79,25 @@
                 <a class="navbar-brand" href="/admin/">Admin</a>
             </nav>
         </header>
+
+        <!-- Caixa de opções no topo para dispositivos móveis -->
+        <div id="top-options">
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_tutores' %}">Tutores</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_pacientes' %}">Pacientes</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_clinicas' %}">Clínicas</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_veterinarios' %}">Veterinários</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'laudos_hoje' %}">Laudos Hoje</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_tarefas_agendadas' %}">Envios programados</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_frases' %}">Frases Programadas</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'lista_laudos' %}">Modelos de Laudos</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'laudo_list' %}">Lista de Exames</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'relatorio_exames' %}">Relatório de Exames</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'editar_precos_laudo_hoje' %}?data={{ laudo.data|date:'Ymd' }}">Atualização de valores</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'calcular_relatorio' %}">Projeções</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_diretorios_s3' %}">Backup</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'editar_inventario' %}">Inventário</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'filtrar_laudos' %}">Controle</a>
+        </div>
 
         <!-- Conteúdo principal -->
         <div class="row" style="display: flex;">

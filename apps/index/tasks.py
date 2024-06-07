@@ -26,42 +26,86 @@ import pywhatkit as kt
 import time
 import asyncio
 
+import qrcode
+from PIL import Image
+from io import BytesIO
+import base64
 import pywhatkit
 
 logger = logging.getLogger(__name__)
-
+from django.core.mail import EmailMessage
 
 def enviar_pdf_task(laudo_id):
+    # Obter o objeto de Laudo
     laudo = Laudo.objects.get(id=laudo_id)
-    lista_de_email = [
-        laudo.tutor.email if laudo.tutor and laudo.tutor.email else None,                   # junior
-        laudo.veterinario.email if laudo.veterinario and laudo.veterinario.email else None, # alexia
-        laudo.clinica.email if laudo.clinica and laudo.clinica.email else None,             # katia
-        laudo.email_extra if laudo.email_extra else None
-    ]
     
-    emails_validos = [email for email in lista_de_email if email]
-
-    data_atual = datetime.now().strftime("%Y-%m-%d")
+    # Verificar se o Laudo existe
+    if not laudo:
+        return
+    
+    # Configurando o link para AWS
+    data_atual = laudo.data.strftime("%Y-%m-%d")
     aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
     s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
     s3_filename_format = s3_filename.replace(" ", "+")
-
-
     pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+    # Crie o QR code com o link para AWS
+    qr_img = qrcode.make(pdf_link)
+    
+    # Converta o QR code em BytesIO
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+    
+    # Converta o BytesIO em imagem PIL
+    qr_pil_img = Image.open(qr_bytes)
+    
+    # Converta a imagem do QR code em base64
+    qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode()
+    
+    # Adicione a imagem codificada ao contexto
+    context = {'laudo': laudo, 'qr_base64': qr_base64}
+    
+    # Renderize o template com o contexto
+    html_index = render_to_string('export-pdf.html', context)
+    weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
+    pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
+    
+    
     mensagem = f"Abaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
 
-    # Enviar o e-mail apenas se houver e-mails válidos
-    if emails_validos:
-        subject = f'Laudo de {laudo.tipo_laudo} do paciente {laudo.paciente}'
-        message_body = mensagem
-        from_email = settings.DEFAULT_FROM_EMAIL
-        to_email = emails_validos
-        send_mail(subject, message_body,from_email, to_email )
-        print(message_body)
-        print(emails_validos)
-        
-       
+    # Configurar os detalhes do email
+    subject = f'Laudo de {laudo.tipo_laudo} do paciente {laudo.paciente}'
+    message_body = mensagem
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = []
+
+    # Adicionar emails válidos à lista de destinatários
+    if laudo.tutor and laudo.tutor.email:
+        to_email.append(laudo.tutor.email)
+    if laudo.veterinario and laudo.veterinario.email:
+        to_email.append(laudo.veterinario.email)
+    if laudo.clinica and laudo.clinica.email:
+        to_email.append(laudo.clinica.email)
+    if laudo.email_extra:
+        to_email.append(laudo.email_extra)
+    
+    # Se não houver emails válidos, encerre a função
+    if not to_email:
+        return
+    
+    # Verificar se o email de destino está na lista de emails específicos
+    if 'laribarbieri.vet@gmail.com' in to_email:
+        # Criar o objeto de email com anexo
+        email = EmailMessage(subject, message_body, from_email, to_email)
+        email.attach(f'Laudo_{laudo.tipo_laudo}_{laudo.paciente}.pdf', pdf, 'application/pdf')
+        email.send()
+    else:
+        # Criar o objeto de email sem anexo
+        email = EmailMessage(subject, message_body, from_email, to_email)
+        email.send()
+
 
 
 async def enviar_whatsapp_async(nome, telefone, mensagem, telefones_validos):
@@ -83,7 +127,7 @@ def enviar_whatsapp_task(laudo_id):
 
     
     
-    data_atual = datetime.now().strftime("%Y-%m-%d")
+    data_atual = laudo.data.strftime("%Y-%m-%d")
     
     # Nome do arquivo no S3
     s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
@@ -142,7 +186,34 @@ def enviar_whatsapp_task(laudo_id):
 def salvar_laudo_aws_task(laudo_id):
     laudo = get_object_or_404(Laudo, id=laudo_id)
     # Seção crítica
-    html_index = render_to_string('export-pdf.html', {'laudo': laudo})
+
+
+    # Configurando o link para AWS
+    data_atual = laudo.data.strftime("%Y-%m-%d")
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    s3_filename_format = s3_filename.replace(" ", "+")
+    pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+    # Crie o QR code com o link para AWS
+    qr_img = qrcode.make(pdf_link)
+    
+    # Converta o QR code em BytesIO
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+    
+    # Converta o BytesIO em imagem PIL
+    qr_pil_img = Image.open(qr_bytes)
+    
+    # Converta a imagem do QR code em base64
+    qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode()
+    
+    # Adicione a imagem codificada ao contexto
+    context = {'laudo': laudo, 'qr_base64': qr_base64}
+    
+    # Renderize o template com o contexto
+    html_index = render_to_string('export-pdf.html', context)
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
 
@@ -153,7 +224,7 @@ def salvar_laudo_aws_task(laudo_id):
 
     # Configurar o cliente S3
     s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-    data_atual = datetime.now().strftime("%Y-%m-%d")
+    data_atual = laudo.data.strftime("%Y-%m-%d")
     
     # Nome do arquivo no S3
     s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'

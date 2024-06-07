@@ -21,6 +21,7 @@
         <tr>
             <th>Data</th>
             <th>Paciente</th>
+            <th>Tutor</th>
             <th>Espécie</th>
             <th>Raça</th>
             <th>Exame</th>
@@ -37,6 +38,7 @@
         <tr>
             <td>{{ laudo.data }}</td>
             <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-primary">{{ laudo.paciente.nome }}</a></td>
+            <td>{{ laudo.tutor }}</td>
             <td>{{ laudo.especie }}</td>
             <td>{{ laudo.raca }}</td>
             <td>{{ laudo.tipo_laudo }}</td>

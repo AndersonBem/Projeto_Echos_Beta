@@ -29,7 +29,7 @@
 </form>
 
 <!-- Resultados -->
-<p class="mt-4">{% if clinica %}{{ clinica }} - {{ total_exames }} exames - Valor Total: R$ {{ total_valor|floatformat:2 }}{% else %}Total - {{ total_exames }} exames - Valor Total: R$ {{ total_valor|floatformat:2 }}{% endif %}</p>
+<p class="mt-4">{% if clinica %}{{ clinica }} - {{ total_exames }} exames - Valor Total: R$ {{ total_valor|floatformat:2 }} {% else %} Total - {{ total_exames }} exames - Valor Total: R$ {{ total_valor|floatformat:2 }}  - Ticket Médio: R$ {{ ticket_medio|floatformat:2 }}{% endif %}</p>
 
 <!-- Lista de Contagem de Exames em uma tabela responsiva -->
 <div class="table-responsive mt-3">
