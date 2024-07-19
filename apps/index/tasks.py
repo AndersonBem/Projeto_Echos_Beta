@@ -73,8 +73,8 @@ def enviar_pdf_task(laudo_id):
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     
     
-    mensagem = f"Abaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
-
+    #mensagem = f"Abaixo encontra-se o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} / tutor {laudo.tutor}\n\n{pdf_link}\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
+    mensagem = f"LAUDO DISPONÍVEL!\n\nSegue abaixo o link para acessar o laudo de {laudo.tipo_laudo} do(a) paciente {laudo.paciente} - tutor {laudo.tutor}\n\n{pdf_link}\n\nAtenciosamente, Dra. Jéssica Yasminne Diagnostico Veterinário"
     # Configurar os detalhes do email
     subject = f'Laudo de {laudo.tipo_laudo} do paciente {laudo.paciente}'
     message_body = mensagem
@@ -141,6 +141,8 @@ def enviar_whatsapp_task(laudo_id):
     
    
     mensagem = f"*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
+
+    
 
     lista_de_telefones = [
     laudo.tutor.telefone if laudo.tutor and laudo.tutor.telefone else None,                   # empresa

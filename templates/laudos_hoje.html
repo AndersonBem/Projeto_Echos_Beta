@@ -30,7 +30,7 @@
             <th>Excluir</th>
             <th>Laudo Pronto</th>
             <th>Entregue Whats</th>
-            
+            <th>Mensagem WhatsApp</th>
         </tr>
     </thead>
     <tbody id="laudos-table-body">
@@ -71,15 +71,39 @@
                     <input type="checkbox" name="entregue_whats" {% if laudo.entregue_whats %}checked{% endif %} onchange="this.form.submit()">
                 </form>
             </td>
-
+            <td>
+                <button class="btn btn-info btn-sm" onclick="showPopup('{{ laudo.mensagem_whatsapp|escapejs }}')">Ver Mensagem</button>
+            </td>
             
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
+<!-- Popup -->
+<div id="popupBackground" onclick="closePopup()"></div>
+<div id="popup">
+    <p id="popupMessage"></p>
+    <button onclick="closePopup()">Fechar</button>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+    function showPopup(message) {
+        const popup = document.getElementById('popup');
+        const popupMessage = document.getElementById('popupMessage');
+        // Usa innerHTML para renderizar o HTML da mensagem, que agora inclui <br>
+        popupMessage.innerHTML = message;
+        popup.style.display = 'block';
+        document.getElementById('popupBackground').style.display = 'block'; 
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'none';
+        document.getElementById('popupBackground').style.display = 'none';
+    }
+
     $(document).ready(function() {
         // Captura o envio do formulário de exclusão
         $('form').submit(function(e) {
@@ -123,8 +147,7 @@
             }
         });
     });
-</script>
-<script>
+
     function openEditarLaudo(laudoId) {
         var url = '/editar_laudo/' + laudoId + '/';
         var novaJanela = window.open(url, '_blank', 'height=600,width=800');
@@ -134,16 +157,39 @@
             window.location.href = url;
         }
     }
+
+    $(document).ready(function() {
+        // Captura o envio do formulário
+        $('#filtro-form').submit(function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            var url = $(this).attr('action') + '?' + formData;
+            window.location.href = url;
+        });
+    });
 </script>
-<script>
-  $(document).ready(function() {
-      // Captura o envio do formulário
-      $('#filtro-form').submit(function(e) {
-          e.preventDefault();
-          var formData = $(this).serialize();
-          var url = $(this).attr('action') + '?' + formData;
-          window.location.href = url;
-      });
-  });
-</script>
+<style>
+    #popup {
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    #popupBackground {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+</style>
 {% endblock %}

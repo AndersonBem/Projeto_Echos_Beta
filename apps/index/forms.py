@@ -217,7 +217,7 @@ class LaudoForms(forms.ModelForm):
 
     hora_envio = forms.DateTimeField(
         widget=forms.DateInput(attrs={'class': 'form-control flatpickr'}, format='%d/%m/%Y %H:%M'),
-        initial=lambda: timezone.now().replace(hour=20, minute=0, second=0, microsecond=0),
+        initial=lambda: timezone.now().replace(hour=23, minute=0, second=0, microsecond=0),
     )
 
     def __init__(self, *args, **kwargs):
@@ -259,6 +259,9 @@ class LaudoForms(forms.ModelForm):
         if 'entregue_email' in self.fields:
             # Remove o campo 'entregue_email' do formulário
             del self.fields['entregue_email']
+        # Remove o campo 'mensagem_whatsapp' do formulário
+        if 'mensagem_whatsapp' in self.fields:
+            del self.fields['mensagem_whatsapp']
 
     def save(self, commit=True):
         laudo = super(LaudoForms, self).save(commit=False)

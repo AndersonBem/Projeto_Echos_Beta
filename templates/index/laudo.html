@@ -37,7 +37,11 @@
         <!-- Adiciona campos hidden para paciente_id e tutor_id -->
         <input type="hidden" name="paciente_id" value="{{ paciente.id }}">
         <input type="hidden" name="tutor_id" value="{{ tutor.id }}">
-
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn btn-success col-12">Salvar</button>
+            </div>
+        </div>
         <div class="row">
             {% for field in form.visible_fields %}
                 <div class="col-12 col-lg-6 mb-3">
@@ -70,7 +74,7 @@
 <script>
 
     var dataAtual = new Date();  // Obtém a data e hora atuais
-    dataAtual.setHours(20, 0, 0, 0);  // Define a hora para 21:00, e os minutos e segundos para 0
+    dataAtual.setHours(23, 0, 0, 0);  // Define a hora para 21:00, e os minutos e segundos para 0
 
 
     flatpickr('.flatpickr', {

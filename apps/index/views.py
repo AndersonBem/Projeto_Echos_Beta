@@ -1155,6 +1155,32 @@ def enviar_laudo(request, laudos_paciente_id):
     enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
     salvar_laudo_aws(request, laudos_paciente_id=laudo.id) 
 
+    aws_storage_bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+    
+    
+    data_atual = laudo.data.strftime("%Y-%m-%d")
+    
+    # Nome do arquivo no S3
+    s3_filename = f'laudos/{data_atual}/{laudo.paciente}/paciente-{laudo.paciente}-Tutor-{laudo.tutor}-{laudo.tipo_laudo}.pdf'
+    s3_filename_format = s3_filename.replace(" ", "+")
+    
+
+    # Gerar o link para o PDF no S3
+    pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
+
+    # Montar a mensagem do WhatsApp com o link do PDF
+    
+   
+    mensagem = f"*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
+
+    # Substituir quebras de linha por <br> para exibição no HTML
+    mensagem_html = mensagem.replace('\n', '<br>')
+    
+    # Atualiza o campo mensagem_whatsapp no objeto Laudo
+    laudo.mensagem_whatsapp = mensagem_html
+    laudo.save()
+
     # Redirecione para a página de edição de horário com o ID da tarefa
     return redirect('lista_tarefas_agendadas')
 

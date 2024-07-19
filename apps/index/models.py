@@ -228,7 +228,7 @@ class Laudo(models.Model):
     
     laudo = HTMLField(null=True)
 
-    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=20, minute=0, second=0, microsecond=0),null=True, blank=True)
+    hora_envio = models.DateTimeField(default=timezone.now().replace(hour=23, minute=0, second=0, microsecond=0),null=True, blank=True)
 
     preco = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'))
 
@@ -245,6 +245,9 @@ class Laudo(models.Model):
     nota_fiscal = models.BooleanField(default=False)
 
     observacao_pagamento = models.CharField(max_length=200, null=True, blank=True)
+
+    mensagem_whatsapp = models.CharField(max_length=2000, null=True, blank=True, default='')
+
 
     forma_pagamento = models.ForeignKey(
         FormaDePagamento,
@@ -267,7 +270,7 @@ class Laudo(models.Model):
     def save(self, *args, **kwargs):
         # Se a hora_envio ainda não foi definida, configure-a para as 20h
         if not self.hora_envio:
-            self.hora_envio = timezone.now().replace(hour=20, minute=0, second=0, microsecond=0)
+            self.hora_envio = timezone.now().replace(hour=23, minute=0, second=0, microsecond=0)
         super().save(*args, **kwargs)
 
 
