@@ -353,13 +353,14 @@ def buscar_paciente(request):
         messages.error(request, "Usuário não logado")
         return redirect('login')
     
-    pacientes = Paciente.objects.order_by("nome").all()
+    pacientes = Paciente.objects.all()
     
     if "buscar" in request.GET:
         nome_a_buscar = request.GET['buscar']
         if nome_a_buscar:
             pacientes = pacientes.filter(nome__unaccent__icontains=nome_a_buscar)
-    
+    # Ordena os pacientes por nome após o filtro de busca
+    pacientes = pacientes.order_by("nome", "tutor__nome")
     return render (request, "index/busca/buscar_paciente.html", {"pacientes":pacientes} )
 
 def buscar_veterinario(request):
@@ -1151,7 +1152,7 @@ def enviar_laudo(request, laudos_paciente_id):
 
     
 
-    enviar_whatsapp(request, laudos_paciente_id=laudo.id)
+    #enviar_whatsapp(request, laudos_paciente_id=laudo.id)
     enviar_pdf(request, laudos_paciente_id=laudo.id)  # Passa a instância do modelo diretamente
     salvar_laudo_aws(request, laudos_paciente_id=laudo.id) 
 
@@ -1169,16 +1170,27 @@ def enviar_laudo(request, laudos_paciente_id):
     # Gerar o link para o PDF no S3
     pdf_link = f'https://{aws_storage_bucket_name}.s3.amazonaws.com/{s3_filename_format}'
 
-    # Montar a mensagem do WhatsApp com o link do PDF
+    # Inicializar a variável mensagem_vet com um valor padrão
+    mensagem_vet = ""
+
+    # Montar a parte da mensagem relacionada ao veterinário
+    if laudo.veterinario:
+        mensagem_vet += f"Veterinário - {laudo.veterinario} - {laudo.veterinario.telefone}"
     
+    if laudo.clinica:
+        mensagem_vet += f" \n\n Clínica - {laudo.clinica} - {laudo.clinica.telefone}"
+        
+    if laudo.tutor:
+        mensagem_vet += f" \n\n Tutor -  {laudo.tutor} - {laudo.tutor.telefone}"  
    
-    mensagem = f"*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
+    mensagem = f"{mensagem_vet}\n\n {laudo.paciente} - {laudo.tipo_laudo}  \n\n Mensagem: \n\n*LAUDO DISPONÍVEL!*\n\nSegue abaixo o link para acessar o laudo de *{laudo.tipo_laudo}* do(a) paciente *{laudo.paciente}* - tutor *{laudo.tutor}*\n\n{pdf_link}\n\n*Caso o link não apareça clicável, salve este número em sua lista de contatos, para liberar o link.*\n\nAtenciosamente, *Dra. Jéssica Yasminne Diagnostico Veterinário*"
 
     # Substituir quebras de linha por <br> para exibição no HTML
     mensagem_html = mensagem.replace('\n', '<br>')
     
     # Atualiza o campo mensagem_whatsapp no objeto Laudo
     laudo.mensagem_whatsapp = mensagem_html
+    laudo.enviar_agora = True
     laudo.save()
 
     # Redirecione para a página de edição de horário com o ID da tarefa
@@ -1326,18 +1338,26 @@ def laudo_list(request):
     if clinica:
         laudos = laudos.filter(clinica=clinica)
 
+    # Ordenar pela data (da mais antiga para a mais recente)
+    laudos = laudos.order_by('data')
+
     # Obtendo a lista de tipos de laudo e clínicas para o formulário de filtro
     laudos_tipos = LaudosPadrao.objects.all()
     clinicas = Clinica.objects.all()
+
+    # Convertendo feriados para uma lista de strings no formato 'YYYY-MM-DD'
+    feriados = [feriado.strftime('%Y-%m-%d') for feriado in feriados]
 
     context = {
         'laudos': laudos,
         'laudos_tipos': laudos_tipos,
         'clinicas': clinicas,
-        'tipo_laudo_selecionado': tipo_laudo,  # Adicione isso ao contexto para marcar a opção selecionada no formulário
+        'tipo_laudo_selecionado': tipo_laudo,
+        'feriados': feriados,  # Adicione os feriados ao contexto
     }
 
     return render(request, 'laudo_list.html', context)
+
 
 
 def relatorio_exames(request):

@@ -22,7 +22,7 @@
             <th>Data</th>
             <th>Paciente</th>
             <th>Tutor</th>
-            <th>Espécie</th>
+            <th>Clínica</th>
             <th>Raça</th>
             <th>Exame</th>
             <th>Enviar laudos</th>
@@ -36,10 +36,10 @@
     <tbody id="laudos-table-body">
         {% for laudo in laudos %}
         <tr>
-            <td>{{ laudo.data }}</td>
+            <td style="font-size: 0.8em;">{{ laudo.data|date:"d/m/Y H:i" }}</td>
             <td><a href="{% url 'exibicao' paciente_id=laudo.paciente.id %}" class="btn btn-primary">{{ laudo.paciente.nome }}</a></td>
             <td>{{ laudo.tutor }}</td>
-            <td>{{ laudo.especie }}</td>
+            <td>{{ laudo.clinica|default:"" }}</td>
             <td>{{ laudo.raca }}</td>
             <td>{{ laudo.tipo_laudo }}</td>
 
@@ -72,7 +72,18 @@
                 </form>
             </td>
             <td>
-                <button class="btn btn-info btn-sm" onclick="showPopup('{{ laudo.mensagem_whatsapp|escapejs }}')">Ver Mensagem</button>
+                <div>
+                    <button class="btn btn-info btn-sm" onclick="showPopup('{{ laudo.mensagem_whatsapp|escapejs }}')">Ver Mensagem</button>
+                </div>
+                <div>
+                    {% if laudo.enviar_agora %}
+                        <strong>Status: {{ laudo.enviar_status }}</strong>
+                    {% else %}
+                        Status: {{ laudo.enviar_status }}
+                    {% endif %}
+                </div>
+                
+               
             </td>
             
         </tr>

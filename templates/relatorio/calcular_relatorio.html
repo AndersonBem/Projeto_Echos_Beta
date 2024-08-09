@@ -36,7 +36,56 @@
         
         <button type="submit" class="btn btn-primary">Calcular</button>
       </form>
+
+      <!-- Adicione o elemento para o calendário -->
+      <h4>Calendário do Mês Atual:</h4>
+      <div id="calendar"></div>
+
     </div>
   </div>
 </div>
+
+<!-- Inclua o CSS e o JS do Flatpickr -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/material_blue.css"> <!-- Tema opcional -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/pt.js"></script> <!-- Locale em português -->
+
+<script>
+  // Lista de feriados em formato de string "YYYY-MM-DD"
+  var feriados = [
+    "2024-09-07",
+    "2024-10-12",
+    "2024-11-02",
+    "2024-11-15",
+    "2024-12-25"
+    // Adicione mais feriados aqui
+  ];
+
+  flatpickr("#calendar", {
+    inline: true, // Mostra o calendário de forma inline
+    dateFormat: "d/m/Y", // Formato da data
+    defaultDate: "today", // Define a data padrão como a data de hoje
+    locale: "pt", // Define o locale para português
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      // Verifica se a data atual é um feriado
+      var dateStr = dayElem.dateObj.toISOString().split('T')[0];
+      if (feriados.includes(dateStr)) {
+        dayElem.classList.add("feriado");
+      }
+    }
+  });
+
+  // Adiciona estilos para feriados
+  var style = document.createElement('style');
+  style.innerHTML = `
+    .flatpickr-day.feriado {
+      background-color: #f8d7da !important;
+      color: #721c24 !important;
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
 {% endblock %}
