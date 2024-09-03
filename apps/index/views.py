@@ -778,6 +778,7 @@ import qrcode
 from PIL import Image
 from io import BytesIO
 import base64
+from django.utils.text import slugify
 
 def exibir_pdf(request, laudos_paciente_id):
     laudo = Laudo.objects.get(id=laudos_paciente_id)
@@ -806,8 +807,30 @@ def exibir_pdf(request, laudos_paciente_id):
     # Adicione a imagem codificada ao contexto
     context = {'laudo': laudo, 'qr_base64': qr_base64}
     
+    # Supondo que 'laudo' seja o objeto que contém o tipo do laudo
+    tipo_laudo_slug = slugify(laudo.tipo_laudo)
+
+    
     # Renderize o template com o contexto
-    html_index = render_to_string('export-pdf.html', context) 
+    if tipo_laudo_slug == 'usg-abdominal':
+        html_index = render_to_string('PDF/export-pdf-usg.html', context)
+    if tipo_laudo_slug == 'ecocardiograma':
+        html_index = render_to_string('PDF/export-pdf-eco.html', context)
+    if tipo_laudo_slug == 'eletrocardiograma':
+        html_index = render_to_string('PDF/export-pdf-ecg.html', context)
+    if tipo_laudo_slug == 'pressao-arterial':
+        html_index = render_to_string('PDF/export-pdf-pressao.html', context)
+    if tipo_laudo_slug == 'cistocentese':
+        html_index = render_to_string('PDF/export-pdf-cistocentese.html', context)
+    if tipo_laudo_slug == 'usg-cervical':
+        html_index = render_to_string('PDF/export-pdf-usg-cervical.html', context)
+    if tipo_laudo_slug == 'usg-gestacional':
+        html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
+    if tipo_laudo_slug == 'usg-ocular':
+        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)            
+    
+     
+    
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     response = HttpResponse(content_type='application/pdf')

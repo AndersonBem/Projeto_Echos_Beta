@@ -7,12 +7,7 @@
     <div class="card-body card-text text-dark">
       <h3>Projeção:</h3>
       <p>Total de dias úteis: {{ total_dias_uteis }}</p>
-      <p>Total de feriados: {{ total_feriados }}</p>
-      <p>Feriados: 
-        {% for feriado in feriados %}
-          {{ feriado|date:"d/m" }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      </p>
+      
       
       <hr>
 
