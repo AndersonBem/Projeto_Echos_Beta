@@ -132,7 +132,7 @@ class Paciente(models.Model):
     peso = models.CharField(max_length=100, null=True, blank=True)
     castracao = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(default=datetime.now, blank=False)
-    
+    obito = models.BooleanField(default=False)
     tutor = models.ForeignKey(
         'Tutor',
         on_delete=models.SET_NULL,

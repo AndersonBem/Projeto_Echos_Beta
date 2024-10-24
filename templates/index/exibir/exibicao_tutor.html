@@ -26,7 +26,11 @@
             <h2>Pacientes:</h2>
             <ul>
                 {% for paciente in tutor.pacientes.all %}
-                    <li><a href="{% url 'exibicao' paciente.id %}" class="btn btn-primary">{{ paciente.nome }}</a></li>
+                    <li><a href="{% url 'exibicao' paciente.id %}" class="btn btn-primary">{{ paciente.nome }}</a>
+                    {% if paciente.obito %}
+                        <span class="text-danger"> - Óbito</span>
+                    {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         </div>

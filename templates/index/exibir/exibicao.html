@@ -2,7 +2,12 @@
 {% load static %}
 {% block content %}
 <div class="page-header">
-    <h1>Paciente {{ paciente.nome }}</h1>
+    <h1 class="{% if paciente.obito %}text-danger{% endif %}">
+        Paciente {{ paciente.nome }}
+        {% if paciente.obito %}
+            <span> - Óbito</span>
+        {% endif %}
+    </h1>
 </div>
 <div class="container-fluid">
     <div class="row">

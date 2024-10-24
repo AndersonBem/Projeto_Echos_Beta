@@ -40,6 +40,7 @@ from django.http import HttpResponseServerError
 from zipfile import ZipFile
 from io import BytesIO
 from urllib.parse import unquote
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -973,7 +974,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
 
 from decimal import Decimal
 from django.db.models import Sum
-
+@login_required(login_url='login')
 def laudos_hoje(request):
     data_selecionada = request.GET.get('data')
 
@@ -1369,14 +1370,14 @@ def laudo_list(request):
     clinicas = Clinica.objects.all()
 
     # Convertendo feriados para uma lista de strings no formato 'YYYY-MM-DD'
-    feriados = [feriado.strftime('%Y-%m-%d') for feriado in feriados]
+    
 
     context = {
         'laudos': laudos,
         'laudos_tipos': laudos_tipos,
         'clinicas': clinicas,
         'tipo_laudo_selecionado': tipo_laudo,
-        'feriados': feriados,  # Adicione os feriados ao contexto
+        
     }
 
     return render(request, 'laudo_list.html', context)
@@ -1588,9 +1589,10 @@ def editar_inventario(request):
 
     # Renderiza o template com os valores atuais do inventário
     return render(request, 'index/editar_inventario.html', {'inventario': inv_instance})
-
+@login_required(login_url='login')
 def filtrar_laudos(request):
     if request.method == 'GET':
+        # Pega os parâmetros do GET
         mes = request.GET.get('mes')
         if mes:
             mes = int(mes)
@@ -1602,39 +1604,38 @@ def filtrar_laudos(request):
             ano = int(ano)
         else:
             ano = datetime.now().year
-            
+
         forma_pagamento_filtro = request.GET.get('forma_pagamento')
         data_pagamento_filtro = request.GET.get('data_pagamento')
-        clinica_filtro = request.GET.get('clinica')  # Novo campo para filtrar por clínica
-        
+        clinica_filtro = request.GET.get('clinica')
 
+        # Filtrando os laudos
         laudos = Laudo.objects.filter(data__month=mes, data__year=ano).order_by('-data')
 
-        # Verifica se a opção de filtro para forma_pagamento foi selecionada
+        # Filtro por forma de pagamento
         if forma_pagamento_filtro:
             try:
                 forma_pagamento_filtro = int(forma_pagamento_filtro)
                 laudos = laudos.filter(forma_pagamento_id=forma_pagamento_filtro)
             except ValueError:
-                # Se a conversão para int falhar, simplesmente não aplique o filtro
                 pass
 
-        # Verifica se a opção de filtro para data_pagamento é diferente de "ambos"
+        # Filtro por data de pagamento
         if data_pagamento_filtro != 'ambos':
             if data_pagamento_filtro == 'null':
                 laudos = laudos.filter(data_pagamento__isnull=True)
             elif data_pagamento_filtro == 'not_null':
                 laudos = laudos.exclude(data_pagamento__isnull=True)
 
-        # Verifica se foi enviado um filtro para laudo.clinica e aplica-o à consulta
+        # Filtro por clínica
         if clinica_filtro:
             laudos = laudos.filter(clinica_id=clinica_filtro)
 
-        
-        # Calcula o somatório de todos os valores de laudo.preco
+        # Cálculo de somatório de preços
         total_precos = laudos.aggregate(Sum('preco'))['preco__sum']
         total_precos_real = laudos.aggregate(Sum('preco_real'))['preco_real__sum']
-        # Calcula o somatório de preços para cada clínica presente nos laudos
+
+        # Somatório de preços por clínica
         somatorio_por_clinica = {}
         for laudo in laudos:
             clinica_nome = laudo.clinica
@@ -1642,14 +1643,31 @@ def filtrar_laudos(request):
                 somatorio_por_clinica[clinica_nome] = 0
             somatorio_por_clinica[clinica_nome] += laudo.preco
 
-        formas_pagamento = FormaDePagamento.objects.all()
-        clinicas = Clinica.objects.all()  # Carrega todas as clínicas para o campo de seleção
-
-        # Ordena o dicionário somatorio_por_clinica com base nos valores (somatório de preços)
+        # Organizar o somatório por clínica
         somatorio_por_clinica_ordenado = dict(sorted(somatorio_por_clinica.items(), key=lambda item: item[1], reverse=True))
-        return render(request, 'controle_financeiro.html', {'laudos': laudos, 'formas_pagamento': formas_pagamento, 'total_precos': total_precos,'total_precos_real':total_precos_real ,'somatorio_por_clinica': somatorio_por_clinica_ordenado, 'clinicas': clinicas})
 
-    
+        # Carregar formas de pagamento e clínicas para os filtros
+        formas_pagamento = FormaDePagamento.objects.all()
+        clinicas = Clinica.objects.all()
+
+        # Adicionar os parâmetros de busca ao contexto
+        context = {
+            'laudos': laudos,
+            'formas_pagamento': formas_pagamento,
+            'total_precos': total_precos,
+            'total_precos_real': total_precos_real,
+            'somatorio_por_clinica': somatorio_por_clinica_ordenado,
+            'clinicas': clinicas,
+            'filtros': {
+                'mes': mes,
+                'ano': ano,
+                'forma_pagamento': forma_pagamento_filtro,
+                'data_pagamento': data_pagamento_filtro,
+                'clinica': clinica_filtro,
+            }
+        }
+        return render(request, 'controle_financeiro.html', context)
+
     laudos = Laudo.objects.all()
     context = {'laudos': laudos}
     return render(request, 'filtrar_laudos.html', context)

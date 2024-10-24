@@ -22,41 +22,47 @@
 <form method="GET" action="{% url 'filtrar_laudos' %}">
     <label for="mes">Mês:</label>
     <select name="mes" id="mes">
-        <option value="1">Janeiro</option>
-        <option value="2">Fevereiro</option>
-        <option value="3">Março</option>
-        <option value="4">Abril</option>
-        <option value="5">Maio</option>
-        <option value="6">Junho</option>
-        <option value="7">Julho</option>
-        <option value="8">Agosto</option>
-        <option value="9">Setembro</option>
-        <option value="10">Outubro</option>
-        <option value="11">Novembro</option>
-        <option value="12">Dezembro</option>
-        <!-- Adicione as outras opções de meses -->
+        <option value="1" {% if request.GET.mes == '1' %}selected{% endif %}>Janeiro</option>
+        <option value="2" {% if request.GET.mes == '2' %}selected{% endif %}>Fevereiro</option>
+        <option value="3" {% if request.GET.mes == '3' %}selected{% endif %}>Março</option>
+        <option value="4" {% if request.GET.mes == '4' %}selected{% endif %}>Abril</option>
+        <option value="5" {% if request.GET.mes == '5' %}selected{% endif %}>Maio</option>
+        <option value="6" {% if request.GET.mes == '6' %}selected{% endif %}>Junho</option>
+        <option value="7" {% if request.GET.mes == '7' %}selected{% endif %}>Julho</option>
+        <option value="8" {% if request.GET.mes == '8' %}selected{% endif %}>Agosto</option>
+        <option value="9" {% if request.GET.mes == '9' %}selected{% endif %}>Setembro</option>
+        <option value="10" {% if request.GET.mes == '10' %}selected{% endif %}>Outubro</option>
+        <option value="11" {% if request.GET.mes == '11' %}selected{% endif %}>Novembro</option>
+        <option value="12" {% if request.GET.mes == '12' %}selected{% endif %}>Dezembro</option>
     </select>
+
     <label for="ano">Ano:</label>
-    <input type="number" name="ano" id="ano" min="2000" max="2100" value="2024">
+    <input type="number" name="ano" id="ano" min="2000" max="2100" value="{{ request.GET.ano|default:'2024' }}">
+
     <label for="forma_pagamento">Forma de Pagamento:</label>
     <select name="forma_pagamento" id="forma_pagamento">
         <option value="">Todas</option>
         {% for forma_pagamento in formas_pagamento %}
-            <option value="{{ forma_pagamento.id }}">{{ forma_pagamento.forma_de_pagamento }}</option>
+            <option value="{{ forma_pagamento.id }}" {% if request.GET.forma_pagamento == forma_pagamento.id|stringformat:"s" %}selected{% endif %}>
+                {{ forma_pagamento.forma_de_pagamento }}
+            </option>
         {% endfor %}
     </select>
-    <!-- Adicione os campos de filtro para data_pagamento -->
+
     <label for="data_pagamento">Data de Pagamento:</label>
     <select name="data_pagamento" id="data_pagamento">
-        <option value="ambos">Ambos</option>
-        <option value="null">Não Pago</option>
-        <option value="not_null">Pago</option>
+        <option value="ambos" {% if request.GET.data_pagamento == "ambos" %}selected{% endif %}>Ambos</option>
+        <option value="null" {% if request.GET.data_pagamento == "null" %}selected{% endif %}>Não Pago</option>
+        <option value="not_null" {% if request.GET.data_pagamento == "not_null" %}selected{% endif %}>Pago</option>
     </select>
+
     <label for="clinica">Clínica:</label>
     <select name="clinica" id="clinica">
         <option value="">Todas</option>
         {% for clinica in clinicas %}
-            <option value="{{ clinica.id }}">{{ clinica.nome }}</option>
+            <option value="{{ clinica.id }}" {% if request.GET.clinica == clinica.id|stringformat:"s" %}selected{% endif %}>
+                {{ clinica.nome }}
+            </option>
         {% endfor %}
     </select>
 

@@ -63,7 +63,7 @@ class PacienteForms(forms.ModelForm):
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
-            
+            'obito': "Óbito",
             'tutor': "Tutor"
         }
 
@@ -97,7 +97,7 @@ class PacienteCaninoForms(forms.ModelForm):
             'nascimento': "Data de Nascimento",
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
-            
+            'obito': "Óbito",
             'tutor': "Tutor"
         }
 
