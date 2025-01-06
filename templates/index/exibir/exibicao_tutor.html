@@ -30,6 +30,9 @@
                     {% if paciente.obito %}
                         <span class="text-danger"> - Óbito</span>
                     {% endif %}
+                    {% if paciente.plano %}
+                        <span class="text-danger"> - {{ paciente.plano }}</span>
+                    {% endif %}
                     </li>
                 {% endfor %}
             </ul>

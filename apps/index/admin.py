@@ -1,6 +1,6 @@
 from django.contrib import admin
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaFelino, RacaCanino, Laudo, LaudosPadrao, Frases, LaudoImagem, Inventario,\
-FormaDePagamento
+FormaDePagamento, Acompanhamento
 
 
 class ListandoVeterinario(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class ListandoClinica(admin.ModelAdmin):
     list_per_page = 10
 
 class ListandoPaciente(admin.ModelAdmin):
-    list_display = ("id", "nome","especie", "raca", "peso", "castracao", "tutor","obito")
+    list_display = ("id", "nome","especie", "raca", "peso", "castracao", "tutor","obito", "plano")
     list_display_links = ("id", "nome")
     search_fields = ("nome",)
     list_filter = ("especie",)
@@ -81,6 +81,10 @@ class ListandoFormaDePagamento(admin.ModelAdmin):
 
 
 
+class ListandoAcompanhamento(admin.ModelAdmin):
+    list_display = ("id","paciente", "data","exame")
+    list_display_links = ("id","paciente", "data","exame")
+
 
 # Register your models here.
 
@@ -102,4 +106,4 @@ admin.site.register(Frases, ListandoFrase)
 admin.site.register(LaudoImagem)
 admin.site.register(Inventario, ListandoInventario)
 admin.site.register(FormaDePagamento, ListandoFormaDePagamento)
-
+admin.site.register(Acompanhamento, ListandoAcompanhamento)

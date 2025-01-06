@@ -47,12 +47,12 @@
             </tr>
             <tr>
                 <td>Seringa de 10ml</td>
-                {% if inventario.seringa_10ml <= 20 %}
+                {% if inventario.seringa_10ml <= 30 %}
                     <td>{{ inventario.seringa_10ml }} Kg <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
                 {% else %}
                     <td>{{ inventario.seringa_10ml }} Und</td>
                 {% endif %}
-                <td> 20 Und </td>
+                <td> 30 Und </td>
                 <td>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="seringa_10ml" value="{{ inventario.seringa_10ml }}">
@@ -251,6 +251,20 @@
                 <td>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="scal_azul" value="{{ inventario.scal_azul }}">
+                    </div>
+                </td>
+            </tr><tr>
+                <td>Luva</td>
+                {% if inventario.luva <= 2 %}
+                    <td>{{ inventario.luva }} Cx <span class="alert-icon" title="Quantidade abaixo do mínimo">&#9888;</span></td>
+                {% else %}
+                    <td>{{ inventario.luva }} Cx</td>
+                {% endif %}
+                
+                <td> 2 Cx </td>
+                <td>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="luva" value="{{ inventario.luva }}">
                     </div>
                 </td>
             </tr>

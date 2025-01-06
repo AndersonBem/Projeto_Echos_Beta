@@ -5,7 +5,7 @@ from multiupload.fields import MultiFileField
 from datetime import date, datetime, timedelta
 
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases,\
-LaudoImagem, Inventario
+LaudoImagem, Inventario, Acompanhamento
 
 from tinymce.widgets import TinyMCE
 
@@ -64,7 +64,10 @@ class PacienteForms(forms.ModelForm):
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
             'obito': "Óbito",
-            'tutor': "Tutor"
+            'tutor': "Tutor",
+            'plano': "Plano de saúde",
+            'acompanhamento' : "Data do acompanhamento",
+            'exame_do_acompanhamento' : "Exame em acompanhamento"
         }
 
         widgets = {
@@ -90,7 +93,7 @@ class PacienteCaninoForms(forms.ModelForm):
         model = Paciente
         exclude = ['data_criacao','raca_felino']
         
-
+        
         labels = {
             'nome': 'Nome',
             'raca_canino': 'Raça Canino',
@@ -98,7 +101,10 @@ class PacienteCaninoForms(forms.ModelForm):
             'peso': "Peso",
             'castracao': "O paciente é castrado?",
             'obito': "Óbito",
-            'tutor': "Tutor"
+            'tutor': "Tutor",
+            'plano': "Plano de saúde",
+            'acompanhamento' : "Data do acompanhamento",
+            'exame_do_acompanhamento' : "Exame em acompanhamento"
         }
 
         widgets = {
@@ -371,6 +377,24 @@ class InventarioForm(forms.ModelForm):
             'prope': 'Propé',
             'seringa_60ml': 'Seringa 60ml',
             'scal_azul': 'Scal Azul',
+            'luva': 'Luva'
             # Adicione rótulos para os outros campos conforme necessário
         }
 
+class AcompanhamentoForm(forms.ModelForm):
+    class Meta:
+        model = Acompanhamento
+        fields = ['data', 'exame']  # Inclui 'exame' e 'data'
+
+        # Personalização do campo de data
+        widgets = {
+            'data': forms.DateInput(
+                format='%d/%m/%Y',
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            )
+        }
+
+    

@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario, FormaDePagamento
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario, FormaDePagamento, Acompanhamento
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
-NovaImagemForm, RelatorioForm
+NovaImagemForm, RelatorioForm, AcompanhamentoForm
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
@@ -1116,8 +1116,26 @@ def editar_pdf(request, laudos_paciente_id):
         # Adicione a imagem codificada ao contexto
         context = {'laudo': laudo, 'qr_base64': qr_base64}
         
+        # Supondo que 'laudo' seja o objeto que contém o tipo do laudo
+        tipo_laudo_slug = slugify(laudo.tipo_laudo)
+
         # Renderize o template com o contexto
-        html_index = render_to_string('export-pdf.html', context)
+        if tipo_laudo_slug == 'usg-abdominal':
+            html_index = render_to_string('PDF/export-pdf-usg.html', context)
+        if tipo_laudo_slug == 'ecocardiograma':
+            html_index = render_to_string('PDF/export-pdf-eco.html', context)
+        if tipo_laudo_slug == 'eletrocardiograma':
+            html_index = render_to_string('PDF/export-pdf-ecg.html', context)
+        if tipo_laudo_slug == 'pressao-arterial':
+            html_index = render_to_string('PDF/export-pdf-pressao.html', context)
+        if tipo_laudo_slug == 'cistocentese':
+            html_index = render_to_string('PDF/export-pdf-cistocentese.html', context)
+        if tipo_laudo_slug == 'usg-cervical':
+            html_index = render_to_string('PDF/export-pdf-usg-cervical.html', context)
+        if tipo_laudo_slug == 'usg-gestacional':
+            html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
+        if tipo_laudo_slug == 'usg-ocular':
+            html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)  
 
         # Crie uma instância do HTML usando weasyprint
         weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
@@ -1578,6 +1596,7 @@ def editar_inventario(request):
             inv_instance.prope = float(request.POST.get('prope', '0.0').replace(',', '.'))
             inv_instance.seringa_60ml = float(request.POST.get('seringa_60ml', '0.0').replace(',', '.'))
             inv_instance.scal_azul = float(request.POST.get('scal_azul', '0.0').replace(',', '.'))
+            inv_instance.luva = float(request.POST.get('luva', '0.0').replace(',', '.'))
             # Repita para os outros campos do inventário
 
             # Salva as alterações
@@ -1725,3 +1744,43 @@ def salvar_alteracao_controle(request):
     return HttpResponseRedirect(reverse('filtrar_laudos'))
 
 
+def adicionar_acompanhamento_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    
+    # Formulário para adicionar um novo acompanhamento
+    if request.method == 'POST':
+        form = AcompanhamentoForm(request.POST)
+        if form.is_valid():
+            acompanhamento = form.save(commit=False)
+            acompanhamento.paciente = paciente
+            acompanhamento.save()
+            return redirect('adicionar_acompanhamento_paciente', paciente_id=paciente.id)  # Redireciona para a mesma página
+    else:
+        form = AcompanhamentoForm()
+
+    # Acompanhamenos já existentes
+    acompanhamentos = paciente.acompanhamentos.all()
+
+    return render(request, 'index/editar/adicionar_acompanhamento_paciente.html', {
+        'paciente': paciente,
+        'form': form,
+        'acompanhamentos': acompanhamentos
+    })
+
+def deletar_acompanhamento(request, acompanhamento_id):
+    # Buscando o objeto Acompanhamento
+    acompanhamento = get_object_or_404(Acompanhamento, id=acompanhamento_id)
+    
+    if request.method == 'POST':
+        paciente_id = acompanhamento.paciente.id  # Pegando o id do paciente
+        
+        # Deletando o acompanhamento
+        acompanhamento.delete()
+        
+        # Adicionando uma mensagem de sucesso
+        messages.success(request, 'Acompanhamento deletado com sucesso!')
+        
+        # Redirecionando de volta para a mesma página (página de origem)
+        return redirect(request.META.get('HTTP_REFERER', reverse('exibicao', kwargs={'paciente_id': paciente_id})))
+    
+    return render(request, 'index/editar/exibicao.html', {'acompanhamento': acompanhamento})

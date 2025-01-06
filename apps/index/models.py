@@ -143,6 +143,8 @@ class Paciente(models.Model):
     )
     
     observacao = models.CharField(max_length=200, null=True, blank=True)
+    plano = models.CharField(max_length=200, null=True, blank=True)
+    
 
     def __str__(self):
         return self.nome
@@ -330,6 +332,7 @@ class Inventario(models.Model):
     prope = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
     seringa_60ml = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
     scal_azul = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
+    luva = models.DecimalField(max_digits=8, decimal_places=1, default=Decimal('0.0'))
     
     def save(self, *args, **kwargs):
         if Inventario.objects.exists():
@@ -337,3 +340,22 @@ class Inventario(models.Model):
             existing_inventario = Inventario.objects.first()
             self.id = existing_inventario.id  # Garante que há apenas uma instância
         super().save(*args, **kwargs)
+
+
+class Acompanhamento(models.Model):
+    paciente = models.ForeignKey(
+        to='Paciente',
+        on_delete=models.CASCADE,
+        related_name='acompanhamentos'
+    )
+    data = models.DateField(null=False, blank=False)
+    exame = models.ForeignKey(
+        to='index.LaudosPadrao',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='acompanhamentos'
+    )
+
+    def __str__(self):
+        return f"{self.paciente.nome} - {self.data.strftime('%d/%m/%Y')}"

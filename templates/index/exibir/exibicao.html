@@ -20,6 +20,36 @@
             <p><strong>Peso:</strong> {{ paciente.peso }}</p>
             <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
             <p><strong>Castração:</strong> {{ paciente.castracao_display }}</p>
+            <p><strong>Plano:</strong> {{ paciente.plano|default:"Particular" }}</p>
+            
+            {% if paciente.acompanhamentos.all %}
+            <p><strong>Acompanhamentos</strong>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Exame</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for acompanhamento in paciente.acompanhamentos.all %}
+                            <tr>
+                                <td>{{ acompanhamento.data|date:"d/m/Y" }}</td>
+                                <td>{{ acompanhamento.exame.nome_exame }}</td>
+                                <!-- Botão para deletar o acompanhamento -->
+                                <td><form action="{% url 'deletar_acompanhamento' acompanhamento.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                                </form></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Este paciente ainda não tem acompanhamentos registrados.</p>
+            {% endif %}
+
+            
             <p><a href="{% url 'exibicao_tutor' tutor_id=paciente.tutor.id %}" class="btn btn-primary">Tutor: {{ paciente.tutor }}</a></p>
             {% if paciente.especie|lower|striptags == 'felino' %}
                 <div class="mb-3">
@@ -28,6 +58,7 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
                     </form>
+                    <a href="{% url 'adicionar_acompanhamento_paciente' paciente.id %}" class="btn btn-primary">Adicionar Acompanhamento</a>
                 </div>
             {% else %}
                 <div class="mb-3">
@@ -36,6 +67,9 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza de que deseja excluir este paciente?')">Deletar</button>
                     </form>
+                    <a href="{% url 'adicionar_acompanhamento_paciente' paciente.id %}" class="btn btn-primary">Adicionar Acompanhamento</a>
+
+
                 </div>
             {% endif %}
         </div>
@@ -126,5 +160,6 @@
         window.location.href = selectedUrl;
     }
 </script>
+
 
 {% endblock %}

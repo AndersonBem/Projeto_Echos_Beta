@@ -1,0 +1,56 @@
+{% extends 'index/base.html' %}
+
+{% block content %}
+<section class="container mt-4">
+    <h2>Acompanhamentos do Paciente: {{ paciente.nome }}</h2>
+    <!-- Botão para voltar para a página de edição do paciente -->
+    
+
+    <!-- Exibir os acompanhamentos existentes -->
+    <h3>Acompanhamentos Registrados</h3>
+    <ul>
+        {% for acompanhamento in acompanhamentos %}
+            <li>
+                {{ acompanhamento.data }} - {{ acompanhamento.exame }}
+                <!-- Botão para deletar o acompanhamento -->
+                <form action="{% url 'deletar_acompanhamento' acompanhamento.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                </form>
+            </li>
+        {% empty %}
+            <li>Não há acompanhamentos registrados.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Formulário para adicionar um novo acompanhamento -->
+    <h3 class="mt-4">Adicionar Novo Acompanhamento</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+                <label for="{{ form.data.id_for_label }}" style="color:#D9D9D9; margin-bottom: 5px;">Data do Acompanhamento</label>
+                {{ form.data }}
+                <label for="{{ form.exame.id_for_label }}" style="color:#D9D9D9; margin-bottom: 5px; margin-top: 10px;">Exame</label>
+                {{ form.exame }}
+            </div>
+            
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Adicionar Acompanhamento</button>
+                        
+        </div>
+        <a href="{% url 'exibicao' paciente.id %}" class="btn btn-success">{{ paciente.nome }}</a>
+    </form>
+</section>
+
+<!-- Adicionando scripts para o datepicker -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    
+</script>
+
+{% endblock %}

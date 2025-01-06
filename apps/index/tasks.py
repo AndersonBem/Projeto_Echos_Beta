@@ -22,7 +22,7 @@ from botocore.exceptions import NoCredentialsError
 from datetime import datetime
 from django.utils import timezone  # Adicione esta linha para importar timezone
 from django.db import IntegrityError
-import pywhatkit as kt
+#import pywhatkit as kt
 import time
 import asyncio
 from django.utils.text import slugify
@@ -30,7 +30,7 @@ import qrcode
 from PIL import Image
 from io import BytesIO
 import base64
-import pywhatkit
+#import pywhatkit
 
 logger = logging.getLogger(__name__)
 from django.core.mail import EmailMessage
@@ -135,7 +135,7 @@ async def enviar_whatsapp_async(nome, telefone, mensagem, telefones_validos):
     print(f"Enviando para {nome} ({telefone})")
     
     time.sleep(15)
-    pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 10)
+    #pywhatkit.sendwhatmsg(telefone, mensagem, datetime.now().hour, datetime.now().minute + 1, 15, True, 10)
     time.sleep(15)
 
     
