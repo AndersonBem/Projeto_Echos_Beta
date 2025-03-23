@@ -1,0 +1,161 @@
+{% extends 'index/base.html' %}
+
+{% block content %}
+
+<style>
+    .smaller-table {
+        margin: 0 auto; /* Centralize a tabela na tela */
+    }
+
+    .smaller-table td, .smaller-table th {
+        font-size: 12px; /* Defina o tamanho da fonte desejado para as células da tabela */
+        border-right: 1px solid #ccc; /* Adicione uma borda direita de 1px sólida entre as colunas */
+    }
+
+    .smaller-table th:last-child, .smaller-table td:last-child {
+        border-right: none; /* Remova a borda direita da última coluna para evitar duplicação */
+    }
+</style>
+
+<h2>Filtrar Despesas</h2>
+<form method="GET" action="{% url 'listar_despesas' %}">
+    <label for="mes">Mês:</label>
+    <select name="mes" id="mes">
+        <option value="1" {% if request.GET.mes == '1' %}selected{% endif %}>Janeiro</option>
+        <option value="2" {% if request.GET.mes == '2' %}selected{% endif %}>Fevereiro</option>
+        <option value="3" {% if request.GET.mes == '3' %}selected{% endif %}>Março</option>
+        <option value="4" {% if request.GET.mes == '4' %}selected{% endif %}>Abril</option>
+        <option value="5" {% if request.GET.mes == '5' %}selected{% endif %}>Maio</option>
+        <option value="6" {% if request.GET.mes == '6' %}selected{% endif %}>Junho</option>
+        <option value="7" {% if request.GET.mes == '7' %}selected{% endif %}>Julho</option>
+        <option value="8" {% if request.GET.mes == '8' %}selected{% endif %}>Agosto</option>
+        <option value="9" {% if request.GET.mes == '9' %}selected{% endif %}>Setembro</option>
+        <option value="10" {% if request.GET.mes == '10' %}selected{% endif %}>Outubro</option>
+        <option value="11" {% if request.GET.mes == '11' %}selected{% endif %}>Novembro</option>
+        <option value="12" {% if request.GET.mes == '12' %}selected{% endif %}>Dezembro</option>
+    </select>
+
+    <label for="ano">Ano:</label>
+    <input type="number" name="ano" id="ano" min="2000" max="2100" value="{{ request.GET.ano|default:'2024' }}">
+
+    
+    <label for="tipo">Tipo:</label>
+    <select name="tipo" id="tipo">
+        <option value="">Selecione o Tipo</option>
+        {% for tipo in tipos_despesa %}
+        <option value="{{ tipo.id }}" {% if request.GET.tipo == tipo.id|stringformat:"s" %}selected{% endif %}>
+            {{ tipo.nome_despesa }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filtrar</button>
+</form>
+<div>
+    <form method="POST" action="{% url 'sua_url_para_criar_despesa' %}">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td><input type="text" name="nome" placeholder="Nome da despesa" required></td>
+                <td><input type="date" name="data" required></td>
+                <td><input type="text" name="valor" placeholder="Valor (ex: 100.00)" required></td>
+                <td><input type="number" name="recorrencia_atual" placeholder="Parcela atual" required></td>
+                <td><input type="number" name="recorrencia_total" placeholder="Parcela total" required></td>
+                <td>
+                    <select name="tipo" required>
+                        <option value="">Selecione o Tipo</option>
+                        {% for tipo in tipos_despesa %}
+                        <option value="{{ tipo.id }}" {% if tipo.id == request.POST.tipo %}selected{% endif %}>
+                            {{ tipo.nome_despesa }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                
+                
+                <td><button type="submit" class="btn btn-success">Adicionar</button></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+{% if despesas %}
+
+<p style="font-size: 16px; text-align: center; font-weight: bold;">
+    Somatório total dos valores: R$ {{ total_valores|default:0 }}
+</p>
+
+<p style="font-size: 16px; text-align: center; font-weight: bold;">
+    Somatório por tipo:
+</p>
+<ul>
+    {% for item in somatorio_por_tipo %}
+        <li>{{ item.tipo__nome_despesa }}: R$ {{ item.total_por_tipo|default:0 }}</li>
+    {% endfor %}
+</ul>
+
+
+<div class="table-responsive">
+    <form method="POST" id="alteracaoForm" action="{% url 'salvar_alteracoes_despesas' %}">
+        {% csrf_token %}
+        <table class="table table-sm smaller-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Parcela atual</th>
+                    <th>Parcela total</th>
+                    <th>Tipo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for despesa in despesas %}
+                <tr>
+                    <td>{{ despesa.nome }}</td>
+                    <td>
+                        <input type="date" name="data_{{ despesa.id }}" value="{{ despesa.data|date:'Y-m-d' }}">
+                    </td>
+                    <td>
+                        <input type="text" name="valor_{{ despesa.id }}" value="{{ despesa.valor|default:'' }}">
+                    </td>
+                    <td>
+                        <input type="number" name="recorrencia_atual_{{ despesa.id }}" value="{{ despesa.recorrencia_atual }}">
+                    </td>
+                    <td>
+                        <input type="number" name="recorrencia_total_{{ despesa.id }}" value="{{ despesa.recorrencia_total }}">
+                    </td>
+                    <td>
+                        <select name="tipo_{{ despesa.id }}">
+                            {% for tipo in tipos_despesa %}
+                            <option value="{{ tipo.id }}" {% if despesa.tipo.id == tipo.id %}selected{% endif %}>
+                                {{ tipo.nome_despesa }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="deletarDespesa({{ despesa.id }})">Excluir</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+</div>
+
+<script>
+    function deletarDespesa(id) {
+        if (confirm('Deseja realmente excluir esta despesa?')) {
+            window.location.href = "{% url 'deletar_despesa' 0 %}".replace('0', id);
+        }
+    }
+</script>
+
+{% else %}
+<p>Nenhuma despesa encontrada para os filtros aplicados.</p>
+{% endif %}
+
+{% endblock %}

@@ -87,7 +87,9 @@ def enviar_pdf_task(laudo_id):
     if tipo_laudo_slug == 'usg-gestacional':
         html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
     if tipo_laudo_slug == 'usg-ocular':
-        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)  
+        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)
+    if tipo_laudo_slug == 'citologia-guiada':
+        html_index = render_to_string('PDF/export-pdf-citologia.html', context)     
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
     
@@ -253,7 +255,9 @@ def salvar_laudo_aws_task(laudo_id):
     if tipo_laudo_slug == 'usg-gestacional':
         html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
     if tipo_laudo_slug == 'usg-ocular':
-        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)          
+        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)
+    if tipo_laudo_slug == 'citologia-guiada':
+        html_index = render_to_string('PDF/export-pdf-citologia.html', context)             
     weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
     pdf = weasyprint_html.write_pdf(stylesheets=[weasyprint.CSS(string='@page { margin: 30px; } body { margin: 0; } img {width: 100%; }')])
 

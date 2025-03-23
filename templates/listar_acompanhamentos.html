@@ -1,0 +1,37 @@
+{% extends 'index/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Acompanhamentos de Pacientes</h2>
+    
+    {% if acompanhamentos %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Data do Acompanhamento</th>
+                <th>Paciente</th>
+                <th>Exame</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acompanhamento in acompanhamentos %}
+            <tr>
+                <td>{{ acompanhamento.data|date:"d/m/Y" }}</td>
+                <td>{{ acompanhamento.paciente.nome }}</td>
+                <td>{{ acompanhamento.exame.nome_exame }}</td>
+                <td>
+                    <form action="{% url 'deletar_acompanhamento' acompanhamento.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Não há acompanhamentos registrados.</p>
+    {% endif %}
+</div>
+{% endblock %}

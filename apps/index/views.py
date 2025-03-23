@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario, FormaDePagamento, Acompanhamento
+from apps.index.models import Veterinario, Clinica, Paciente, Tutor, LaudosPadrao, Frases, Laudo, LaudoImagem, Inventario, FormaDePagamento, Acompanhamento, Despesa, TipoDespesa
 from django.contrib import messages
 from apps.index.forms import VeterinarioForms, ClinicaForms, PacienteForms, TutorForms, PacienteCaninoForms, LaudoForms, RacaFelinoForms, RacaCaninoForms, LaudoPadraoForms, FrasesForm,\
 NovaImagemForm, RelatorioForm, AcompanhamentoForm
@@ -828,7 +828,9 @@ def exibir_pdf(request, laudos_paciente_id):
     if tipo_laudo_slug == 'usg-gestacional':
         html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
     if tipo_laudo_slug == 'usg-ocular':
-        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)            
+        html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context) 
+    if tipo_laudo_slug == 'citologia-guiada':
+        html_index = render_to_string('PDF/export-pdf-citologia.html', context)           
     
      
     
@@ -972,7 +974,7 @@ def enviar_whatsapp(request, laudos_paciente_id):
         return redirect('exibicao', paciente_id=laudo.paciente.id)
     
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.db.models import Sum
 @login_required(login_url='login')
 def laudos_hoje(request):
@@ -1135,7 +1137,9 @@ def editar_pdf(request, laudos_paciente_id):
         if tipo_laudo_slug == 'usg-gestacional':
             html_index = render_to_string('PDF/export-pdf-usg-gestacional.html', context)
         if tipo_laudo_slug == 'usg-ocular':
-            html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)  
+            html_index = render_to_string('PDF/export-pdf-usg-ocular.html', context)
+        if tipo_laudo_slug == 'citologia-guiada':
+            html_index = render_to_string('PDF/export-pdf-citologia.html', context)     
 
         # Crie uma instância do HTML usando weasyprint
         weasyprint_html = weasyprint.HTML(string=html_index, base_url='http://127.0.0.1:8000/media')
@@ -1747,6 +1751,9 @@ def salvar_alteracao_controle(request):
 def adicionar_acompanhamento_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
     
+    # Obter o último acompanhamento salvo, se houver
+    ultimo_acompanhamento = paciente.acompanhamentos.last()
+
     # Formulário para adicionar um novo acompanhamento
     if request.method == 'POST':
         form = AcompanhamentoForm(request.POST)
@@ -1754,9 +1761,14 @@ def adicionar_acompanhamento_paciente(request, paciente_id):
             acompanhamento = form.save(commit=False)
             acompanhamento.paciente = paciente
             acompanhamento.save()
+
+             #Após salvar, preenche o formulário com os dados do acompanhamento recém-criado
+            form = AcompanhamentoForm(instance=acompanhamento)
+
             return redirect('adicionar_acompanhamento_paciente', paciente_id=paciente.id)  # Redireciona para a mesma página
     else:
-        form = AcompanhamentoForm()
+        # Se o formulário não foi enviado ou não foi válido, preenche com os dados do último acompanhamento
+        form = AcompanhamentoForm(instance=ultimo_acompanhamento)
 
     # Acompanhamenos já existentes
     acompanhamentos = paciente.acompanhamentos.all()
@@ -1784,3 +1796,132 @@ def deletar_acompanhamento(request, acompanhamento_id):
         return redirect(request.META.get('HTTP_REFERER', reverse('exibicao', kwargs={'paciente_id': paciente_id})))
     
     return render(request, 'index/editar/exibicao.html', {'acompanhamento': acompanhamento})
+
+
+def listar_acompanhamentos(request):
+    # Obtendo todos os acompanhamentos, ordenados por nome do paciente e depois por data
+    acompanhamentos = Acompanhamento.objects.all().order_by('data', 'paciente__nome')
+
+    # Verificar se há algum acompanhamento na data atual
+    hoje = date.today()
+    acompanhamento_hoje = Acompanhamento.objects.filter(data=hoje).exists()
+    
+    return render(request, 'listar_acompanhamentos.html', { 'acompanhamentos': acompanhamentos,'acompanhamento_hoje': acompanhamento_hoje})
+
+def listar_despesas(request):
+    tipos_despesa = TipoDespesa.objects.all()  # Buscando todos os tipos de despesa
+    despesas = Despesa.objects.all()  # Inicialmente pega todas as despesas
+    tipos = TipoDespesa.objects.all()  # Buscando os tipos disponíveis
+
+    # Filtros
+    mes = request.GET.get('mes')
+    ano = request.GET.get('ano')
+    recorrencia = request.GET.get('recorrencia')
+    tipo = request.GET.get('tipo')
+
+    # Aplicando filtros
+    if mes:
+        despesas = despesas.filter(data__month=mes)
+    if ano:
+        despesas = despesas.filter(data__year=ano)
+    if recorrencia:
+        despesas = despesas.filter(recorrencia__icontains=recorrencia)
+    if tipo:
+        try:
+            tipo_obj = TipoDespesa.objects.get(id=tipo)  # Busca o TipoDespesa com o ID fornecido
+            despesas = despesas.filter(tipo=tipo_obj)  # Filtro pelo tipo selecionado
+        except TipoDespesa.DoesNotExist:
+            # Caso o tipo não exista, você pode adicionar uma lógica para tratar esse caso
+            pass
+
+    # Somatório total
+    total_valores = despesas.aggregate(Sum('valor'))['valor__sum'] or 0  # Somatório total das despesas
+
+    # Somatório por tipo
+    somatorio_por_tipo = despesas.values('tipo__nome_despesa').annotate(total_por_tipo=Sum('valor'))
+
+
+    # Adicionar nova despesa
+    if request.method == "POST":
+        nome = request.POST.get("nome")
+        data = request.POST.get("data")
+        valor = request.POST.get("valor")
+        tipo_id = request.POST.get("tipo")
+
+        # Validar e buscar o tipo selecionado
+        tipo_obj = TipoDespesa.objects.get(id=tipo_id) if tipo_id else None
+
+        # Criar despesa
+        Despesa.objects.create(
+            nome=nome,
+            data=data,
+            valor=valor,
+            tipo=tipo_obj,  # Atribuindo o tipo da despesa
+        )
+        return redirect('listar_despesas')  # Redirecionar após a criação da despesa
+
+    context = {
+        'despesas': despesas,
+        'tipos': tipos,  # Passando os tipos de despesa disponíveis
+        'total_valores': total_valores,
+        'somatorio_por_tipo': somatorio_por_tipo,  # Somatório por tipo
+        'tipos_despesa': tipos_despesa  # Passando novamente os tipos de despesa
+    }
+    return render(request, 'despesas.html', context)
+
+
+def salvar_alteracoes_despesas(request):
+    if request.method == 'POST':
+        for despesa in Despesa.objects.all():
+            despesa.data = request.POST.get(f'data_{despesa.id}')
+            despesa.valor = request.POST.get(f'valor_{despesa.id}')
+            despesa.recorrencia = request.POST.get(f'recorrencia_{despesa.id}')
+            despesa.tipo = request.POST.get(f'tipo_{despesa.id}')
+            # Substituir vírgula por ponto
+            valor = request.POST.get(f'valor_{despesa.id}')
+            if valor:
+                valor = valor.replace(',', '.')
+                try:
+                    despesa.valor = Decimal(valor)
+                except InvalidOperation:
+                    return HttpResponse("Valor inválido!", status=400)
+            despesa.save()
+        return redirect('listar_despesas')
+
+
+def deletar_despesa(request, despesa_id):
+    despesa = get_object_or_404(Despesa, id=despesa_id)
+    despesa.delete()
+    return redirect('listar_despesas')
+
+def criar_despesa(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        data = request.POST.get('data')
+        valor = request.POST.get('valor')
+        recorrencia_atual = request.POST.get('recorrencia_atual')
+        recorrencia_total = request.POST.get('recorrencia_total')
+        tipo_id = request.POST.get('tipo')  # Aqui o valor é o ID, mas é passado como string
+        
+        # Substituir vírgula por ponto no valor
+        valor = valor.replace(',', '.')
+        
+        try:
+            # Converter o valor de tipo_id para um número inteiro, que é o esperado para o ID
+            tipo = TipoDespesa.objects.get(id=int(tipo_id))  # Buscando a instância de TipoDespesa
+            
+            # Criando a despesa com a instância de TipoDespesa
+            nova_despesa = Despesa.objects.create(
+                nome=nome,
+                data=data,
+                valor=Decimal(valor),  # Garantir que o valor seja um Decimal
+                 recorrencia_atual= recorrencia_atual,
+                 recorrencia_total= recorrencia_total,
+                tipo=tipo  # Passando a instância de TipoDespesa
+            )
+            nova_despesa.save()
+            return redirect('listar_despesas')  # Redireciona para a página de listagem
+        except TipoDespesa.DoesNotExist:
+            return HttpResponse("Tipo de despesa não encontrado.", status=400)
+        except Exception as e:
+            return HttpResponse(f"Erro ao criar despesa: {e}", status=400)

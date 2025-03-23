@@ -77,6 +77,11 @@
                 <a class="navbar-brand" href="{% url 'cadastro' %}">Cadastro</a>
                 <a class="navbar-brand" href="{% url 'logout' %}">Logout</a>
                 <a class="navbar-brand" href="/admin/">Admin</a>
+                {% if acompanhamento_7_dias %}
+                    <!-- Alerta discreto no topo -->
+                    <span class="badge bg-warning text-dark ms-2" style="font-size: 0.9em;">Acompanhamento em menos de 7 dias</span>
+                {% endif %}
+
             </nav>
         </header>
 
@@ -96,6 +101,7 @@
             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'calcular_relatorio' %}">Projeções</a>
             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_diretorios_s3' %}">Backup</a>
             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'editar_inventario' %}">Inventário</a>
+            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_acompanhamentos' %}">Acompanhamento</a>
             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'filtrar_laudos' %}">Controle</a>
         </div>
 
@@ -151,6 +157,11 @@
                                 Modelos de Laudos
                             </a>
                         </li>
+                        <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_acompanhamentos' %}">
+                                Acompanhamento
+                            </a>
+                        </li>
                         <!-- Divisão visual -->
                         <li class="nav-item mb-3">
                             <hr class="sidebar-divider">
@@ -187,10 +198,17 @@
                             </a>
                         </li>
                         <li class="nav-item mb-3">
+                            <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'listar_despesas' %}">
+                                Despesa
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
                             <a class="nav-link text-white btn btn-info sidebar-btn" href="{% url 'filtrar_laudos' %}">
                                 Controle
                             </a>
                         </li>
+                        
+                        
                     </ul>
                     <div id="sidebarCollapseContainer">
                         <button class="btn btn-dark" id="sidebarCollapse">

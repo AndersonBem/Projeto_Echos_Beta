@@ -5,7 +5,7 @@ from multiupload.fields import MultiFileField
 from datetime import date, datetime, timedelta
 
 from apps.index.models import Veterinario, Clinica, Paciente, Tutor, RacaCanino, RacaFelino, Laudo, LaudosPadrao, Frases,\
-LaudoImagem, Inventario, Acompanhamento
+LaudoImagem, Inventario, Acompanhamento, Despesa
 
 from tinymce.widgets import TinyMCE
 
@@ -389,7 +389,7 @@ class AcompanhamentoForm(forms.ModelForm):
         # Personalização do campo de data
         widgets = {
             'data': forms.DateInput(
-                format='%d/%m/%Y',
+                format='%Y-%m-%d',  # O formato que o HTML espera para campos do tipo date
                 attrs={
                     'type': 'date',
                     'class': 'form-control'
@@ -397,4 +397,26 @@ class AcompanhamentoForm(forms.ModelForm):
             )
         }
 
-    
+class DespesaForm(forms.ModelForm):
+    class Meta:
+        model = Despesa
+        fields = '__all__'
+
+        labels = {
+            'nome': 'Nome',
+            'data': 'Data',
+            'valor': 'Valor',
+            'recorrencia_atual':'Parcela atual',
+            'recorrencia_total':'Parcela total',
+            'tipo': 'Tipo'
+        }
+
+        widgets = {
+            'data': forms.DateInput(
+                format='%Y-%m-%d',  # O formato que o HTML espera para campos do tipo date
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            )
+        }

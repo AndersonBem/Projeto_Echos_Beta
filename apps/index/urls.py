@@ -8,7 +8,7 @@ from apps.index.views import \
     deletar_laudo_ajax, editar_pdf, enviar_laudo, excluir_pdf_aws, sua_funcao_para_excluir_pdf,\
     listar_diretorios_s3, baixar_diretorio_s3, auto_save_laudo, laudo_list, relatorio_exames, editar_precos_laudo_hoje, atualizar_preco_laudo, salvar_todos_precos_laudo,editar_preco_laudo,\
     calcular_relatorio, atualizar_entrega_whats_laudo, atualizar_entrega_email_laudo, editar_observacao_paciente, editar_inventario, filtrar_laudos, salvar_alteracao_controle,\
-    atualizar_laudo_pronto,excluir_todas_imagens, adicionar_acompanhamento_paciente, deletar_acompanhamento
+    atualizar_laudo_pronto,excluir_todas_imagens, adicionar_acompanhamento_paciente, deletar_acompanhamento, listar_acompanhamentos, listar_despesas, salvar_alteracoes_despesas, deletar_despesa,criar_despesa
     
 
 urlpatterns = [
@@ -119,5 +119,11 @@ urlpatterns = [
     path('salvar-alteracao-controle/', salvar_alteracao_controle, name='salvar_alteracao_controle'),
     path('paciente/<int:paciente_id>/adicionar_acompanhamento/', adicionar_acompanhamento_paciente, name='adicionar_acompanhamento_paciente'),
     path('acompanhamento/<int:acompanhamento_id>/deletar/', deletar_acompanhamento, name='deletar_acompanhamento'),
+    path('acompanhamentos/', listar_acompanhamentos, name='listar_acompanhamentos'),
+
+    path('despesas/', listar_despesas, name='listar_despesas'),
+    path('despesas/salvar/', salvar_alteracoes_despesas, name='salvar_alteracoes_despesas'),
+    path('despesas/deletar/<int:despesa_id>/', deletar_despesa, name='deletar_despesa'),
+    path('despesas/criar/', criar_despesa, name='sua_url_para_criar_despesa'),
 
 ]

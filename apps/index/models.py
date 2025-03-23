@@ -199,6 +199,7 @@ class Laudo(models.Model):
         related_name='tutor'
     )
     email = models.CharField(max_length=100, null=True, blank=True)
+    
     idade = models.CharField(max_length=100, null=True, blank=True)
     
     peso = models.CharField(max_length=100, null=True, blank=True)
@@ -359,3 +360,47 @@ class Acompanhamento(models.Model):
 
     def __str__(self):
         return f"{self.paciente.nome} - {self.data.strftime('%d/%m/%Y')}"
+
+class TipoDespesa(models.Model):
+    nome_despesa = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nome_despesa
+
+
+from dateutil.relativedelta import relativedelta
+class Despesa(models.Model):
+    nome = models.CharField(max_length=100, null=False, blank=False)
+    data = models.DateField(null=True, blank=True)
+    valor = models.DecimalField(max_digits=8, decimal_places=2, default=Decimal('0.00'), null=True, blank=True)
+    recorrencia_atual = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
+    recorrencia_total = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
+    tipo = models.ForeignKey('TipoDespesa', on_delete=models.CASCADE)
+    data_criacao = models.DateTimeField(default=datetime.now, blank=False)
+
+    def save(self, *args, **kwargs):
+        criando_novas_despesas = self.pk is None  # Só cria novas se for uma nova despesa
+        super().save(*args, **kwargs)  # Salva a despesa original primeiro
+
+        if criando_novas_despesas and self.recorrencia_atual == 1 and self.recorrencia_total > 1:
+            despesas = []
+            for i in range(2, self.recorrencia_total + 1):  # Começa do 2 até o total
+                nova_data = self.data + relativedelta(months=i-1) if self.data else None
+                despesas.append(
+                    Despesa(
+                        nome=self.nome,
+                        data=nova_data,
+                        valor=self.valor,
+                        recorrencia_atual=i,  # Agora incrementa corretamente
+                        recorrencia_total=self.recorrencia_total,
+                        tipo=self.tipo
+                    )
+                )
+            Despesa.objects.bulk_create(despesas)  # Criação em massa para melhor performance
+
+    def __str__(self):
+        return f"{self.nome} ({self.recorrencia_atual}/{self.recorrencia_total})"
+
+    class Meta:
+        ordering = ['data']
+
