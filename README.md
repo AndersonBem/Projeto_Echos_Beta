@@ -1,10 +1,18 @@
 # Projeto Echos Beta
 
-![Logo](caminho/para/logo.png)  
+
 Sistema web para gerenciamento de laudos veterinários, desenvolvido em Django.
 
 ## 📌 Visão Geral
 O **Projeto Echos Beta** foi criado para facilitar o gerenciamento de exames e laudos em clínicas veterinárias. Ele permite o cadastro de tutores, pacientes, veterinários e clínicas, além da geração e organização de laudos médicos.
+
+## OBS:
+-Este projeto nasceu da necessidade de um sistema mais completo para a empresa de laudos veterinários que administro com minha esposa. No início, eu não tinha conhecimento em programação, mas acreditava que seria possível desenvolver uma solução própria. Por isso, comecei a estudar na Alura (minhas formações estão no LinkedIn: [meu perfil](https://www.linkedin.com/in/anderson-cavalcante-bem-92bb48268/)).
+
+
+O projeto foi, ao mesmo tempo, um exercício de aprendizado e a base do sistema que utilizamos atualmente. Embora o código possa não seguir todas as melhores práticas, ele reflete minha evolução como desenvolvedor. Algumas bibliotecas instaladas não foram utilizadas, e os templates poderiam estar mais organizados, mas o sistema é funcional e atende às necessidades da empresa.
+
+Postei este repositório como parte do meu portfólio, mostrando tanto o resultado prático quanto minha trajetória de aprendizado.
 
 ## 🚀 Funcionalidades
 - 🏥 **Cadastro e gerenciamento** de tutores, pacientes, veterinários e clínicas
@@ -17,40 +25,9 @@ O **Projeto Echos Beta** foi criado para facilitar o gerenciamento de exames e l
 ## 🛠️ Tecnologias Utilizadas
 - **Back-end:** Django (Python)
 - **Front-end:** HTML, CSS, Bootstrap
-- **Banco de Dados:** SQLite (padrão) ou PostgreSQL (opcional)
+- **Banco de Dados:** PostgreSQL (padrão)
 - **Geração de PDFs:** WeasyPrint
 
-## ⚙️ Como Instalar
-
-### 1️⃣ Clonar o Repositório
-```bash
-$ git clone https://github.com/AndersonBem/Projeto_Echos_Beta.git
-$ cd Projeto_Echos_Beta
-```
-
-### 2️⃣ Criar e Ativar um Ambiente Virtual
-```bash
-$ python -m venv venv
-$ source venv/bin/activate  # Linux/macOS
-$ venv\Scripts\activate    # Windows
-```
-
-### 3️⃣ Instalar as Dependências
-```bash
-$ pip install -r requirements.txt
-```
-
-### 4️⃣ Configurar o Banco de Dados
-```bash
-$ python manage.py migrate
-$ python manage.py createsuperuser  # Criar um usuário admin
-```
-
-### 5️⃣ Rodar o Servidor
-```bash
-$ python manage.py runserver
-```
-Acesse o sistema em: `http://127.0.0.1:8000`
 
 ## 📷 Capturas de Tela
 ![Tela Inicial](caminho/para/tela_inicial.png)
