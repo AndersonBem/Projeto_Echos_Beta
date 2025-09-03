@@ -59,7 +59,7 @@ Postei este repositório como parte do meu portfólio, mostrando tanto o resulta
 ![Dados do Paciente 5](IMAGEM_SYS/paciente5.jpg)
 
 
-![Adicionar Imagem ao Laudo](IMAGEM_SYS/add_imagem.jpg)
+
 ![Visualização do Laudo em PDF](IMAGEM_SYS/pdf_laudo.jpg)
 
 ![Laudos Realizados no Dia](IMAGEM_SYS/laudos_hj.jpg)
