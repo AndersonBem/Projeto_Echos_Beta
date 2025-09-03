@@ -40,19 +40,6 @@ Postei este repositório como parte do meu portfólio, mostrando tanto o resulta
 
 ![Tela de Login](IMAGEM_SYS/login.jpg)
 
-![Lista de Tutores](IMAGEM_SYS/Tutores.jpg)
-
-
-![Busca de Tutores](IMAGEM_SYS/Busca_tutores.jpg)
-
-
-![Lista de Pacientes](IMAGEM_SYS/pacientes.jpg)
-
-
-![Lista de Clínicas](IMAGEM_SYS/clinicas.jpg)
-
-
-![Lista de Veterinários](IMAGEM_SYS/veterinarios.jpg)
 
 
 ![Frases Pré-programadas](IMAGEM_SYS/frases.jpg)
